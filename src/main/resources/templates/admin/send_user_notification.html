@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/fragments/layout_admin}">
+
+<head>
+    <title>Gửi Thông Báo Người Dùng</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Gửi Thông Báo Người Dùng (Chuông)</h1>
+        </div>
+
+        <div th:if="${successMessageUserNotify}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i><span th:text="${successMessageUserNotify}"></span>
+        </div>
+        <div th:if="${errorMessageUserNotify}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i><span th:text="${errorMessageUserNotify}"></span>
+        </div>
+
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Soạn và Gửi Thông Báo</h6>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/admin/notifications/user/send}" method="post">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Gửi đến:</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="targetType" id="targetAll" value="all" checked>
+                            <label class="form-check-label" for="targetAll">Tất cả người dùng (Nhân viên & Độc giả)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="targetType" id="targetRole" value="role">
+                            <label class="form-check-label" for="targetRole">Một nhóm vai trò</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="targetType" id="targetSingle" value="single">
+                            <label class="form-check-label" for="targetSingle">Một người dùng cụ thể</label>
+                        </div>
+                    </div>
+
+                    <div id="roleSelectContainer" class="mb-3" style="display: none;">
+                        <label for="role" class="form-label">Chọn vai trò:</label>
+                        <select class="form-select" name="role" id="role">
+                            <option value="">-- Chọn vai trò --</option>
+                            <option value="READER">READER</option>
+                            <option value="STAFF">STAFF</option>
+                        </select>
+                    </div>
+
+                    <div id="usernameInputContainer" class="mb-3" style="display: none;">
+                        <label for="username" class="form-label">Tên đăng nhập người dùng:</label>
+                        <input type="text" class="form-control" id="username" name="username" placeholder="Nhập tên đăng nhập...">
+                    </div>
+                    <div class="mb-3">
+                        <label for="title" class="form-label fw-bold">Tiêu đề thông báo:</label>
+                        <input type="text" class="form-control" id="title" name="title" required placeholder="Nhập tiêu đề...">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="message" class="form-label fw-bold">Nội dung thông báo:</label>
+                        <textarea class="form-control" id="message" name="message" rows="4" required placeholder="Ví dụ: Sách 'Lập trình Java' bạn đặt trước đã có sẵn tại quầy."></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="link" class="form-label fw-bold">Đường dẫn (Tùy chọn):</label>
+                        <input type="text" class="form-control" id="link" name="link" placeholder="Ví dụ: /books/details/123">
+                        <small class="form-text text-muted">Người dùng sẽ được chuyển đến link này khi nhấp vào thông báo.</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-2" style="
+    padding-right: 10px;
+"></i>Gửi thông báo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="page_scripts">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const radios = document.querySelectorAll('input[name="targetType"]');
+            const roleContainer = document.getElementById('roleSelectContainer');
+            const usernameContainer = document.getElementById('usernameInputContainer');
+            const roleSelect = document.getElementById('role');
+            const usernameInput = document.getElementById('username');
+
+            function toggleTargetInputs() {
+                const selectedValue = document.querySelector('input[name="targetType"]:checked').value;
+                roleContainer.style.display = (selectedValue === 'role') ? 'block' : 'none';
+                usernameContainer.style.display = (selectedValue === 'single') ? 'block' : 'none';
+
+                // Yêu cầu nhập liệu tương ứng
+                roleSelect.required = (selectedValue === 'role');
+                usernameInput.required = (selectedValue === 'single');
+            }
+
+            radios.forEach(radio => radio.addEventListener('change', toggleTargetInputs));
+            toggleTargetInputs(); // Chạy lần đầu
+        });
+    </script>
+</th:block>
+</body>
+</html>

@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thư viện Trực tuyến - Bảng điều khiển Thủ thư</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Wood & Beige Theme */
+            --primary: #8B4513;         /* SaddleBrown (Main Wood) */
+            --primary-light: #A0522D;   /* Sienna (Lighter Wood) */
+            --primary-dark: #5C3317;    /* Darker Wood */
+            --secondary: #D2B48C;       /* Tan (Accent Beige/Light Wood) */
+            --light: #FAF0E6;           /* Linen (Main Background Beige) */
+            --dark: #4A3B31;            /* Dark Brown (Main Text) */
+            --card-bg: #FFFBF0;         /* Very Light Warm Off-White (for cards/inputs) */
+            --text-on-primary: #FAF0E6; /* Light beige text for primary background */
+            --text-on-secondary: #4A3B31;/* Dark brown text for secondary background */
+            --text-light-custom: #795548; /* Lighter brown for secondary text */
+            --footer-bg-custom: #3D2B1F; /* Very Dark Brown (Footer BG) */
+            --footer-text-custom: #D3C5BC;/* Light Beige/Brown (Footer Text) */
+            --footer-link-hover-custom: #FAF0E6; /* Linen for hover */
+            --nav-bar-bg: rgba(255, 251, 240, 0.95); /* --card-bg with opacity */
+            --box-shadow-base-color-rgb: 139, 69, 19; /* For box shadows */
+            --border-subtle: #E0D6CC; /* A light brown border */
+            --accordion-button-active-bg: rgba(139, 69, 19, 0.05); /* Primary wood with light alpha */
+
+            /* Sidebar specific colors */
+            --sidebar-bg: #FDF5E6; /* Màu nền sidebar */
+            --sidebar-link-hover: #EADDCA; /* Màu hover cho link sidebar */
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background-color: var(--c-bg);
+            color: var(--c-text-primary);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            /* *** THAY ĐỔI: Nền trong suốt và hiệu ứng blur *** */
+            background-color: rgba(253, 249, 243, 0.95);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s ease;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .navbar-brand {
+            color: var(--primary-dark) !important;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+        }
+        .navbar-brand span {
+            color: var(--primary);
+        }
+
+        .nav-link {
+            color: var(--dark) !important;
+            font-weight: 500;
+            margin: 0 10px;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: var(--primary) !important;
+        }
+
+        .user-avatar-icon, .user-notification-icon {
+            color: var(--dark);
+            font-size: 1.3rem;
+            transition: color 0.2s ease;
+        }
+        .user-avatar-icon:hover, .user-notification-icon:hover {
+            color: var(--primary);
+        }
+        .user-avatar-dropdown {
+            border: 2px solid var(--border-subtle) !important;
+        }
+        .dropdown-username {
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+        .dropdown-item i {
+            color: var(--primary-light);
+        }
+        .dropdown-item:hover i {
+            color: var(--primary);
+        }
+
+        /* Hero Section (Librarian Home Banner) */
+        /* Hero Section */
+        /* Hero Section (Librarian Home Banner) */
+        .staff-hero-section {
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+            background-image: url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center 30%;
+            background-attachment: fixed;
+        }
+
+        .staff-hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            /* *** THAY ĐỔI: Lớp phủ được làm đậm hơn để tăng độ tương phản *** */
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.4) 100%);
+            z-index: 1;
+        }
+
+        .staff-hero-section .container {
+            position: relative; /* Đảm bảo nội dung nằm trên lớp phủ */
+            z-index: 2;
+            animation: fadeInScale 1s ease-out forwards;
+        }
+
+        .staff-hero-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.8rem;
+            /* *** THAY ĐỔI: Hiệu ứng shadow mạnh hơn để chữ nổi bật *** */
+            text-shadow: 0 4px 15px rgba(0,0,0,0.6);
+        }
+
+        .staff-hero-section p {
+            font-size: 1.4rem;
+            /* *** THAY ĐỔI: Hiệu ứng shadow mạnh hơn *** */
+            text-shadow: 0 2px 8px rgba(0,0,0,0.7);
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Wrapper for Sidebar and Content */
+        .wrapper {
+            display: flex;
+            width: 100%;
+            flex: 1; /* Cho phép wrapper mở rộng để đẩy footer xuống */
+        }
+
+        /* Sidebar */
+        #sidebar {
+            width: 260px;
+            min-width: 260px;
+            background: var(--sidebar-bg);
+            box-shadow: 2px 0 15px rgba(var(--box-shadow-base-color-rgb), 0.1);
+            transition: all 0.3s;
+            padding-top: 20px; /* Thêm padding top để sidebar không bị dính vào navbar */
+            position: sticky; /* Sidebar dính khi cuộn */
+            top: 70px; /* Cùng với padding-top của body */
+            height: calc(100vh - 70px); /* Đảm bảo sidebar chiếm hết chiều cao còn lại */
+            overflow-y: auto; /* Cho phép cuộn nếu nội dung sidebar dài */
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-subtle);
+            text-align: center;
+        }
+
+        .sidebar-header h3 {
+            color: var(--primary);
+            font-family: 'Playfair Display', serif;
+            margin-bottom: 0;
+            font-size: 1.8rem;
+        }
+
+        .sidebar-menu {
+            padding: 10px 0;
+            margin: 0;
+        }
+
+        .sidebar-menu .nav-item {
+            font-weight: 500;
+        }
+
+        .sidebar-menu .nav-link {
+            padding: 15px 20px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar-menu .nav-link i {
+            width: 30px;
+            text-align: center;
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-menu .nav-link:hover {
+            background: var(--sidebar-link-hover);
+            color: var(--primary-dark);
+        }
+
+        .sidebar-menu .nav-link.active {
+            background: var(--sidebar-link-hover);
+            color: var(--primary);
+            font-weight: 700;
+            border-left-color: var(--primary);
+        }
+
+        /* Content Area */
+        #content {
+            flex-grow: 1;
+            padding: 25px;
+            overflow-y: auto;
+        }
+
+        .page-header {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 10px;
+            margin-bottom: 25px;
+            font-size: 2.2rem;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 4px 12px rgba(var(--box-shadow-base-color-rgb), 0.08);
+            margin-bottom: 25px; /* Thêm khoảng cách dưới mỗi card */
+        }
+
+        .card-header {
+            background-color: var(--sidebar-bg); /* Màu nền cho header card */
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--primary-dark);
+            font-size: 1.1rem;
+            padding: 15px 20px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--text-on-primary);
+            padding: 8px 20px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+            color: var(--text-on-secondary);
+            padding: 8px 20px;
+            border-radius: 5px;
+        }
+        .btn-secondary:hover {
+            background-color: #C3A37C; /* Slightly darker tan */
+            border-color: #C3A37C;
+        }
+
+        .btn-outline-primary {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--primary);
+            color: var(--text-on-primary);
+        }
+
+        .btn-outline-danger {
+            border-color: #dc3545;
+            color: #dc3545;
+        }
+        .btn-outline-danger:hover {
+            background-color: #dc3545;
+            color: #fff;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+
+        .table {
+            background-color: var(--card-bg);
+            margin-bottom: 0; /* Loại bỏ margin-bottom mặc định của table */
+        }
+        .table thead th {
+            background-color: var(--sidebar-bg);
+            color: var(--primary-dark);
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-light);
+        }
+        .table tbody tr:hover {
+            background-color: var(--sidebar-link-hover);
+        }
+        .table .badge {
+            font-size: 0.9em;
+            padding: 0.5em 0.7em;
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background-color: var(--input-bg-custom);
+            color: var(--dark);
+            padding: 10px 15px;
+        }
+        .form-control::placeholder {
+            color: var(--text-light-custom);
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(var(--box-shadow-base-color-rgb), 0.25);
+            background-color: var(--input-bg-custom);
+        }
+
+        /* Modal */
+        .modal-content {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(var(--box-shadow-base-color-rgb), 0.15);
+        }
+        .modal-header {
+            border-bottom: 1px solid var(--border-subtle);
+            padding: 20px;
+        }
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+        }
+        .modal-footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 15px 20px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--footer-bg-custom);
+            color: var(--footer-text-custom);
+            padding: 60px 0 20px;
+            margin-top: auto; /* Đẩy footer xuống cuối trang */
+        }
+
+        .footer-title {
+            color: var(--light);
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: var(--footer-text-custom);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--footer-link-hover-custom);
+            padding-left: 5px;
+        }
+        .footer-links i.me-2 {
+            color: var(--footer-text-custom);
+            transition: all 0.3s ease;
+        }
+        .footer-links a:hover i.me-2 {
+            color: var(--footer-link-hover-custom);
+        }
+
+        .social-links {
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background-color: rgba(250, 240, 230, 0.1);
+            color: var(--footer-link-hover-custom);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            color: var(--text-on-primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(250, 240, 230, 0.15);
+            padding-top: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        .footer-bottom p a {
+            color: var(--footer-text-custom) !important;
+            opacity: 0.8;
+        }
+        .footer-bottom p a:hover {
+            color: var(--footer-link-hover-custom) !important;
+            opacity: 1;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            #sidebar {
+                margin-left: -260px; /* Ẩn sidebar theo mặc định trên màn hình nhỏ */
+                position: fixed;
+                top: 0;
+                bottom: 0;
+                height: 100vh;
+                z-index: 1040; /* Đảm bảo sidebar nằm trên nội dung khác khi mở */
+                padding-top: 0; /* Reset padding-top */
+            }
+            #sidebar.active {
+                margin-left: 0;
+            }
+            .wrapper {
+                flex-direction: column;
+            }
+            #content {
+                width: 100%;
+                padding: 15px;
+            }
+            body {
+                padding-top: 56px; /* Điều chỉnh padding top cho màn hình nhỏ */
+            }
+            .navbar.fixed-top {
+                box-shadow: 0 2px 10px rgba(139, 69, 19, 0.07); /* Luôn có shadow trên mobile */
+            }
+            .staff-hero-section {
+                height: 250px;
+                margin-top: 0;
+            }
+            .staff-hero-section h1 {
+                font-size: 2.5rem;
+            }
+            .staff-hero-section p {
+                font-size: 1.1rem;
+            }
+            .page-header {
+                font-size: 1.8rem;
+            }
+            .footer-bottom .col-md-6 {
+                text-align: center !important;
+                margin-bottom: 10px;
+            }
+            .footer-bottom .col-md-6.text-md-end {
+                text-align: center !important;
+            }
+        }
+
+        /* Toggle button for sidebar on small screens */
+        .sidebar-toggle-btn {
+            display: none; /* Ẩn theo mặc định */
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1050; /* Cao hơn sidebar để có thể click */
+            background-color: var(--primary);
+            color: var(--text-on-primary);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 992px) {
+            .sidebar-toggle-btn {
+                display: block; /* Hiển thị trên màn hình nhỏ */
+            }
+        }
+
+        /* Overlay khi sidebar mở */
+        .overlay {
+            display: none;
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1030; /* Nằm giữa sidebar và nội dung chính */
+        }
+        .overlay.active {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+
+<button class="btn sidebar-toggle-btn d-lg-none" id="sidebarToggle">
+    <i class="fas fa-bars"></i>
+</button>
+
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand ms-lg-0 ms-auto" href="/staff/dashboard"><i class="fas fa-book-open me-2"></i>Thư viện<span>Số</span></a>
+        <button class="navbar-toggler d-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            </ul>
+            <div class="d-flex align-items-center">
+                <div th:if="${isAuthenticated}" class="d-flex align-items-center">
+                    <span class="me-2 navbar-text d-none d-lg-inline" style="color: var(--dark); white-space: nowrap;">
+                        Chào <span th:text="${loggedInUserFullName != null ? loggedInUserFullName : 'Thủ thư'}">Thủ thư</span>!👋
+                    </span>
+
+                    <div class="dropdown me-3">
+                        <a href="#" class="nav-icon-link position-relative" id="notificationDropdownToggle" data-bs-toggle="dropdown" aria-expanded="false"
+                           th:title="${unreadNotificationCount > 0 ? 'Bạn có ' + unreadNotificationCount + ' thông báo chưa đọc' : 'Không có thông báo mới'}">
+                            <i class="fas fa-bell user-notification-icon"></i>
+                            <span th:if="${unreadNotificationCount > 0}" id="notificationBadge"
+                                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                [[${unreadNotificationCount}]]
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow notification-dropdown" aria-labelledby="notificationDropdownToggle">
+                            <li class="notification-header">
+                                <h6 class="mb-0">Thông báo</h6>
+                                <a href="javascript:void(0);" id="markAllReadBtn">Đánh dấu tất cả đã đọc</a>
+                            </li>
+                            <li><hr class="dropdown-divider my-0"></li>
+
+                            <li class="notification-body">
+                                <ul class="list-unstyled mb-0" id="notificationList">
+                                    <li>
+                                        <a href="#" class="dropdown-item d-flex align-items-start py-2">
+                                            <div class="flex-shrink-0 me-3">
+                                                <i class="fas fa-exclamation-circle text-warning mt-1"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-bold">Sách quá hạn!</div>
+                                                <small class="text-muted">Độc giả Nguyễn Văn A có sách "Nhà Giả Kim" quá hạn 5 ngày.</small>
+                                                <div class="text-muted small">2 giờ trước</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" class="dropdown-item d-flex align-items-start py-2">
+                                            <div class="flex-shrink-0 me-3">
+                                                <i class="fas fa-info-circle text-info mt-1"></i>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="fw-bold">Sách mới về!</div>
+                                                <small class="text-muted">Đã thêm 10 bản "Harry Potter" vào kho.</small>
+                                                <div class="text-muted small">Hôm qua</div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+
+                                <div id="notificationEmptyState" style="display: none; text-align: center; padding: 20px;">
+                                    <i class="far fa-envelope-open fa-2x text-muted mb-2"></i>
+                                    <p class="mb-0 text-muted">Bạn chưa có thông báo nào.</p>
+                                </div>
+                            </li>
+
+                            <li class="notification-footer">
+                                <button class="btn-load-more" id="loadMoreBtn" style="width: 100%; border: none; background: none; color: var(--primary); padding: 10px 0; font-weight: 500;">
+                                    Tải thêm
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="dropdown">
+                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUserNavbar" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-tie fa-lg user-avatar-icon"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUserNavbar">
+                            <li class="px-3 py-2 text-center">
+                                <img th:if="${loggedInUserAvatarUrl != null AND !loggedInUserAvatarUrl.isEmpty()}"
+                                     th:src="${loggedInUserAvatarUrl}"
+                                     alt="User Avatar" width="70" height="70"
+                                     class="rounded-circle mb-2 border user-avatar-dropdown">
+                                <div th:unless="${loggedInUserAvatarUrl != null AND !loggedInUserAvatarUrl.isEmpty()}"
+                                     class="default-avatar-dropdown mb-2">
+                                    <i class="fas fa-user-circle fa-4x text-muted"></i>
+                                </div>
+                                <h5 class="mb-0 dropdown-username"
+                                    th:text="${loggedInUsername != null ? loggedInUsername : 'Thủ thư'}">
+                                    Thủ thư
+                                </h5>
+                                <p class="text-muted mb-0 dropdown-email"
+                                   th:text="${loggedInUserEmail != null ? loggedInUserEmail : 'email@thuvien.com'}">
+                                    email@thuvien.com
+                                </p>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{/staff/profile}"><i class="fas fa-user-edit me-2"></i>Thông tin cá nhân</a></li>
+                            <li><a class="dropdown-item" th:href="@{/staff/settings}"><i class="fas fa-cog me-2"></i>Cài đặt</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/auth/logout}" method="post" class="d-block">
+                                    <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<section class="staff-hero-section d-none d-lg-flex"> <div class="container">
+    <h1>Chào mừng, Thủ thư!</h1>
+    <p>Bảng điều khiển toàn diện cho quản lý thư viện của bạn.</p>
+</div>
+</section>
+
+<div class="wrapper">
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-cogs"></i> Quản lý Thư viện</h3>
+        </div>
+
+        <ul class="nav flex-column sidebar-menu nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <li class="nav-item">
+                <a class="nav-link active" id="v-pills-dashboard-tab" data-bs-toggle="pill" href="#v-pills-dashboard" role="tab" aria-controls="v-pills-dashboard" aria-selected="true">
+                    <i class="fas fa-tachometer-alt"></i> Tổng quan
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="v-pills-sach-tab" data-bs-toggle="pill" href="#v-pills-sach" role="tab" aria-controls="v-pills-sach" aria-selected="false">
+                    <i class="fas fa-book"></i> Quản lý Sách
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="v-pills-docgia-tab" data-bs-toggle="pill" href="#v-pills-docgia" role="tab" aria-controls="v-pills-docgia" aria-selected="false">
+                    <i class="fas fa-users"></i> Quản lý Độc giả
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="v-pills-muontra-tab" data-bs-toggle="pill" href="#v-pills-muontra" role="tab" aria-controls="v-pills-muontra" aria-selected="false">
+                    <i class="fas fa-exchange-alt"></i> Quản lý Mượn/Trả
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="v-pills-baocao-tab" data-bs-toggle="pill" href="#v-pills-baocao" role="tab" aria-controls="v-pills-baocao" aria-selected="false">
+                    <i class="fas fa-chart-pie"></i> Báo cáo & Thống kê
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="v-pills-phiphat-tab" data-bs-toggle="pill" href="#v-pills-phiphat" role="tab" aria-controls="v-pills-phiphat" aria-selected="false">
+                    <i class="fas fa-dollar-sign"></i> Quản lý Phí phạt
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="v-pills-thongbao-tab" data-bs-toggle="pill" href="#v-pills-thongbao" role="tab" aria-controls="v-pills-thongbao" aria-selected="false">
+                    <i class="fas fa-bell"></i> Hệ thống Thông báo
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div id="content">
+        <div class="tab-content" id="v-pills-tabContent">
+
+            <div class="tab-pane fade show active" id="v-pills-dashboard" role="tabpanel" aria-labelledby="v-pills-dashboard-tab">
+                <h2 class="page-header">Tổng quan Thư viện</h2>
+                <div class="row g-4 mb-4">
+                    <div class="col-md-4">
+                        <div class="card text-center py-4">
+                            <div class="card-body">
+                                <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                                <h5 class="card-title text-muted">Tổng số sách</h5>
+                                <p class="card-text fs-2 fw-bold text-dark">5,200</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center py-4">
+                            <div class="card-body">
+                                <i class="fas fa-users fa-3x text-success mb-3"></i>
+                                <h5 class="card-title text-muted">Tổng số độc giả</h5>
+                                <p class="card-text fs-2 fw-bold text-dark">1,850</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center py-4">
+                            <div class="card-body">
+                                <i class="fas fa-exchange-alt fa-3x text-warning mb-3"></i>
+                                <h5 class="card-title text-muted">Sách đang mượn</h5>
+                                <p class="card-text fs-2 fw-bold text-dark">450</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-header fw-bold text-primary">Sách quá hạn nổi bật</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="fw-bold">Nhà Giả Kim</div>
+                                            <small class="text-muted">Độc giả: Nguyễn Văn An (SV00123)</small>
+                                        </div>
+                                        <span class="badge bg-danger rounded-pill">Quá hạn 5 ngày</span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <div class="fw-bold">Đắc Nhân Tâm</div>
+                                            <small class="text-muted">Độc giả: Trần Thị Bích (GV0045)</small>
+                                        </div>
+                                        <span class="badge bg-danger rounded-pill">Quá hạn 2 ngày</span>
+                                    </li>
+                                    <li class="list-group-item text-center">
+                                        <a href="#v-pills-muontra" data-bs-toggle="pill" class="text-primary text-decoration-none">Xem tất cả sách quá hạn <i class="fas fa-arrow-right ms-1"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="card mb-4">
+                            <div class="card-header fw-bold text-primary">Hoạt động gần đây</div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <i class="fas fa-plus-circle text-success me-3"></i>
+                                        <div>
+                                            <div class="fw-bold">Thêm sách mới:</div>
+                                            <small class="text-muted">Đã thêm "Cuộc Đời Của Pi" vào kho.</small>
+                                            <div class="text-muted small">10 phút trước</div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <i class="fas fa-undo-alt text-info me-3"></i>
+                                        <div>
+                                            <div class="fw-bold">Sách đã trả:</div>
+                                            <small class="text-muted">Độc giả Phạm Văn Dũng đã trả "Hoàng Tử Bé".</small>
+                                            <div class="text-muted small">1 giờ trước</div>
+                                        </div>
+                                    </li>
+                                    <li class="list-group-item d-flex align-items-center">
+                                        <i class="fas fa-user-plus text-primary me-3"></i>
+                                        <div>
+                                            <div class="fw-bold">Đăng ký thành viên mới:</div>
+                                            <small class="text-muted">Lê Minh Khang (SV00124) đã đăng ký.</small>
+                                            <div class="text-muted small">Hôm nay</div>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="v-pills-sach" role="tabpanel" aria-labelledby="v-pills-sach-tab">
+                <h2 class="page-header">Quản lý Sách và Tài liệu</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBookModal"><i class="fas fa-plus-circle"></i> Thêm sách mới</button>
+                            <div>
+                                <button class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#importBookModal"><i class="fas fa-file-import"></i> Import Excel</button>
+                                </button>
+                                <a th:href="@{/staff/books/export}" class="btn btn-outline-primary">
+                                    <i class="fas fa-file-export"></i> Export Báo cáo
+                                </a>
+                            </div>
+                        </div>
+                        <p class="text-muted">Danh sách toàn bộ sách trong thư viện.</p>
+                        <div class="card mb-4">
+                            <div class="card-header fw-bold text-primary">
+                                <i class="fas fa-filter me-2"></i>Tìm kiếm & Lọc chi tiết
+                            </div>
+                            <div class="card-body">
+                                <form th:action="@{/staff/dashboard}" method="GET" id="book-filter-form">
+                                    <input type="hidden" name="tab" value="v-pills-sach">
+                                    <input type="hidden" name="startsWith" id="startsWithInput" th:value="${param.startsWith}">
+
+                                    <div class="row g-3 align-items-end">
+                                        <div class="col-md-6">
+                                            <label for="keyword" class="form-label">Tên sách / Tác giả</label>
+                                            <input type="text" class="form-control" id="keyword" name="keyword"
+                                                   placeholder="Nhập tên sách, tác giả..." th:value="${param.keyword}">
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label for="filterCategory" class="form-label">Thể loại</label>
+                                            <select class="form-select" id="filterCategory" name="categoryId">
+                                                <option value="">Tất cả thể loại</option>
+                                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"
+                                                        th:selected="${param.categoryId != null && #strings.equals(param.categoryId, cat.id)}"></option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label for="filterAvailability" class="form-label">Trạng thái</label>
+                                            <select class="form-select" id="filterAvailability" name="availability">
+                                                <option value="">Tất cả</option>
+                                                <option value="available" th:selected="${#strings.equals(param.availability, 'available')}">Còn sách</option>
+                                                <option value="borrowed" th:selected="${#strings.equals(param.availability, 'borrowed')}">Hết sách</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="accordion mt-3" id="advancedFilterAccordion">
+                                        <div class="accordion-item" style="background-color: transparent; border: none;">
+                                            <h2 class="accordion-header" id="headingOne">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                        data-bs-target="#collapseAdvancedFilter" aria-expanded="false"
+                                                        aria-controls="collapseAdvancedFilter"
+                                                        style="padding-left: 0; background-color: transparent; box-shadow: none; color: var(--primary);">
+                                                    Lọc theo Năm xuất bản và Chữ cái đầu
+                                                </button>
+                                            </h2>
+                                            <div id="collapseAdvancedFilter" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                                                 data-bs-parent="#advancedFilterAccordion">
+                                                <div class="accordion-body" style="padding: 1rem 0;">
+                                                    <div class="row g-3 align-items-end">
+                                                        <div class="col-md-3">
+                                                            <label for="startYear" class="form-label">Từ năm</label>
+                                                            <input type="number" class="form-control" id="startYear" name="startYear"
+                                                                   placeholder="VD: 1990" th:value="${param.startYear}">
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <label for="endYear" class="form-label">Đến năm</label>
+                                                            <input type="number" class="form-control" id="endYear" name="endYear"
+                                                                   placeholder="VD: 2025" th:value="${param.endYear}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-3">
+                                                        <label class="form-label">Lọc nhanh theo chữ cái đầu của tên sách:</label>
+                                                        <div class="d-flex flex-wrap gap-2 alphabet-filter">
+                                                            <a th:href="@{/staff/dashboard(tab='v-pills-sach')}"
+                                                               class="btn btn-sm"
+                                                               th:classappend="${param.startsWith == null || param.startsWith.isEmpty()} ? 'btn-primary' : 'btn-outline-primary'">Tất cả</a>
+                                                            <th:block th:each="char : ${'A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z'.split(',')}">
+                                                                <a th:href="@{/staff/dashboard(tab='v-pills-sach', startsWith=${char})}"
+                                                                   class="btn btn-sm"
+                                                                   th:classappend="${#strings.equals(param.startsWith, char)} ? 'btn-primary' : 'btn-outline-primary'"
+                                                                   th:text="${char}"></a>
+                                                            </th:block>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-end gap-2 mt-3 border-top pt-3">
+                                        <a th:href="@{/staff/dashboard(tab='v-pills-sach')}" class="btn btn-secondary">
+                                            <i class="fas fa-eraser me-1"></i> Xóa bộ lọc
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-search me-1"></i> Áp dụng
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                <tr>
+                                    <th>Tên sách</th>
+                                    <th>Tác giả</th>
+                                    <th>Thể loại</th>
+                                    <th>ISBN</th>
+                                    <th>SL Tồn</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody th:if="${bookPage != null and !bookPage.isEmpty()}">
+                                <tr th:each="book : ${bookPage.content}">
+                                    <td><strong th:text="${book.title}">Nhà Giả Kim</strong></td>
+                                    <td th:text="${book.author}">Paulo Coelho</td>
+                                    <td th:text="${book.category != null ? book.category.name : 'N/A'}">Tiểu thuyết</td>
+                                    <td th:text="${book.isbn}">978-604-399-073-6</td>
+                                    <td>
+                                            <span class="badge"
+                                                  th:text="${book.availableCopies}"
+                                                  th:classappend="${book.availableCopies > 10 ? 'bg-success' : (book.availableCopies > 0 ? 'bg-warning text-dark' : 'bg-danger')}">
+                                                15
+                                            </span>
+                                    </td>
+                                    <td>
+                                        <a href="#" th:attr="data-book-id=${book.id}" class="btn btn-sm btn-outline-primary edit-book-btn" data-bs-toggle="modal" data-bs-target="#editBookModal">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a th:href="@{'/staff/books/delete/' + ${book.id}}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa sách này không?');"><i class="fas fa-trash"></i></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <tbody th:if="${bookPage == null or bookPage.isEmpty()}">
+                                <tr>
+                                    <td colspan="6" class="text-center py-4">
+                                        <i class="fas fa-book-reader fa-2x text-muted mb-2"></i>
+                                        <p class="mb-0">Không có sách nào trong thư viện.</p>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <nav aria-label="Page navigation" class="mt-3" th:if="${bookPage != null and bookPage.totalPages > 1}">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" th:classappend="${bookPage.isFirst()} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/staff/dashboard(tab='v-pills-sach', page=${bookPage.number - 1}, size=${bookPage.size})}">Trước</a>
+                                </li>
+
+                                <li class="page-item" th:each="pageNumber : ${pageNumbers}" th:classappend="${pageNumber == bookPage.number + 1} ? 'active'">
+                                    <a class="page-link" th:href="@{/staff/dashboard(tab='v-pills-sach', page=${pageNumber - 1}, size=${bookPage.size})}" th:text="${pageNumber}">1</a>
+                                </li>
+
+                                <li class="page-item" th:classappend="${bookPage.isLast()} ? 'disabled'">
+                                    <a class="page-link" th:href="@{/staff/dashboard(tab='v-pills-sach', page=${bookPage.number + 1}, size=${bookPage.size})}">Sau</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="v-pills-docgia" role="tabpanel" aria-labelledby="v-pills-docgia-tab">
+                <h2 class="page-header">Quản lý Độc giả</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addReaderModal"><i class="fas fa-user-plus"></i> Đăng ký thành viên mới</button>
+                            <div>
+                                <button class="btn btn-secondary"><i class="fas fa-file-import"></i> Import Danh sách</button>
+                                <button class="btn btn-outline-primary"><i class="fas fa-file-export"></i> Export Danh sách</button>
+                            </div>
+                        </div>
+                        <p class="text-muted">Danh sách các thành viên của thư viện.</p>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                <tr>
+                                    <th>Họ tên</th>
+                                    <th>Mã thẻ</th>
+                                    <th>Email</th>
+                                    <th>Phân loại</th>
+                                    <th>Trạng thái</th>
+                                    <th>Ngày hết hạn</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td><strong>Nguyễn Văn An</strong></td>
+                                    <td>SV00123</td>
+                                    <td>an.nv@uef.edu.vn</td>
+                                    <td>Sinh viên</td>
+                                    <td><span class="badge bg-success">Hoạt động</span></td>
+                                    <td>31/12/2025</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editReaderModal"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="fas fa-user-times"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Trần Thị Bích</strong></td>
+                                    <td>GV0045</td>
+                                    <td>bich.tt@uef.edu.vn</td>
+                                    <td>Giáo viên</td>
+                                    <td><span class="badge bg-warning text-dark">Sắp hết hạn</span></td>
+                                    <td>30/06/2025</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editReaderModal"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="fas fa-user-times"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Lê Thị Cúc</strong></td>
+                                    <td>NV0078</td>
+                                    <td>cuc.lt@uef.edu.vn</td>
+                                    <td>Nhân viên</td>
+                                    <td><span class="badge bg-danger">Đã hết hạn</span></td>
+                                    <td>31/05/2025</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editReaderModal"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-outline-danger"><i class="fas fa-user-times"></i></button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav aria-label="Page navigation" class="mt-3">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Sau</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="v-pills-muontra" role="tabpanel" aria-labelledby="v-pills-muontra-tab">
+                <h2 class="page-header">Quản lý Mượn/Trả sách</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header fw-bold text-primary">CHO MƯỢN SÁCH</div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="borrowerId" class="form-label">Mã độc giả</label>
+                                        <input type="text" class="form-control" id="borrowerId" placeholder="Quét mã vạch hoặc nhập tay...">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="bookIdBorrow" class="form-label">Mã sách (ISBN)</label>
+                                        <input type="text" class="form-control" id="bookIdBorrow" placeholder="Quét mã vạch hoặc nhập tay...">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-check-circle"></i> Xác nhận Mượn</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card mb-4">
+                            <div class="card-header fw-bold text-primary">TRẢ SÁCH</div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="bookIdReturn" class="form-label">Mã sách (ISBN)</label>
+                                        <input type="text" class="form-control" id="bookIdReturn" placeholder="Quét mã vạch hoặc nhập tay...">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Tình trạng sách</label>
+                                        <select class="form-select">
+                                            <option selected>Tốt</option>
+                                            <option>Hư hỏng nhẹ</option>
+                                            <option>Hư hỏng nặng</option>
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100"><i class="fas fa-undo-alt"></i> Xác nhận Trả</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header fw-bold text-primary">DANH SÁCH SÁCH ĐANG MƯỢN / QUÁ HẠN</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Tên sách</th>
+                                    <th>Độc giả</th>
+                                    <th>Ngày mượn</th>
+                                    <th>Hạn trả</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="table-danger">
+                                    <td>Tội Ác và Hình Phạt</td>
+                                    <td>Lê Thị Cúc</td>
+                                    <td>01/05/2025</td>
+                                    <td>15/05/2025</td>
+                                    <td><span class="badge bg-danger">Quá hạn 30 ngày</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary"><i class="fas fa-envelope"></i> Gửi nhắc nhở</button>
+                                        <button class="btn btn-sm btn-warning text-dark"><i class="fas fa-dollar-sign"></i> Phạt</button>
+                                    </td>
+                                </tr>
+                                <tr class="table-warning">
+                                    <td>Hoàng Tử Bé</td>
+                                    <td>Phạm Văn Dũng</td>
+                                    <td>10/06/2025</td>
+                                    <td>24/06/2025</td>
+                                    <td><span class="badge bg-warning text-dark">Sắp đến hạn</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary"><i class="fas fa-sync-alt"></i> Gia hạn</button>
+                                        <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-info-circle"></i> Chi tiết</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav aria-label="Page navigation" class="mt-3">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Sau</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="v-pills-baocao" role="tabpanel" aria-labelledby="v-pills-baocao-tab">
+                <h2 class="page-header">Báo cáo và Thống kê</h2>
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="card mb-4">
+                            <div class="card-header fw-bold text-primary">Top Sách được mượn nhiều nhất (Tháng 6/2025)</div>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Nhà Giả Kim <span class="badge bg-primary rounded-pill">125 lượt</span></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Đắc Nhân Tâm <span class="badge bg-primary rounded-pill">98 lượt</span></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Cây Cam Ngọt Của Tôi <span class="badge bg-primary rounded-pill">76 lượt</span></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Hoàng Tử Bé <span class="badge bg-primary rounded-pill">60 lượt</span></li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">Thám Tử Lừng Danh Conan <span class="badge bg-primary rounded-pill">55 lượt</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="card mb-4">
+                            <div class="card-header fw-bold text-primary">Tùy chọn Báo cáo</div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="mb-3">
+                                        <label for="reportType" class="form-label">Loại báo cáo</label>
+                                        <select class="form-select" id="reportType">
+                                            <option selected>Lượt mượn/trả</option>
+                                            <option>Danh sách quá hạn</option>
+                                            <option>Tài chính phí phạt</option>
+                                            <option>Thống kê sách theo thể loại</option>
+                                            <option>Thống kê độc giả</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="reportStartDate" class="form-label">Từ ngày</label>
+                                        <input type="date" class="form-control" id="reportStartDate">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="reportEndDate" class="form-label">Đến ngày</label>
+                                        <input type="date" class="form-control" id="reportEndDate">
+                                    </div>
+                                    <button class="btn btn-primary w-100"><i class="fas fa-file-download"></i> Xuất Báo cáo</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="v-pills-phiphat" role="tabpanel" aria-labelledby="v-pills-phiphat-tab">
+                <h2 class="page-header">Quản lý Phí phạt</h2>
+                <div class="card">
+                    <div class="card-body">
+                        <p class="text-muted">Danh sách các khoản phí phạt chưa thanh toán.</p>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                <tr>
+                                    <th>Độc giả</th>
+                                    <th>Sách quá hạn</th>
+                                    <th>Số ngày trễ</th>
+                                    <th>Số tiền phạt</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Lê Thị Cúc</td>
+                                    <td>Tội Ác và Hình Phạt</td>
+                                    <td>30</td>
+                                    <td>60,000đ</td>
+                                    <td><span class="badge bg-danger">Chưa thanh toán</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success"><i class="fas fa-check"></i> Đã thu</button>
+                                        <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-gift"></i> Miễn giảm</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Nguyễn Văn An</td>
+                                    <td>Đắc Nhân Tâm</td>
+                                    <td>5</td>
+                                    <td>10,000đ</td>
+                                    <td><span class="badge bg-warning text-dark">Chưa thanh toán</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success"><i class="fas fa-check"></i> Đã thu</button>
+                                        <button class="btn btn-sm btn-outline-secondary"><i class="fas fa-gift"></i> Miễn giảm</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Phạm Văn Dũng</td>
+                                    <td>Hoàng Tử Bé</td>
+                                    <td>0</td>
+                                    <td>0đ <span class="text-success">(Đã thanh toán)</span></td>
+                                    <td><span class="badge bg-success">Đã thanh toán</span></td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-info" disabled><i class="fas fa-info-circle"></i> Chi tiết</button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav aria-label="Page navigation" class="mt-3">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Sau</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="v-pills-thongbao" role="tabpanel" aria-labelledby="v-pills-thongbao-tab">
+                <h2 class="page-header">Hệ thống Thông báo</h2>
+                <div class="card mb-4">
+                    <div class="card-header fw-bold text-primary">Gửi thông báo thủ công</div>
+                    <div class="card-body">
+                        <form>
+                            <div class="mb-3">
+                                <label for="recipient" class="form-label">Người nhận</label>
+                                <input type="text" class="form-control" id="recipient" placeholder="Nhập mã độc giả, hoặc 'ALL' để gửi tất cả">
+                            </div>
+                            <div class="mb-3">
+                                <label for="subject" class="form-label">Tiêu đề</label>
+                                <input type="text" class="form-control" id="subject" value="Thông báo từ Thư viện">
+                            </div>
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Nội dung</label>
+                                <textarea class="form-control" id="message" rows="5" placeholder="Nhập nội dung thông báo..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Gửi thông báo</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header fw-bold text-primary">Lịch sử Thông báo đã gửi</div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                <tr>
+                                    <th>Người gửi</th>
+                                    <th>Người nhận</th>
+                                    <th>Tiêu đề</th>
+                                    <th>Nội dung (tóm tắt)</th>
+                                    <th>Thời gian gửi</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>Hệ thống</td>
+                                    <td>ALL</td>
+                                    <td>Thông báo ngày lễ</td>
+                                    <td>Thư viện sẽ đóng cửa vào ngày 2/9...</td>
+                                    <td>01/09/2025 09:00</td>
+                                </tr>
+                                <tr>
+                                    <td>Thủ thư An</td>
+                                    <td>SV00123</td>
+                                    <td>Nhắc nhở trả sách</td>
+                                    <td>Sách "Nhà Giả Kim" của bạn đã quá hạn...</td>
+                                    <td>17/06/2025 14:30</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <nav aria-label="Page navigation" class="mt-3">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled"><a class="page-link" href="#">Trước</a></li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item"><a class="page-link" href="#">Sau</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBookModalLabel"><i class="fas fa-plus-circle me-2 text-primary"></i> Thêm Sách Mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/staff/books/add}" th:object="${newBook}" method="post">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="addBookTitle" class="form-label">Tên sách <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="addBookTitle" th:field="*{title}" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="addBookIsbn" class="form-label">ISBN <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="addBookIsbn" th:field="*{isbn}" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="addBookAuthor" class="form-label">Tác giả</label>
+                            <input type="text" class="form-control" id="addBookAuthor" th:field="*{author}">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="addBookCategory" class="form-label">Thể loại</label>
+                            <select class="form-select" id="addBookCategory" name="categoryId" required>
+                                <option value="" selected>Chọn thể loại...</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">Tiểu thuyết</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="addBookPublisher" class="form-label">Nhà xuất bản</label>
+                            <input type="text" class="form-control" id="addBookPublisher" th:field="*{publisher}">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="addBookYear" class="form-label">Năm xuất bản</label>
+                            <input type="number" class="form-control" id="addBookYear" th:field="*{publicationYear}" min="1000" th:max="${#dates.year(#dates.createNow())}">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="addBookQuantity" class="form-label">Số lượng <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="addBookQuantity" th:field="*{availableCopies}" value="1" min="1" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addBookDescription" class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="addBookDescription" th:field="*{description}" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addBookImageUrl" class="form-label">URL ảnh bìa</label>
+                        <input type="url" class="form-control" id="addBookImageUrl" th:field="*{coverImage}" placeholder="https://example.com/image.jpg">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Lưu lại</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="editBookModal" tabindex="-1" aria-labelledby="editBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editBookModalLabel"><i class="fas fa-edit me-2 text-primary"></i> Chỉnh sửa Sách</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editBookForm" th:action="@{/staff/books/update/0}" method="post">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label for="editBookTitle" class="form-label">Tên sách <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="title" id="editBookTitle" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="editBookIsbn" class="form-label">ISBN <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="isbn" id="editBookIsbn" required readonly>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editBookAuthor" class="form-label">Tác giả</label>
+                            <input type="text" class="form-control" name="author" id="editBookAuthor">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editBookCategory" class="form-label">Thể loại</label>
+                            <select class="form-select" name="categoryId" id="editBookCategory" required>
+                                <option value="">Chọn thể loại...</option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editBookPublisher" class="form-label">Nhà xuất bản</label>
+                            <input type="text" class="form-control" name="publisher" id="editBookPublisher">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="editBookYear" class="form-label">Năm xuất bản</label>
+                            <input type="number" class="form-control" name="publicationYear" id="editBookYear" min="1000" max="2100">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="editBookQuantity" class="form-label">Số lượng <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" name="availableCopies" id="editBookQuantity" min="0" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBookDescription" class="form-label">Mô tả</label>
+                        <textarea class="form-control" name="description" id="editBookDescription" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editBookImageUrl" class="form-label">URL ảnh bìa</label>
+                        <input type="url" class="form-control" name="coverImage" id="editBookImageUrl" placeholder="https://example.com/image.jpg">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+<div class="modal fade" id="addReaderModal" tabindex="-1" aria-labelledby="addReaderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addReaderModalLabel"><i class="fas fa-user-plus me-2 text-primary"></i> Đăng ký Thành viên Mới</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="readerName" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="readerName" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="readerId" class="form-label">Mã độc giả <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="readerId" placeholder="VD: SVYYYYYY / GVYYYY" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="readerEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="readerEmail" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="readerPhone" class="form-label">Số điện thoại</label>
+                            <input type="tel" class="form-control" id="readerPhone">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="readerType" class="form-label">Phân loại <span class="text-danger">*</span></label>
+                            <select class="form-select" id="readerType" required>
+                                <option selected disabled>Chọn phân loại...</option>
+                                <option value="Sinh viên">Sinh viên</option>
+                                <option value="Giáo viên">Giáo viên</option>
+                                <option value="Nhân viên">Nhân viên</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="readerExpireDate" class="form-label">Ngày hết hạn thẻ</label>
+                            <input type="date" class="form-control" id="readerExpireDate">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="readerAddress" class="form-label">Địa chỉ</label>
+                        <input type="text" class="form-control" id="readerAddress">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary"><i class="fas fa-save"></i> Đăng ký</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editReaderModal" tabindex="-1" aria-labelledby="editReaderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editReaderModalLabel"><i class="fas fa-user-edit me-2 text-primary"></i> Chỉnh sửa Thông tin Độc giả</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editReaderName" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editReaderName" value="Nguyễn Văn An" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editReaderId" class="form-label">Mã độc giả <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editReaderId" value="SV00123" required disabled>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editReaderEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                            <input type="email" class="form-control" id="editReaderEmail" value="an.nv@uef.edu.vn" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editReaderPhone" class="form-label">Số điện thoại</label>
+                            <input type="tel" class="form-control" id="editReaderPhone" value="0987654321">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="editReaderType" class="form-label">Phân loại <span class="text-danger">*</span></label>
+                            <select class="form-select" id="editReaderType" required>
+                                <option value="Sinh viên" selected>Sinh viên</option>
+                                <option value="Giáo viên">Giáo viên</option>
+                                <option value="Nhân viên">Nhân viên</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="editReaderExpireDate" class="form-label">Ngày hết hạn thẻ</label>
+                            <input type="date" class="form-control" id="editReaderExpireDate" value="2025-12-31">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editReaderAddress" class="form-label">Địa chỉ</label>
+                        <input type="text" class="form-control" id="editReaderAddress" value="123 Đường ABC, Quận XYZ, TP.HCM">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editReaderStatus" class="form-label">Trạng thái tài khoản</label>
+                        <select class="form-select" id="editReaderStatus">
+                            <option value="Hoạt động" selected>Hoạt động</option>
+                            <option value="Tạm khóa">Tạm khóa</option>
+                            <option value="Vô hiệu hóa">Vô hiệu hóa</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary"><i class="fas fa-save"></i> Cập nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="importBookModal" tabindex="-1" aria-labelledby="importBookModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="importBookModalLabel"><i class="fas fa-file-import me-2 text-primary"></i> Import Danh sách Sách</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form th:action="@{/staff/books/import}" method="post" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div th:if="${importError}" class="alert alert-danger" role="alert">
+                        <strong>Lỗi!</strong> <span th:text="${importError}"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="bookExcelFile" class="form-label">Chọn file Excel (.xlsx):</label>
+                        <input class="form-control" type="file" id="bookExcelFile" name="file" required accept=".xlsx">
+                    </div>
+
+                    <div class="alert alert-info" role="alert">
+                        <h6 class="alert-heading"><i class="fas fa-info-circle"></i> Hướng dẫn</h6>
+                        <p>File Excel cần có các cột theo đúng thứ tự sau đây:</p>
+                        <p class="mb-0"><code>ISBN</code> | <code>Tên sách</code> | <code>Tác giả</code> | <code>Thể loại</code> | <code>Nhà xuất bản</code> | <code>Năm XB</code> | <code>Số lượng</code></p>
+                        <hr>
+                        <a th:href="@{/templates/mau_import_sach.xlsx}" class="alert-link">Tải file mẫu tại đây</a>.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-upload"></i> Tải lên và Xử lý</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<footer>
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-md-4">
+                <h4 class="footer-title">Thư viện Số</h4>
+                <p>Hệ thống quản lý thư viện trực tuyến hiện đại, giúp kết nối người đọc với kho tàng tri thức qua nền tảng số.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h4 class="footer-title">Liên kết nhanh</h4>
+                <ul class="footer-links">
+                    <li><a href="/staff/dashboard"><i class="fas fa-angle-right me-2"></i>Tổng quan</a></li>
+                    <li><a href="/staff/books"><i class="fas fa-angle-right me-2"></i>Quản lý Sách</a></li>
+                    <li><a href="/staff/members"><i class="fas fa-angle-right me-2"></i>Quản lý Độc giả</a></li>
+                    <li><a href="/staff/borrow-return"><i class="fas fa-angle-right me-2"></i>Mượn/Trả sách</a></li>
+                    <li><a href="/staff/reports"><i class="fas fa-angle-right me-2"></i>Báo cáo Thống kê</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h4 class="footer-title">Thông tin thư viện</h4>
+                <ul class="footer-links">
+                    <li><i class="fas fa-map-marker-alt me-2"></i>276 Điện Biên Phủ, P.17, Q.Bình Thạnh, TP.HCM</li>
+                    <li><i class="fas fa-phone-alt me-2"></i>(028) 3838 6686</li>
+                    <li><i class="fas fa-envelope me-2"></i>thuvienso@uef.edu.vn</li>
+                    <li><i class="fas fa-clock me-2"></i>Thứ 2 - Thứ 6: 7:30 - 17:30</li>
+                    <li><i class="fas fa-clock me-2"></i>Thứ 7: 8:00 - 16:00</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <div class="row">
+                <div class="col-md-6 text-md-start mb-2 mb-md-0">
+                    <p class="mb-0">© 2025 Thư viện Số UEF. Đã đăng ký bản quyền.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">
+                        <a href="/terms" class="me-3">Điều khoản sử dụng</a>
+                        <a href="/privacy" >Chính sách bảo mật</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const editBookModal = document.getElementById('editBookModal');
+        if (editBookModal) {
+            editBookModal.addEventListener('show.bs.modal', async function (event) {
+                // Nút đã được click để mở modal
+                const button = event.relatedTarget;
+
+                // Lấy bookId từ thuộc tính data-book-id
+                const bookId = button.getAttribute('data-book-id');
+
+                // Lấy thẻ form
+                const form = document.getElementById('editBookForm');
+
+                // Cập nhật action của form để trỏ đến đúng ID sách cần update
+                form.action = `/staff/books/update/${bookId}`;
+
+                try {
+                    // Gọi API để lấy thông tin chi tiết của sách
+                    const response = await fetch(`/staff/books/api/${bookId}`);
+
+                    if (!response.ok) {
+                        alert('Không thể tải dữ liệu sách. Vui lòng thử lại.');
+                        event.preventDefault(); // Ngăn modal hiển thị
+                        return;
+                    }
+
+                    const book = await response.json();
+
+                    // Điền dữ liệu sách vào các trường trong form
+                    form.querySelector('#editBookTitle').value = book.title || '';
+                    form.querySelector('#editBookIsbn').value = book.isbn || '';
+                    form.querySelector('#editBookAuthor').value = book.author || '';
+                    form.querySelector('#editBookPublisher').value = book.publisher || '';
+                    form.querySelector('#editBookYear').value = book.publicationYear || '';
+                    form.querySelector('#editBookQuantity').value = book.availableCopies; // number nên không cần || ''
+                    form.querySelector('#editBookDescription').value = book.description || '';
+                    form.querySelector('#editBookImageUrl').value = book.coverImage || '';
+
+                    // Chọn đúng thể loại trong dropdown
+                    if (book.category && book.category.id) {
+                        form.querySelector('#editBookCategory').value = book.category.id;
+                    } else {
+                        form.querySelector('#editBookCategory').value = "";
+                    }
+
+                } catch (error) {
+                    console.error('Lỗi khi lấy thông tin sách:', error);
+                    alert('Đã xảy ra lỗi. Vui lòng xem console để biết chi tiết.');
+                    event.preventDefault(); // Ngăn modal hiển thị
+                }
+            });
+        }
+
+        // --- LOGIC GỐC CỦA TRANG (Navbar, Sidebar, Tabs, Notifications) ---
+
+        // Điều chỉnh padding top cho body dựa trên chiều cao navbar
+        const navbar = document.querySelector('.navbar.fixed-top');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const overlay = document.createElement('div');
+        overlay.classList.add('overlay');
+        document.body.appendChild(overlay);
+
+        function adjustLayout() {
+            if (navbar) {
+                const navHeight = navbar.offsetHeight;
+                document.body.style.paddingTop = navHeight + 'px';
+                if (window.innerWidth >= 992) {
+                    sidebar.style.top = navHeight + 'px';
+                    sidebar.style.height = `calc(100vh - ${navHeight}px)`;
+                } else {
+                    sidebar.style.top = '0';
+                    sidebar.style.height = '100vh';
+                }
+            }
+        }
+
+        adjustLayout();
+        window.addEventListener('resize', adjustLayout);
+
+        // Hiệu ứng co nhỏ navbar khi cuộn
+        if (navbar) {
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.style.paddingTop = '8px';
+                    navbar.style.paddingBottom = '8px';
+                    navbar.style.boxShadow = '0 2px 15px rgba(139, 69, 19, 0.1)';
+                } else {
+                    navbar.style.paddingTop = '12px';
+                    navbar.style.paddingBottom = '12px';
+                    navbar.style.boxShadow = '0 2px 10px rgba(139, 69, 19, 0.07)';
+                }
+            });
+        }
+
+        // Logic cho Sidebar Toggle trên mobile
+        if (sidebarToggle && sidebar && overlay) {
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            });
+        }
+
+        // Đánh dấu nav-link active cho sidebar và xử lý hash URL
+        const sidebarLinks = document.querySelectorAll('#v-pills-tab .nav-link');
+        function activateTabFromHash() {
+            let activeTabId = new URL(window.location.href).searchParams.get('tab') || 'v-pills-dashboard';
+
+            // Cập nhật hash URL mà không reload trang (tùy chọn)
+            history.replaceState(null, '', `#${activeTabId}`);
+
+            const tabToActivate = document.getElementById(`${activeTabId}-tab`);
+            if(tabToActivate) {
+                new bootstrap.Tab(tabToActivate).show();
+            }
+        }
+
+        activateTabFromHash();
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('shown.bs.tab', function (event) {
+                const newTabId = event.target.getAttribute('href').substring(1);
+                history.pushState(null, '', `#${newTabId}`);
+            });
+        });
+
+        window.addEventListener('popstate', function() {
+            let activeTabId = window.location.hash.substring(1) || 'v-pills-dashboard';
+            const tabToActivate = document.getElementById(`${activeTabId}-tab`);
+            if(tabToActivate) {
+                new bootstrap.Tab(tabToActivate).show();
+            }
+        });
+
+
+        // Logic cho Notification Dropdown (giữ nguyên từ code gốc)
+        const notificationDropdownToggle = document.getElementById('notificationDropdownToggle');
+        if (notificationDropdownToggle) {
+            const notificationList = document.getElementById('notificationList');
+            const notificationBadge = document.getElementById('notificationBadge');
+            const markAllReadBtn = document.getElementById('markAllReadBtn');
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            const emptyState = document.getElementById('notificationEmptyState');
+            let currentNotificationPage = 0;
+            let isLastPage = false;
+            let isLoading = false;
+
+            // Hàm giả định fetch notifications
+            async function fetchNotifications(page) {
+                // Đây sẽ là nơi bạn gọi API thật để lấy thông báo
+                console.log(`Fetching notifications for page: ${page}`);
+                // Mô phỏng dữ liệu phản hồi
+                const dummyNotifications = [
+                    { id: 1, type: 'warning', title: 'Sách quá hạn!', content: 'Độc giả Nguyễn Văn A có sách "Nhà Giả Kim" quá hạn 5 ngày.', time: '2025-06-14T10:00:00Z', read: false },
+                    { id: 2, type: 'info', title: 'Sách mới về!', content: 'Đã thêm 10 bản "Harry Potter" vào kho.', time: '2025-06-13T15:30:00Z', read: false },
+                    { id: 3, type: 'success', title: 'Giao dịch thành công', content: 'Độc giả Trần Thị B đã mượn "Đắc Nhân Tâm".', time: '2025-06-12T09:00:00Z', read: true },
+                    { id: 4, type: 'warning', title: 'Phí phạt mới', content: 'Độc giả Lê Văn C bị phạt 20.000đ.', time: '2025-06-11T11:00:00Z', read: false },
+                ];
+
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        const startIndex = page * 2; // Ví dụ mỗi lần tải 2 thông báo
+                        const endIndex = startIndex + 2;
+                        const notifications = dummyNotifications.slice(startIndex, endIndex);
+                        isLastPage = endIndex >= dummyNotifications.length; // Kiểm tra xem còn trang nào nữa không
+                        resolve({
+                            notifications: notifications,
+                            unreadCount: dummyNotifications.filter(n => !n.read).length
+                        });
+                    }, 500);
+                });
+            }
+
+            function formatTimeAgo(isoDateString) {
+                const now = new Date();
+                const date = new Date(isoDateString);
+                const seconds = Math.floor((now - date) / 1000);
+                let interval = seconds / 31536000;
+                if (interval > 1) return Math.floor(interval) + " năm trước";
+                interval = seconds / 2592000;
+                if (interval > 1) return Math.floor(interval) + " tháng trước";
+                interval = seconds / 86400;
+                if (interval > 1) return Math.floor(interval) + " ngày trước";
+                interval = seconds / 3600;
+                if (interval > 1) return Math.floor(interval) + " giờ trước";
+                interval = seconds / 60;
+                if (interval > 1) return Math.floor(interval) + " phút trước";
+                return "vài giây trước";
+            }
+
+            function createNotificationElement(notification) {
+                const li = document.createElement('li');
+                li.className = 'notification-item';
+                if (!notification.read) {
+                    li.classList.add('unread');
+                }
+                li.innerHTML = `
+                <a href="#" class="dropdown-item d-flex align-items-start py-2" data-notification-id="${notification.id}">
+                    <div class="flex-shrink-0 me-3">
+                        <i class="fas fa-circle notification-read-status me-1" style="font-size: 0.7em; color: ${notification.read ? 'transparent' : 'var(--primary-light)'};"></i>
+                        <i class="fas fa-${notification.type === 'warning' ? 'exclamation-circle text-warning' : (notification.type === 'info' ? 'info-circle text-info' : 'check-circle text-success')} mt-1"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <div class="fw-bold">${notification.title}</div>
+                        <small class="text-muted">${notification.content}</small>
+                        <div class="text-muted small">${formatTimeAgo(notification.time)}</div>
+                    </div>
+                </a>
+            `;
+                li.querySelector('a').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Khi click vào thông báo, đánh dấu là đã đọc và có thể chuyển hướng
+                    if (!notification.read) {
+                        markNotificationAsRead(notification.id);
+                        li.classList.remove('unread');
+                        li.querySelector('.notification-read-status').style.color = 'transparent';
+                    }
+                    // Thêm logic chuyển hướng hoặc hiển thị chi tiết thông báo tại đây
+                    console.log('Clicked notification:', notification.id);
+                });
+                return li;
+            }
+
+            function checkEmptyState() {
+                if (notificationList.children.length === 0) {
+                    emptyState.style.display = 'block';
+                    loadMoreBtn.style.display = 'none';
+                    markAllReadBtn.style.display = 'none';
+                } else {
+                    emptyState.style.display = 'none';
+                    loadMoreBtn.style.display = isLastPage ? 'none' : 'block';
+                    markAllReadBtn.style.display = 'block';
+                }
+            }
+
+            function renderNotifications(notifications, append = false) {
+                if (!append) {
+                    notificationList.innerHTML = '';
+                }
+                if (notifications && notifications.length > 0) {
+                    notifications.forEach(notification => {
+                        notificationList.appendChild(createNotificationElement(notification));
+                    });
+                }
+                checkEmptyState();
+            }
+
+            async function loadNotifications(page) {
+                if (isLoading) return;
+                isLoading = true;
+                loadMoreBtn.textContent = 'Đang tải...';
+                try {
+                    const data = await fetchNotifications(page);
+                    renderNotifications(data.notifications, page > 0);
+                    if (notificationBadge) {
+                        const unreadCount = data.unreadCount;
+                        notificationBadge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                        notificationBadge.style.display = unreadCount > 0 ? 'block' : 'none';
+                    }
+                } catch (error) {
+                    console.error("Error fetching notifications:", error);
+                    // Hiển thị thông báo lỗi
+                } finally {
+                    isLoading = false;
+                    loadMoreBtn.textContent = 'Tải thêm';
+                }
+            }
+
+            async function markNotificationAsRead(id) {
+                console.log(`Marking notification ${id} as read`);
+                // Gọi API để đánh dấu đã đọc
+                if (notificationBadge) {
+                    let currentCount = parseInt(notificationBadge.textContent) || 0;
+                    if (currentCount > 0) {
+                        currentCount--;
+                        notificationBadge.textContent = currentCount > 99 ? '99+' : currentCount;
+                        notificationBadge.style.display = currentCount > 0 ? 'block' : 'none';
+                    }
+                }
+            }
+
+            async function markAllNotificationsAsRead() {
+                console.log('Marking all notifications as read');
+                // Gọi API để đánh dấu tất cả đã đọc
+                notificationList.querySelectorAll('.notification-item.unread').forEach(item => {
+                    item.classList.remove('unread');
+                    item.querySelector('.notification-read-status').style.color = 'transparent';
+                });
+                if (notificationBadge) {
+                    notificationBadge.textContent = '0';
+                    notificationBadge.style.display = 'none';
+                }
+            }
+
+
+            loadNotifications(0); // Tải trang đầu tiên khi khởi tạo
+            loadMoreBtn.addEventListener('click', () => { currentNotificationPage++; loadNotifications(currentNotificationPage); });
+            markAllReadBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); markAllNotificationsAsRead(); });
+        }
+    });
+</script>
+
+</body>
+</html>

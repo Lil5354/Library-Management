@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/fragments/layout_admin}">
+
+<head>
+    <title>Quản lý Thông báo Marquee</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid"> <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h3 mb-0 text-gray-800">Quản lý Thông báo Chung (Marquee)</h1> </div>
+
+        <div th:if="${successMessageMarquee}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i><span th:text="${successMessageMarquee}"></span>
+        </div>
+        <div th:if="${errorMessageMarquee}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i><span th:text="${errorMessageMarquee}"></span>
+        </div>
+
+        <div class="card shadow mb-4"> <div class="card-header py-3" style="background-color: var(--primary); color: var(--text-on-primary);">
+            <h6 class="m-0 font-weight-bold" style="color: #fff;">Cập nhật Thông báo Marquee</h6>
+        </div>
+            <div class="card-body" style="background-color: var(--card-bg);">
+                <form th:action="@{/admin/notifications/marquee/update}" method="post">
+                    <div class="mb-3">
+                        <label for="marqueeContent" class="form-label fw-bold" style="color: var(--dark);">Nội dung thông báo:</label>
+                        <textarea class="form-control" id="marqueeContent" name="marqueeContent" rows="4"
+                                  th:text="${currentMarqueeMessageContent}"
+                                  placeholder="Nhập nội dung thông báo..."></textarea>
+                        <small class="form-text text-muted">Để trống và bỏ tick 'Kích hoạt' nếu muốn tắt.</small>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="marqueeEnabled" name="marqueeEnabled" value="true"
+                               th:checked="${isMarqueeEnabled}">
+                        <label class="form-check-label" for="marqueeEnabled" style="color: var(--dark);">
+                            Kích hoạt hiển thị
+                        </label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-admin-action">
+                        <i></i>Lưu thay đổi
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div> </div></body>
+</html>

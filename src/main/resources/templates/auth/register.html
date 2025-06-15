@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng ký - Thư viện Trực tuyến</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Bảng màu mới: Be, Nâu Gỗ, Kem */
+            --primary-beige: #D2B48C; /* Tan - Màu be chính */
+            --primary-beige-light: #E0CDB6; /* Be nhạt hơn */
+            --primary-beige-dark: #B89A74;  /* Be đậm hơn */
+
+            --wood-brown: #8B4513;    /* SaddleBrown - Màu gỗ đậm */
+            --wood-brown-light: #A0522D; /* Sienna - Màu gỗ nhạt hơn */
+
+            --cream-bg: #F5F5DC;      /* Beige (CSS name) - Màu nền kem nhẹ */
+            --light-text: #FAF0E6;   /* Linen - Màu chữ sáng trên nền tối */
+            --dark-text: #5D4037;    /* Deep Brown - Màu chữ đậm trên nền sáng */
+
+            /* Gán lại các biến màu gốc để sử dụng trong các class hiện tại */
+            --primary: var(--primary-beige);
+            --primary-light: var(--primary-beige-light);
+            --primary-dark: var(--primary-beige-dark);
+            --secondary: var(--wood-brown-light);
+            --light: var(--cream-bg);
+            --dark: var(--dark-text);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: rgba(253, 250, 243, 0.95); /* Màu kem rất nhạt, hơi trong */
+            box-shadow: 0 2px 20px rgba(93, 64, 55, 0.08);
+            padding: 12px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--wood-brown) !important;
+        }
+
+        .navbar-brand span {
+            color: var(--primary-beige-dark);
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark-text) !important;
+            margin: 0 10px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:before {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--wood-brown);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover:before {
+            width: 100%;
+        }
+
+        .nav-btn {
+            border-radius: 30px;
+            padding: 8px 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login { /* Nút đăng nhập trên navbar */
+            background-color: transparent;
+            border: 2px solid var(--primary-beige-dark);
+            color: var(--primary-beige-dark) !important;
+        }
+
+        .btn-login:hover {
+            background-color: var(--primary-beige-dark);
+            color: var(--light-text) !important;
+        }
+
+        .btn-register { /* Nút đăng ký trên navbar (trang hiện tại có thể không cần) */
+            background-color: var(--primary-beige);
+            border: 2px solid var(--primary-beige);
+            color: var(--dark-text) !important;
+        }
+
+        .btn-register:hover {
+            background-color: var(--primary-beige-dark);
+            border-color: var(--primary-beige-dark);
+            color: var(--light-text) !important;
+        }
+
+        /* Register Form Container */
+        .register-container { /* Đổi tên từ login-container */
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 0 60px; /* Tăng padding top một chút cho navbar fixed */
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, rgba(210, 180, 140, 0.08), rgba(245, 245, 220, 0.1));
+        }
+
+        .register-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://images.unsplash.com/photo-1481627834876-b7833e8f5570?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); /* Một hình ảnh thư viện khác */
+            background-size: cover;
+            background-position: center;
+            opacity: 0.04; /* Giảm opacity hoặc thay thế */
+            z-index: -1;
+        }
+
+        .card {
+            border: 1px solid var(--primary-beige-light);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(93, 64, 55, 0.12);
+            background-color: #FFFAF0; /* FloralWhite */
+            animation: fadeIn 0.7s ease-in-out;
+            max-width: 580px; /* Tăng nhẹ độ rộng cho form đăng ký */
+            width: 100%;
+        }
+
+        .card-header {
+            background-color: var(--primary-beige);
+            color: var(--dark-text);
+            text-align: center;
+            padding: 25px 20px;
+            border-bottom: 1px solid var(--primary-beige-light);
+        }
+        .card-header h3 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .card-body {
+            padding: 30px 35px; /* Điều chỉnh padding */
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background-color: var(--light-text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: 0 4px 10px rgba(93, 64, 55, 0.1);
+            border: 3px solid var(--primary-beige-dark);
+        }
+
+        .logo i {
+            font-size: 38px;
+            color: var(--wood-brown);
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(184, 154, 116, 0.3);
+            border-color: var(--primary-beige-dark);
+        }
+
+        .input-group {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(93, 64, 55, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid var(--primary-beige-light);
+            /* margin-bottom giữ nguyên từ code gốc của bạn */
+        }
+
+        .input-group:focus-within {
+            box-shadow: 0 5px 15px rgba(93, 64, 55, 0.1);
+            border-color: var(--primary-beige-dark);
+        }
+
+        .input-group-text {
+            background-color: #fff;
+            border-right: 0;
+            color: var(--dark-text);
+            transition: all 0.3s ease;
+        }
+
+        .form-control {
+            border-left: 0;
+            font-size: 15px; /* Điều chỉnh nếu cần */
+            padding: 12px;
+            background-color: #fff;
+        }
+        .form-label {
+            font-weight: 500; /* Thêm cho label rõ hơn */
+            margin-bottom: 0.3rem;
+        }
+
+        .input-group:focus-within .input-group-text {
+            color: var(--wood-brown);
+        }
+
+        .btn-primary { /* Nút Đăng ký chính */
+            background-color: var(--primary-beige-dark);
+            border-color: var(--primary-beige-dark);
+            color: var(--light-text);
+            padding: 12px;
+            font-weight: 600;
+            border-radius: 30px;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--wood-brown);
+            border-color: var(--wood-brown);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(93, 64, 55, 0.15);
+        }
+
+        .form-footer { /* Phần link "Đã có tài khoản?" */
+            text-align: center; /* Căn giữa */
+            margin-top: 25px;
+            font-size: 0.9rem;
+        }
+
+        .form-footer a {
+            color: var(--wood-brown);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .form-footer a:hover {
+            color: var(--primary-beige-dark);
+            text-decoration: underline;
+        }
+        /* Bỏ .divider vì form đăng ký thường không có "hoặc" */
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .form-control.is-invalid, .form-check-input.is-invalid ~ .form-check-label {
+            border-color: #dc3545; /* Màu đỏ cho lỗi */
+        }
+        .form-control.is-invalid {
+            animation: shake 0.3s ease;
+        }
+        .invalid-feedback { /* Đảm bảo feedback lỗi có màu đỏ */
+            color: #dc3545;
+            font-size: 0.875em;
+        }
+
+
+        @keyframes shake {
+            0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-5px); } 100% { transform: translateX(0); }
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+        }
+        .toast {
+            min-width: 300px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            opacity: 0.95;
+        }
+        .toast-header { /* Style cho toast header */
+            font-weight: 600;
+        }
+
+        /* Go back button */
+        .go-back {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            margin-top: 25px;
+        }
+        .btn-go-back {
+            background-color: transparent;
+            color: var(--wood-brown);
+            border: 2px solid var(--wood-brown);
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        .btn-go-back:hover {
+            background-color: var(--wood-brown);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(93, 64, 55, 0.1);
+        }
+
+        /* Floating elements */
+        .floating-element {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.06;
+            color: var(--primary-beige-dark);
+            animation: float 10s ease-in-out infinite alternate;
+        }
+        .element-1 { top: 10%; left: 5%; font-size: 45px; animation-delay: 0s; }
+        .element-2 { top: 65%; right: 8%; font-size: 55px; animation-delay: 2.5s; }
+        .element-3 { bottom: 15%; left: 15%; font-size: 50px; animation-delay: 5s; }
+        .element-4 { top: 25%; right: 12%; font-size: 40px; animation-delay: 7.5s; }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(-2deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(-2deg); }
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-text);
+            color: var(--primary-beige-light);
+            padding: 20px 0;
+            margin-top: auto;
+        }
+        .footer-mini {
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Success checkmark */
+        .success-checkmark {
+            width: 80px;
+            height: 115px; /* Tăng chiều cao để chứa text */
+            margin: 20px auto 30px; /* Tăng margin bottom */
+            position: relative;
+            display: none; /* Sẽ được hiển thị bằng JS */
+            flex-direction: column; /* Sắp xếp icon và text theo chiều dọc */
+            align-items: center;
+            justify-content: center;
+        }
+        .success-checkmark .check-icon {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            border-radius: 50%;
+            box-sizing: content-box;
+            border: 4px solid var(--primary-beige-dark); /* Màu be đậm cho checkmark */
+            /* Animation cho checkmark sẽ được thêm bằng JS hoặc CSS sau */
+        }
+        .success-checkmark .check-icon::before { /* Phần ngắn của dấu tick */
+            top: 38px; /* Điều chỉnh vị trí */
+            left: 15px;
+            width: 25px;
+            height: 5px;
+            background-color: var(--primary-beige-dark);
+            content: "";
+            position: absolute;
+            transform: rotate(45deg);
+        }
+        .success-checkmark .check-icon::after { /* Phần dài của dấu tick */
+            top: 30px; /* Điều chỉnh vị trí */
+            left: 35px; /* Điều chỉnh vị trí */
+            width: 45px;
+            height: 5px;
+            background-color: var(--primary-beige-dark);
+            content: "";
+            position: absolute;
+            transform: rotate(-45deg); /* Hoặc 135deg tùy cách vẽ */
+        }
+        #successMessage { /* Đã có sẵn, chỉ cần đảm bảo nó được hiển thị đúng */
+            text-align: center;
+            margin-top: 15px;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .register-container { padding: 80px 15px 40px; }
+            .card-body { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#"><i class="fas fa-book-open me-2"></i>Thư viện<span>Số</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/categories">Danh mục sách</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">Giới thiệu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Liên hệ</a>
+                </li>
+            </ul>
+            <div class="d-flex">
+                <a href="/auth/login" class="btn nav-btn btn-login me-2">Đăng nhập</a>
+                <a href="/auth/register" class="btn nav-btn btn-register">Đăng ký</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="floating-element element-1"><i class="fas fa-pen-nib"></i></div> <div class="floating-element element-2"><i class="fas fa-scroll"></i></div><div class="floating-element element-3"><i class="fas fa-glasses"></i></div> <div class="floating-element element-4"><i class="fas fa-landmark"></i></div><div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+    <div id="mainToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-header bg-danger text-white">
+            <strong class="me-auto" id="toastTitle"><i class="fas fa-exclamation-circle me-2"></i>Thông báo</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage">
+            Nội dung thông báo.
+        </div>
+    </div>
+</div>
+
+<div th:if="${error}" class="d-none" id="serverError" th:text="${error}"></div>
+<div th:if="${success}" class="d-none" id="serverSuccess" th:text="${success}"></div>
+
+<div class="register-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-5">
+                <div class="logo-container">
+                    <div class="logo">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">Tạo Tài Khoản Mới</h3>
+                        <p class="mb-0 mt-2 opacity-75 small">Tham gia cộng đồng Thư viện Số</p>
+                    </div>
+
+                    <div class="card-body">
+                        <div id="registrationSuccessDisplay" style="display: none; text-align: center;">
+                            <div class="success-checkmark mb-3">
+                                <div class="check-icon"></div>
+                            </div>
+                            <h4 class="text-success" id="successMessageText">Đăng ký tài khoản thành công!</h4>
+                            <p class="text-muted" id="redirectMessage">Đang chuyển hướng đến trang đăng nhập...</p>
+                        </div>
+
+                        <form id="registerForm" th:action="@{/auth/register}" method="post" novalidate>
+                            <div class="mb-3">
+                                <label for="username" class="form-label fw-medium">Tên đăng nhập</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" id="username" name="username"
+                                           placeholder="Ít nhất 4 ký tự, chỉ chữ và số" required
+                                           th:value="${user != null ? user.username : ''}">
+                                </div>
+                                <div class="invalid-feedback d-block" id="usernameError"></div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="password" class="form-label fw-medium">Mật khẩu</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="password" name="rawPassword"
+                                           placeholder="Ít nhất 6 ký tự" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="border-left: none; border-color: var(--primary-beige-light);">
+                                        <i class="fas fa-eye" id="passwordEyeIcon"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback d-block" id="passwordError"></div>
+                                <small id="passwordHelp" class="form-text text-muted"></small>
+                            </div>
+
+                            <div class="mb-4"> <label for="confirmPassword" class="form-label fw-medium">Xác nhận mật khẩu</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-shield-alt"></i></span>
+                                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                                           placeholder="Nhập lại mật khẩu" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="toggleConfirmPassword" style="border-left: none; border-color: var(--primary-beige-light);">
+                                        <i class="fas fa-eye" id="confirmEyeIcon"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback d-block" id="confirmPasswordError"></div>
+                            </div>
+
+                            <div class="mb-4 form-check">
+                                <input type="checkbox" class="form-check-input" id="termsCheck" name="termsCheck" required>
+                                <label class="form-check-label" for="termsCheck">
+                                    Tôi đồng ý với <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal" style="color: var(--wood-brown);">điều khoản sử dụng</a>
+                                </label>
+                                <div class="invalid-feedback d-block" id="termsError"></div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-user-plus me-2"></i>Đăng ký
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="form-footer mt-4"> <a th:href="@{/auth/login}" class="text-decoration-none">
+                            <i class="fas fa-sign-in-alt me-1"></i>
+                            Đã có tài khoản? Đăng nhập
+                        </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="go-back">
+                    <a href="/" class="btn btn-go-back">
+                        <i class="fas fa-home me-1"></i>
+                        Về Trang Chủ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content" style="background-color: #FFFAF0; color: var(--dark-text);">
+            <div class="modal-header" style="background-color: var(--primary-beige); border-bottom-color: var(--primary-beige-dark);">
+                <h5 class="modal-title" id="termsModalLabel" style="color: var(--dark-text); font-family: 'Playfair Display', serif;">Điều khoản sử dụng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>1. Quy định chung</h5>
+                <p>Khi sử dụng hệ thống Thư viện Trực tuyến, người dùng cam kết tuân thủ các quy định của thư viện và pháp luật Việt Nam hiện hành.</p>
+                <h5>2. Tài khoản</h5>
+                <p>Người dùng chịu trách nhiệm bảo mật thông tin tài khoản của mình và không chia sẻ cho người khác. Mọi hoạt động từ tài khoản của bạn được xem là do bạn thực hiện và thuộc trách nhiệm của bạn.</p>
+                <h5>3. Hoạt động mượn/trả sách</h5>
+                <p>Người dùng phải tuân thủ quy định về thời hạn mượn/trả và số lượng sách được phép mượn. Phí phạt sẽ được áp dụng nếu trả sách trễ hạn hoặc làm hư hỏng tài liệu.</p>
+                <h5>4. Quyền của thư viện</h5>
+                <p>Thư viện có quyền tạm khóa hoặc xóa tài khoản nếu phát hiện vi phạm nghiêm trọng các quy định sử dụng. Thư viện có thể thay đổi điều khoản này mà không cần báo trước.</p>
+            </div>
+            <div class="modal-footer" style="background-color: var(--primary-beige-light); border-top-color: var(--primary-beige);">
+                <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: var(--primary-beige-dark); color: var(--light-text);">Đã hiểu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="privacyModal" tabindex="-1" aria-labelledby="privacyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content" style="background-color: #FFFAF0; color: var(--dark-text);">
+            <div class="modal-header" style="background-color: var(--primary-beige); border-bottom-color: var(--primary-beige-dark);">
+                <h5 class="modal-title" id="privacyModalLabel" style="color: var(--dark-text); font-family: 'Playfair Display', serif;">Chính sách bảo mật</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h5>1. Thu thập thông tin</h5><p>Thư viện chỉ thu thập những thông tin cá nhân cần thiết để vận hành hệ thống và cung cấp dịch vụ.</p>
+                <h5>2. Sử dụng thông tin</h5><p>Thông tin của bạn được sử dụng để xác thực tài khoản, thông báo về hoạt động mượn/trả và các thông báo quan trọng khác. Chúng tôi không bán hoặc chia sẻ thông tin của bạn cho bên thứ ba.</p>
+                <h5>3. Bảo mật thông tin</h5><p>Chúng tôi áp dụng các biện pháp bảo mật phù hợp để bảo vệ thông tin cá nhân của bạn. Mật khẩu của bạn được mã hóa và chúng tôi không thể truy cập trực tiếp.</p>
+                <h5>4. Cookie và dữ liệu duyệt web</h5><p>Hệ thống có thể sử dụng cookie để cải thiện trải nghiệm người dùng và thu thập dữ liệu phân tích ẩn danh.</p>
+            </div>
+            <div class="modal-footer" style="background-color: var(--primary-beige-light); border-top-color: var(--primary-beige);">
+                <button type="button" class="btn" data-bs-dismiss="modal" style="background-color: var(--primary-beige-dark); color: var(--light-text);">Đã hiểu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer>
+    <div class="container">
+        <div class="footer-mini">
+            <p class="mb-0">&copy; 2025 - Hệ thống Thư viện Trực tuyến | Đồ án Java Web - Đại học UEF</p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const usernameInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+        const confirmPasswordInput = document.getElementById("confirmPassword");
+        const termsCheck = document.getElementById("termsCheck");
+        const registerForm = document.getElementById("registerForm");
+        const submitButton = registerForm.querySelector('button[type="submit"]');
+
+        const usernameError = document.getElementById("usernameError");
+        const passwordError = document.getElementById("passwordError");
+        const confirmPasswordError = document.getElementById("confirmPasswordError");
+        const termsError = document.getElementById("termsError"); // Thêm phần tử này trong HTML nếu muốn hiển thị lỗi gần checkbox
+
+        if(usernameInput) usernameInput.focus();
+
+        // Toggle password visibility
+        function setupPasswordToggle(inputId, eyeIconId) {
+            const toggleButton = document.getElementById(eyeIconId)?.parentElement; // Lấy nút button
+            const passwordField = document.getElementById(inputId);
+            const eyeIcon = document.getElementById(eyeIconId);
+
+            if (toggleButton && passwordField && eyeIcon) {
+                toggleButton.addEventListener("click", function() {
+                    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordField.setAttribute('type', type);
+                    eyeIcon.classList.toggle('fa-eye');
+                    eyeIcon.classList.toggle('fa-eye-slash');
+                });
+            }
+        }
+        setupPasswordToggle('password', 'passwordEyeIcon');
+        setupPasswordToggle('confirmPassword', 'confirmEyeIcon');
+
+
+        // Real-time validation and username check
+        if(usernameInput) {
+            usernameInput.addEventListener('blur', async function() {
+                validateUsernameField(this);
+            });
+            usernameInput.addEventListener('input', function() {
+                this.classList.remove('is-invalid', 'is-valid');
+                usernameError.textContent = '';
+            });
+        }
+        if(passwordInput) {
+            passwordInput.addEventListener('input', function() {
+                validatePasswordField(this, passwordError);
+                validateConfirmPasswordField(confirmPasswordInput, passwordInput, confirmPasswordError); // Check confirm pass if pass changes
+            });
+        }
+        if(confirmPasswordInput) {
+            confirmPasswordInput.addEventListener('input', function() {
+                validateConfirmPasswordField(this, passwordInput, confirmPasswordError);
+            });
+        }
+        if(termsCheck){
+            termsCheck.addEventListener('change', function(){
+                if(this.checked){
+                    this.classList.remove('is-invalid');
+                    if(termsError) termsError.textContent = '';
+                }
+            });
+        }
+
+
+        async function validateUsernameField(input) {
+            const value = input.value.trim();
+            const usernameRegex = /^[a-zA-Z0-9_]{4,30}$/; // Cho phép dấu gạch dưới, dài 4-30 ký tự
+            input.classList.remove('is-invalid', 'is-valid');
+            usernameError.textContent = '';
+
+            if (!value) {
+                input.classList.add("is-invalid");
+                usernameError.textContent = "Vui lòng nhập tên đăng nhập.";
+                return false;
+            }
+            if (!usernameRegex.test(value)) {
+                input.classList.add("is-invalid");
+                usernameError.textContent = "Tên từ 4-30 ký tự, chỉ gồm chữ, số, và dấu gạch dưới (_).";
+                return false;
+            }
+            try {
+                const response = await fetch(`/auth/check-username?username=${encodeURIComponent(value)}`);
+                const isTaken = await response.json();
+                if (isTaken) {
+                    input.classList.add("is-invalid");
+                    usernameError.textContent = "Tên đăng nhập này đã được sử dụng.";
+                    return false;
+                } else {
+                    input.classList.add("is-valid");
+                    return true;
+                }
+            } catch (error) {
+                console.error("Lỗi kiểm tra username:", error);
+                // Không chặn submit nếu lỗi API, nhưng có thể hiển thị thông báo
+                return true; // Hoặc false tùy theo logic bạn muốn
+            }
+        }
+
+        function validatePasswordField(input, errorElement) {
+            const value = input.value;
+            input.classList.remove('is-invalid', 'is-valid');
+            errorElement.textContent = '';
+            const passwordHelp = document.getElementById('passwordHelp');
+            if(passwordHelp) passwordHelp.textContent = '';
+
+
+            if (!value) {
+                input.classList.add("is-invalid");
+                errorElement.textContent = "Vui lòng nhập mật khẩu.";
+                return false;
+            }
+            if (value.length < 6) {
+                input.classList.add("is-invalid");
+                errorElement.textContent = "Mật khẩu phải có ít nhất 6 ký tự.";
+                return false;
+            }
+            // Kiểm tra độ mạnh
+            const strength = checkPasswordStrength(value);
+            if(passwordHelp){
+                switch(strength) {
+                    case 'weak': passwordHelp.className = 'form-text text-danger'; passwordHelp.textContent = 'Mật khẩu yếu.'; break;
+                    case 'medium': passwordHelp.className = 'form-text text-warning'; passwordHelp.textContent = 'Mật khẩu trung bình.'; break;
+                    case 'strong': passwordHelp.className = 'form-text text-success'; passwordHelp.textContent = 'Mật khẩu mạnh.'; break;
+                }
+            }
+
+            input.classList.add("is-valid");
+            return true;
+        }
+
+        function validateConfirmPasswordField(input, passwordField, errorElement) {
+            const value = input.value;
+            const passwordValue = passwordField.value;
+            input.classList.remove('is-invalid', 'is-valid');
+            errorElement.textContent = '';
+
+            if (!value) {
+                input.classList.add("is-invalid");
+                errorElement.textContent = "Vui lòng xác nhận mật khẩu.";
+                return false;
+            }
+            if (value !== passwordValue) {
+                input.classList.add("is-invalid");
+                errorElement.textContent = "Mật khẩu xác nhận không khớp.";
+                return false;
+            }
+            input.classList.add("is-valid");
+            return true;
+        }
+
+
+        if (registerForm) {
+            registerForm.addEventListener("submit", async function(e) {
+                e.preventDefault();
+                const isUsernameValid = await validateUsernameField(usernameInput); // Chờ kết quả check username
+                const isPasswordValid = validatePasswordField(passwordInput, passwordError);
+                const isConfirmPasswordValid = validateConfirmPasswordField(confirmPasswordInput, passwordInput, confirmPasswordError);
+
+                termsCheck.classList.remove('is-invalid');
+                if(termsError) termsError.textContent = '';
+                if (!termsCheck.checked) {
+                    termsCheck.classList.add("is-invalid");
+                    if(termsError) termsError.textContent = "Bạn phải đồng ý với điều khoản.";
+                    showCustomToast("Bạn phải đồng ý với điều khoản và chính sách.", 'danger', 'Lỗi');
+                    return;
+                }
+
+                if (isUsernameValid && isPasswordValid && isConfirmPasswordValid && termsCheck.checked) {
+                    const originalButtonText = submitButton.innerHTML;
+                    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Đang đăng ký...';
+                    submitButton.disabled = true;
+
+                    setTimeout(() => { // Giả lập thời gian xử lý
+                        this.submit(); // Gửi form nếu tất cả đều hợp lệ
+                    }, 500);
+                } else {
+                    showCustomToast("Vui lòng kiểm tra lại thông tin đăng ký.", 'danger', 'Lỗi');
+                }
+            });
+        }
+
+
+        // Kiểm tra thông báo từ server (error/success)
+        const serverErrorMsg = document.getElementById("serverError")?.textContent;
+        const serverSuccessMsg = document.getElementById("serverSuccess")?.textContent;
+
+        if (serverErrorMsg) {
+            showCustomToast(serverErrorMsg, 'danger', 'Lỗi Đăng Ký');
+        } else if (serverSuccessMsg) {
+            // Ẩn form và hiển thị thông báo thành công
+            if(registerForm) registerForm.style.display = "none";
+            const successDisplay = document.getElementById("registrationSuccessDisplay");
+            if(successDisplay) {
+                successDisplay.style.display = "flex"; // Hiển thị checkmark và text
+                const checkIcon = successDisplay.querySelector('.check-icon');
+                if(checkIcon) checkIcon.style.animation = 'scaleUp 0.4s ease-out forwards, fill 0.4s ease-out 0.3s forwards'; // Thêm animation
+            }
+
+
+            let countdown = 5; // Đếm ngược 5 giây
+            const redirectMsgEl = document.getElementById('redirectMessage');
+            if(redirectMsgEl) redirectMsgEl.textContent = `Đăng ký thành công! Chuyển hướng đến đăng nhập sau ${countdown} giây...`;
+
+            const redirectInterval = setInterval(() => {
+                countdown--;
+                if(redirectMsgEl) redirectMsgEl.textContent = `Đăng ký thành công! Chuyển hướng đến đăng nhập sau ${countdown} giây...`;
+                if (countdown <= 0) {
+                    clearInterval(redirectInterval);
+                    window.location.href = "/auth/login"; // Chuyển hướng
+                }
+            }, 1000);
+        }
+
+        // Hiệu ứng cuộn navbar
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 30) {
+                navbar.style.padding = '8px 0';
+                navbar.style.backgroundColor = 'rgba(253, 250, 243, 1)';
+                navbar.style.boxShadow = '0 4px 15px rgba(93, 64, 55, 0.1)';
+            } else {
+                navbar.style.padding = '12px 0';
+                navbar.style.backgroundColor = 'rgba(253, 250, 243, 0.95)';
+                navbar.style.boxShadow = '0 2px 10px rgba(93, 64, 55, 0.08)';
+            }
+        });
+    });
+
+    // Hàm kiểm tra độ mạnh mật khẩu
+    function checkPasswordStrength(password) {
+        let strength = 0;
+        if (password.length >= 6) strength++;
+        if (password.length >= 8) strength++; // Thêm điểm nếu dài hơn
+        if (/[A-Z]/.test(password)) strength++; // Chữ hoa
+        if (/[0-9]/.test(password)) strength++; // Số
+        if (/[^A-Za-z0-9]/.test(password)) strength++; // Ký tự đặc biệt
+
+        if (strength < 2) return 'weak';
+        if (strength < 4) return 'medium';
+        return 'strong';
+    }
+
+</script>
+</body>
+</html>
