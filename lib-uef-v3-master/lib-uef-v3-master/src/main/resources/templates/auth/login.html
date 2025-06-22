@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Đăng nhập - Thư viện Trực tuyến</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Bảng màu mới: Be, Nâu Gỗ, Kem */
+            --primary-beige: #D2B48C; /* Tan - Màu be chính */
+            --primary-beige-light: #E0CDB6; /* Be nhạt hơn */
+            --primary-beige-dark: #B89A74;  /* Be đậm hơn */
+
+            --wood-brown: #8B4513;    /* SaddleBrown - Màu gỗ đậm */
+            --wood-brown-light: #A0522D; /* Sienna - Màu gỗ nhạt hơn */
+
+            --cream-bg: #F5F5DC;      /* Beige (CSS name) - Màu nền kem nhẹ */
+            --light-text: #FAF0E6;   /* Linen - Màu chữ sáng trên nền tối */
+            --dark-text: #5D4037;    /* Deep Brown - Màu chữ đậm trên nền sáng */
+
+            /* Gán lại các biến màu gốc để sử dụng trong các class hiện tại */
+            --primary: var(--primary-beige);
+            --primary-light: var(--primary-beige-light);
+            --primary-dark: var(--primary-beige-dark);
+            --secondary: var(--wood-brown-light);
+            --light: var(--cream-bg);
+            --dark: var(--dark-text);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: rgba(253, 250, 243, 0.95); /* Màu kem rất nhạt, hơi trong */
+            box-shadow: 0 2px 20px rgba(93, 64, 55, 0.08); /* Bóng đổ màu nâu nhạt hơn */
+            padding: 12px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--wood-brown) !important;
+        }
+
+        .navbar-brand span {
+            color: var(--primary-beige-dark);
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark-text) !important;
+            margin: 0 10px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:before {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--wood-brown);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover:before {
+            width: 100%;
+        }
+
+        .nav-btn {
+            border-radius: 30px;
+            padding: 8px 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login { /* Nút đăng nhập trên navbar (nếu có) */
+            background-color: transparent;
+            border: 2px solid var(--primary-beige-dark);
+            color: var(--primary-beige-dark) !important;
+        }
+
+        .btn-login:hover {
+            background-color: var(--primary-beige-dark);
+            color: var(--light-text) !important;
+        }
+
+        .btn-register { /* Nút đăng ký trên navbar */
+            background-color: var(--primary-beige);
+            border: 2px solid var(--primary-beige);
+            color: var(--dark-text) !important;
+        }
+
+        .btn-register:hover {
+            background-color: var(--primary-beige-dark);
+            border-color: var(--primary-beige-dark);
+            color: var(--light-text) !important;
+        }
+
+        /* Login Form */
+        .login-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 0 60px; /* Tăng padding top một chút */
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, rgba(210, 180, 140, 0.08), rgba(245, 245, 220, 0.1));
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            /* Cân nhắc đổi hình nền này sang hình ảnh có texture gỗ hoặc thư viện cổ điển */
+            /* Ví dụ: background-image: url('/images/wood-texture.jpg'); */
+            background-image: url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.03; /* Giảm opacity hoặc thay thế */
+            z-index: -1;
+        }
+
+        .card {
+            border: 1px solid var(--primary-beige-light);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(93, 64, 55, 0.12);
+            background-color: #FFFAF0; /* FloralWhite - hoặc #FAF0E6 (Linen) */
+            animation: fadeIn 0.7s ease-in-out;
+            max-width: 526px;
+            width: 100%;
+        }
+
+        .card-header {
+            background-color: var(--primary-beige);
+            color: var(--dark-text);
+            text-align: center;
+            padding: 25px 20px;
+            border-bottom: 1px solid var(--primary-beige-light);
+        }
+        .card-header h3 {
+            font-family: 'Playfair Display', serif; /* Thêm font cho tiêu đề nếu muốn */
+        }
+
+        .card-body {
+            padding: 35px 40px; /* Tăng padding một chút */
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background-color: var(--light-text);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            box-shadow: 0 4px 10px rgba(93, 64, 55, 0.1);
+            border: 3px solid var(--primary-beige-dark); /* Viền dày hơn chút */
+        }
+
+        .logo i {
+            font-size: 38px; /* Giảm nhẹ icon nếu viền dày hơn */
+            color: var(--wood-brown);
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 3px rgba(184, 154, 116, 0.3); /* Màu be đậm hơn cho focus */
+            border-color: var(--primary-beige-dark);
+        }
+
+        .input-group {
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(93, 64, 55, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid var(--primary-beige-light);
+        }
+
+        .input-group:focus-within {
+            box-shadow: 0 5px 15px rgba(93, 64, 55, 0.1);
+            border-color: var(--primary-beige-dark);
+        }
+
+        .input-group-text {
+            background-color: #fff;
+            border-right: 0;
+            color: var(--dark-text);
+            transition: all 0.3s ease;
+        }
+
+        .form-control {
+            border-left: 0;
+            font-size: 16px;
+            padding: 12px;
+            background-color: #fff;
+        }
+
+        .input-group:focus-within .input-group-text {
+            color: var(--wood-brown);
+        }
+
+        .btn-primary { /* Nút Đăng nhập chính */
+            background-color: var(--primary-beige-dark);
+            border-color: var(--primary-beige-dark);
+            color: var(--light-text);
+            padding: 12px;
+            font-weight: 600;
+            border-radius: 30px;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            text-transform: uppercase; /* Thêm chữ hoa */
+        }
+
+        .btn-primary:hover {
+            background-color: var(--wood-brown);
+            border-color: var(--wood-brown);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(93, 64, 55, 0.15);
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            font-size: 0.9rem; /* Giảm nhẹ font size */
+        }
+
+        .form-footer a {
+            color: var(--wood-brown);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-footer a:hover {
+            color: var(--primary-beige-dark);
+            text-decoration: underline; /* Thêm gạch chân khi hover */
+        }
+
+        .form-footer a i {
+            margin-right: 5px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin: 25px 0; /* Tăng margin */
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid var(--primary-beige-light); /* Màu be nhạt cho đường kẻ */
+        }
+
+        .divider span {
+            padding: 0 15px; /* Tăng padding */
+            color: var(--primary-beige-dark); /* Màu be đậm cho chữ "hoặc" */
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545; /* Giữ màu đỏ cho lỗi */
+            animation: shake 0.2s ease;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* Toast (giữ nguyên hoặc điều chỉnh màu nếu cần) */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+        }
+
+        .toast {
+            min-width: 300px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-radius: 10px;
+            opacity: 0.95;
+        }
+        /* Nút "Quay về trang chủ" */
+        .go-back {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            margin-top: 25px; /* Tăng margin */
+        }
+
+        .btn-go-back {
+            background-color: transparent; /* Trong suốt */
+            color: var(--wood-brown);
+            border: 2px solid var(--wood-brown);
+            border-radius: 30px;
+            padding: 10px 25px; /* Tăng padding */
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-go-back:hover {
+            background-color: var(--wood-brown);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(93, 64, 55, 0.1);
+        }
+
+        /* Floating elements */
+        .floating-element {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.06; /* Giảm opacity nếu muốn tinh tế hơn */
+            color: var(--primary-beige-dark);
+            animation: float 10s ease-in-out infinite alternate; /* Thay đổi animation */
+        }
+
+        .element-1 { top: 10%; left: 5%; font-size: 45px; animation-delay: 0s; }
+        .element-2 { top: 65%; right: 8%; font-size: 55px; animation-delay: 2.5s; }
+        .element-3 { bottom: 15%; left: 15%; font-size: 50px; animation-delay: 5s; }
+        .element-4 { top: 25%; right: 12%; font-size: 40px; animation-delay: 7.5s; }
+
+        @keyframes float { /* Animation float nhẹ nhàng hơn */
+            0% { transform: translateY(0px) rotate(-2deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+            100% { transform: translateY(0px) rotate(-2deg); }
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark-text); /* Nâu đậm */
+            color: var(--primary-beige-light); /* Be nhạt */
+            padding: 20px 0; /* Tăng padding */
+            margin-top: auto;
+        }
+
+        .footer-mini {
+            font-size: 0.9rem;
+            text-align: center;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .form-footer {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+            .login-container { padding: 60px 15px 30px; } /* Điều chỉnh padding cho mobile */
+            .card-body { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#"><i class="fas fa-book-open me-2"></i>Thư viện<span>Số</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/categories">Danh mục sách</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">Giới thiệu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Liên hệ</a>
+                </li>
+            </ul>
+            <div class="d-flex">
+                <a href="/auth/register" class="btn nav-btn btn-register">Đăng ký</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="floating-element element-1"><i class="fas fa-book"></i></div>
+<div class="floating-element element-2"><i class="fas fa-atlas"></i></div> <div class="floating-element element-3"><i class="fas fa-feather-alt"></i></div> <div class="floating-element element-4"><i class="fas fa-glasses"></i></div> <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+    <div id="mainToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-header bg-danger text-white"> <strong class="me-auto" id="toastTitle"><i class="fas fa-exclamation-circle me-2"></i>Thông báo</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="toastMessage">
+            Nội dung thông báo.
+        </div>
+    </div>
+    <div id="logoutToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="5000">
+        <div class="toast-header bg-success text-white">
+            <strong class="me-auto"><i class="fas fa-check-circle me-2"></i>Thành công</strong>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            Đăng xuất thành công!
+        </div>
+    </div>
+</div>
+
+
+<div th:if="${param.error}" class="d-none" id="serverError" th:text="'Sai tên đăng nhập hoặc mật khẩu, hoặc tài khoản đã bị khóa.'"></div>
+<div th:if="${param.logout}" class="d-none" id="logoutSuccess" th:text="'Đăng xuất thành công.'"></div>
+
+<div class="login-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-7 col-lg-5"> <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-book-reader"></i>
+                </div>
+            </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="mb-0">Đăng Nhập Hệ Thống</h3>
+                        <p class="mb-0 mt-2 opacity-75 small">Thư viện Tri thức - Kết nối Đam mê</p>
+                    </div>
+
+                    <div class="card-body">
+                        <form id="loginForm" th:action="@{/auth/login}" method="post" novalidate>
+                            <div class="mb-4">
+                                <label for="username" class="form-label fw-medium">Tên đăng nhập</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                    <input type="text" class="form-control" id="username" name="username" placeholder="Nhập tên đăng nhập" required>
+                                </div>
+                                <div class="invalid-feedback d-block" id="usernameError"></div> </div>
+
+                            <div class="mb-4">
+                                <label for="password" class="form-label fw-medium">Mật khẩu</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="password" name="password" placeholder="Nhập mật khẩu" required>
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword" style="border-left: none; border-color: var(--primary-beige-light);">
+                                        <i class="fas fa-eye" id="eyeIcon"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback d-block" id="passwordError"></div> </div>
+
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="rememberMe" name="remember-me">
+                                <label class="form-check-label" for="rememberMe">Ghi nhớ đăng nhập</label>
+                            </div>
+
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-sign-in-alt me-2"></i>Đăng nhập
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="divider">
+                            <span>hoặc</span>
+                        </div>
+
+                        <div class="form-footer">
+                            <a th:href="@{/auth/forgot-password}" class="text-decoration-none"> <i class="fas fa-key"></i>
+                                Quên mật khẩu?
+                            </a>
+                            <a th:href="@{/auth/register}" class="text-decoration-none">
+                                <i class="fas fa-user-plus"></i>
+                                Đăng ký tài khoản mới
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="go-back">
+                    <a href="/" class="btn btn-go-back">
+                        <i class="fas fa-home me-1"></i>
+                        Về Trang Chủ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="container">
+        <div class="footer-mini">
+            <p class="mb-0">&copy; 2025 - Hệ thống Thư viện Trực tuyến | Đồ án Java Web - Đại học UEF</p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Navigation effect on scroll
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 30) { // Giảm ngưỡng scroll
+            navbar.style.padding = '8px 0';
+            navbar.style.backgroundColor = 'rgba(253, 250, 243, 1)'; // Nền đậm hơn khi scroll
+            navbar.style.boxShadow = '0 4px 15px rgba(93, 64, 55, 0.1)';
+        } else {
+            navbar.style.padding = '12px 0';
+            navbar.style.backgroundColor = 'rgba(253, 250, 243, 0.95)';
+            navbar.style.boxShadow = '0 2px 10px rgba(93, 64, 55, 0.08)';
+        }
+    });
+
+    function showCustomToast(message, type = 'danger', title = 'Thông báo') {
+        const toastEl = document.getElementById('mainToast');
+        const toastTitleEl = document.getElementById('toastTitle');
+        const toastBodyEl = document.getElementById('toastMessage');
+        const toastHeaderEl = toastEl.querySelector('.toast-header');
+
+        toastTitleEl.innerHTML = `<i class="fas ${type === 'danger' ? 'fa-exclamation-circle' : 'fa-check-circle'} me-2"></i>${title}`;
+        toastBodyEl.textContent = message;
+
+        toastHeaderEl.className = `toast-header bg-${type} text-white`; // Cập nhật class cho header
+
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+    }
+
+
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+        const usernameInput = document.getElementById("username");
+        const passwordInput = document.getElementById("password");
+        const usernameError = document.getElementById("usernameError");
+        const passwordError = document.getElementById("passwordError");
+
+        usernameInput.classList.remove("is-invalid");
+        passwordInput.classList.remove("is-invalid");
+        usernameError.textContent = "";
+        passwordError.textContent = "";
+
+        let valid = true;
+
+        if (usernameInput.value.trim() === "") {
+            usernameInput.classList.add("is-invalid");
+            usernameError.textContent = "Vui lòng nhập tên đăng nhập.";
+            valid = false;
+        }
+
+        if (passwordInput.value.trim() === "") {
+            passwordInput.classList.add("is-invalid");
+            passwordError.textContent = "Vui lòng nhập mật khẩu.";
+            valid = false;
+        }
+
+        if (!valid) {
+            e.preventDefault();
+            // Không cần gọi showCustomToast ở đây nữa vì invalid-feedback đã hiển thị
+        }
+    });
+
+    document.getElementById("togglePassword").addEventListener("click", function() {
+        const passwordField = document.getElementById("password");
+        const eyeIcon = document.getElementById("eyeIcon");
+        if (passwordField.type === "password") {
+            passwordField.type = "text";
+            eyeIcon.classList.remove("fa-eye");
+            eyeIcon.classList.add("fa-eye-slash");
+        } else {
+            passwordField.type = "password";
+            eyeIcon.classList.remove("fa-eye-slash");
+            eyeIcon.classList.add("fa-eye");
+        }
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+        document.getElementById("username").focus();
+
+        const passwordField = document.getElementById("password");
+        if(passwordField){ // Kiểm tra tồn tại trước khi gán event
+            passwordField.addEventListener("paste", e => e.preventDefault());
+            passwordField.addEventListener("copy", e => e.preventDefault());
+            passwordField.addEventListener("cut", e => e.preventDefault());
+        }
+
+        const serverError = document.getElementById("serverError");
+        const logoutSuccess = document.getElementById("logoutSuccess");
+
+        if (serverError && serverError.textContent) {
+            showCustomToast(serverError.textContent, 'danger', 'Lỗi Đăng Nhập');
+        } else if (logoutSuccess && logoutSuccess.textContent) {
+            // Sử dụng toast logoutToast đã có sẵn nếu muốn
+            const toastLogoutEl = document.getElementById('logoutToast');
+            if (toastLogoutEl) {
+                const toast = new bootstrap.Toast(toastLogoutEl);
+                toast.show();
+            } else { // Hoặc dùng toast chung
+                showCustomToast(logoutSuccess.textContent, 'success', 'Thành công');
+            }
+        }
+    });
+</script>
+</body>
+</html>

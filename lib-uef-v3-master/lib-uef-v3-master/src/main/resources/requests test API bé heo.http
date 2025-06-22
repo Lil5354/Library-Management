@@ -1,0 +1,7 @@
+### Test danh tính của AI
+POST http://localhost:8080/api/ai/chat
+Content-Type: application/json
+
+{
+  "message": "Bạn là ai?"
+}

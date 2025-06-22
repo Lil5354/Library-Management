@@ -1,0 +1,1210 @@
+
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thư viện Trực tuyến - Liên hệ (Gỗ & Be)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="/css/index.css" rel="stylesheet">
+    <link href="/js/index.js" rel="stylesheet">
+    <style>
+        :root {
+            /* Wood & Beige Theme (Consistent with other pages) */
+            --primary: #8B4513;         /* SaddleBrown (Main Wood) */
+            --primary-light: #A0522D;    /* Sienna (Lighter Wood) */
+            --primary-dark: #5C3317;     /* Darker Wood */
+            --secondary: #D2B48C;        /* Tan (Accent Beige/Light Wood) */
+            --light: #FAF0E6;           /* Linen (Main Background Beige) */
+            --dark: #4A3B31;            /* Dark Brown (Main Text) */
+
+            /* Additional custom colors */
+            --card-bg: #FFFBF0;         /* Very Light Warm Off-White (for cards/inputs) */
+            --input-bg-custom: #FFFBF0; /* Explicit for inputs */
+            --text-on-primary: #FAF0E6; /* Light beige text for primary background */
+            --text-on-secondary: #4A3B31;/* Dark brown text for secondary background */
+            --text-light-custom: #795548; /* Lighter brown for secondary text */
+
+            --footer-bg-custom: #3D2B1F; /* Very Dark Brown (Footer BG) */
+            --footer-text-custom: #D3C5BC;/* Light Beige/Brown (Footer Text) */
+            --footer-link-hover-custom: #FAF0E6; /* Linen for hover */
+
+            --nav-bar-bg: rgba(255, 251, 240, 0.95); /* --card-bg with opacity */
+            --box-shadow-base-color-rgb: 139, 69, 19; /* For box shadows */
+            --border-subtle: #E0D6CC; /* A light brown border */
+            --accordion-button-active-bg: rgba(139, 69, 19, 0.05); /* Primary wood with light alpha */
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            position: relative;
+            /* padding-top will be set by JS */
+        }
+        /* Page Header */
+        .page-header {
+            /* Dòng background với url() đã được xóa */
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--text-on-primary);
+            position: relative; /* Giữ nguyên position: relative */
+            margin-bottom: 60px;
+            overflow: hidden; /* Thêm để video không bị tràn ra ngoài */
+        }
+        /* --- CSS CHO VIDEO NỀN VÀ LỚP PHỦ --- */
+
+        /* Cấu hình cho video nền */
+        #header-video-bg {
+            position: absolute;
+            top: 183%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -2; /* Đẩy video ra lớp sau cùng */
+            object-fit: cover;
+        }
+
+        /* Tạo lại lớp phủ màu tối để chữ dễ đọc */
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(rgba(40, 28, 20, 0.65), rgba(40, 28, 20, 0.65));
+            z-index: -1; /* Nằm trên video, dưới chữ */
+        }
+        .page-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            margin-bottom: 15px; /* Reduced margin */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s forwards 0.3s;
+        }
+
+        .breadcrumb {
+            background-color: transparent;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s forwards 0.6s;
+            padding: 0; /* Reset padding for breadcrumb */
+        }
+
+        .breadcrumb-item, .breadcrumb-item a {
+            color: rgba(250, 240, 230, 0.85); /* Linen with alpha */
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--text-on-primary); /* Linen */
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: rgba(250, 240, 230, 0.7); /* Linen with alpha */
+        }
+
+        /* Section Title */
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary); /* Main Wood */
+            margin-bottom: 40px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title:after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 3px;
+            background-color: var(--secondary); /* Tan */
+        }
+
+        /* Contact Section */
+        .contact-info-box {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(var(--box-shadow-base-color-rgb), 0.07);
+            transition: all 0.3s ease;
+            height: 100%;
+            border-left: 4px solid var(--primary); /* Main Wood */
+        }
+        .contact-info-box p {
+            color: var(--dark); /* Ensure p text is dark */
+            line-height: 1.7;
+        }
+
+
+        .contact-info-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(var(--box-shadow-base-color-rgb), 0.12);
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            background-color: rgba(var(--box-shadow-base-color-rgb), 0.1); /* Primary wood with alpha */
+            color: var(--primary); /* Main Wood */
+            border-radius: 50%;
+            font-size: 22px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-info-box:hover .contact-icon {
+            background-color: var(--primary); /* Main Wood */
+            color: var(--text-on-primary); /* Linen */
+        }
+
+        .contact-info-box h5 {
+            font-weight: 600;
+            color: var(--primary-dark); /* Darker Wood */
+            margin-bottom: 15px;
+        }
+        .contact-info-box .badge.bg-warning { /* Custom badge style */
+            background-color: var(--secondary) !important;
+            color: var(--text-on-secondary) !important;
+            border: 1px solid var(--primary-light);
+            font-weight: 500;
+        }
+
+
+        .contact-form {
+            background-color: var(--card-bg);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 20px rgba(var(--box-shadow-base-color-rgb), 0.07);
+        }
+        .contact-form h3 {
+            color: var(--primary);
+        }
+
+        .form-control {
+            height: 50px;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            background-color: var(--input-bg-custom);
+            color: var(--dark);
+            padding-left: 15px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .form-control::placeholder {
+            color: var(--text-light-custom);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(var(--box-shadow-base-color-rgb), 0.25);
+            background-color: var(--input-bg-custom);
+        }
+
+        textarea.form-control {
+            height: 150px;
+            padding-top: 15px;
+        }
+        .form-check-label a {
+            color: var(--primary) !important;
+            text-decoration: underline;
+        }
+        .form-check-label a:hover {
+            color: var(--primary-dark) !important;
+        }
+
+
+        .contact-btn {
+            background-color: var(--primary); /* Main Wood */
+            border-color: var(--primary);
+            color: var(--text-on-primary); /* Linen */
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .contact-btn:hover {
+            background-color: var(--primary-dark); /* Darker Wood */
+            border-color: var(--primary-dark);
+            color: var(--text-on-primary);
+        }
+
+        /* Map */
+        .map-container {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(var(--box-shadow-base-color-rgb), 0.07);
+            margin-top: 50px;
+        }
+
+        .map-frame {
+            width: 100%;
+            height: 450px;
+            border: none;
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            background-color: rgba(var(--box-shadow-base-color-rgb), 0.03); /* Primary wood with alpha */
+            padding: 80px 0;
+            margin: 60px 0;
+        }
+
+        .accordion-item {
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(var(--box-shadow-base-color-rgb), 0.03);
+            background-color: var(--card-bg); /* Set base background for item */
+        }
+
+        .accordion-button {
+            padding: 20px 25px;
+            font-weight: 600;
+            color: var(--primary-dark); /* Darker Wood */
+            background-color: var(--card-bg);
+            border-left: 4px solid var(--primary); /* Main Wood */
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: var(--primary); /* Main Wood */
+            background-color: var(--accordion-button-active-bg); /* Primary wood with light alpha */
+        }
+
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: rgba(var(--box-shadow-base-color-rgb), 0.1); /* Primary wood with alpha for focus border */
+        }
+
+        .accordion-body {
+            padding: 20px 25px;
+            background-color: var(--card-bg); /* Ensure body matches item bg */
+            color: var(--dark);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--footer-bg-custom);
+            color: var(--footer-text-custom);
+            padding: 60px 0 20px;
+            /* margin-top: 60px; */ /* Removed as FAQ section provides bottom margin/padding */
+        }
+
+        .footer-title {
+            color: var(--light); /* Linen */
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: var(--footer-text-custom);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--footer-link-hover-custom);
+            padding-left: 5px;
+        }
+        .footer-links i.me-2 {
+            color: var(--footer-text-custom);
+            transition: all 0.3s ease;
+        }
+        .footer-links a:hover i.me-2 {
+            color: var(--footer-link-hover-custom);
+        }
+
+        .social-links {
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background-color: rgba(250, 240, 230, 0.1); /* Linen with alpha */
+            color: var(--footer-link-hover-custom);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            color: var(--text-on-primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(250, 240, 230, 0.15); /* Linen with alpha */
+            padding-top: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        .footer-bottom p a {
+            color: var(--footer-text-custom) !important;
+            opacity: 0.8;
+        }
+        .footer-bottom p a:hover {
+            color: var(--footer-link-hover-custom) !important;
+            opacity: 1;
+        }
+
+        /* Back to Top Button Style */
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: none;
+            width: 40px;
+            height: 40px;
+            line-height: 40px; /* For vertical centering of icon */
+            text-align: center;
+            border-radius: 50%;
+            background-color: var(--primary); /* Main Wood */
+            color: var(--text-on-primary); /* Linen */
+            z-index: 999;
+            transition: all 0.3s ease;
+            opacity: 0.8;
+        }
+        .back-to-top:hover {
+            opacity: 1;
+            background-color: var(--primary-dark); /* Darker wood */
+            transform: translateY(-3px);
+        }
+
+
+        /* Animations */
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-header {
+                height: auto; /* Adjust for content */
+                padding-top: 40px;
+                padding-bottom: 40px;
+            }
+
+            .page-header h1 {
+                font-size: 2.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .contact-form {
+                padding: 25px;
+            }
+            .footer-bottom .col-md-6 {
+                text-align: center !important;
+                margin-bottom: 10px;
+            }
+            .footer-bottom .col-md-6.text-md-end {
+                text-align: center !important;
+            }
+        }
+        .marquee-notification-bar{
+            color: #D32F2F;
+            padding: 5px 0;
+            font-size: 0.9rem;
+            font-weight: 500;
+            overflow: hidden;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--border-subtle);
+            box-shadow: 0 2px 5px rgba(var(--box-shadow-base-color-rgb), 0.05);
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/"><i class="fas fa-book-open me-2"></i>Thư viện<span>Số</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/categories">Danh mục sách</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">Giới thiệu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Liên hệ</a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <div th:if="${!isAuthenticated}" class="ms-auto">
+                    <a th:href="@{/auth/login}" class="btn nav-btn btn-login me-2">Đăng nhập</a>
+                    <a th:href="@{/auth/register}" class="btn nav-btn btn-register">Đăng ký</a>
+                </div>
+
+                <div th:if="${isAuthenticated}" class="d-flex align-items-center ms-auto">
+                    <span class="me-2 navbar-text" style="color: var(--dark); white-space: nowrap;">
+                        Chào <span th:text="${loggedInUserFullName != null ? loggedInUserFullName : 'bạn'}">bạn</span>!<span class="wave-hand-navbar">👋</span>
+                    </span>
+
+                    <div class="dropdown me-3">
+                        <a href="#" class="nav-icon-link position-relative" id="notificationDropdownToggle" data-bs-toggle="dropdown" aria-expanded="false"
+                           th:title="${unreadNotificationCount > 0 ? 'Bạn có ' + unreadNotificationCount + ' thông báo chưa đọc' : 'Không có thông báo mới'}">
+                            <i class="fas fa-bell user-notification-icon"></i>
+                            <span th:if="${unreadNotificationCount > 0}" id="notificationBadge"
+                                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            [[${unreadNotificationCount}]]
+        </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow notification-dropdown" aria-labelledby="notificationDropdownToggle">
+                            <li class="notification-header">
+                                <h6 class="mb-0">Thông báo</h6>
+                                <a href="javascript:void(0);" id="markAllReadBtn">Đánh dấu tất cả đã đọc</a>
+                            </li>
+                            <li><hr class="dropdown-divider my-0"></li>
+
+                            <li class="notification-body">
+                                <ul class="list-unstyled mb-0" id="notificationList"></ul>
+
+                                <div id="notificationEmptyState">
+                                    <i class="far fa-envelope-open"></i>
+                                    <p class="mb-0">Bạn chưa có thông báo nào.</p>
+                                </div>
+                            </li>
+
+                            <li class="notification-footer">
+                                <button class="btn-load-more" id="loadMoreBtn">
+                                    Tải thêm
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="dropdown">
+                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUserNavbar" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle fa-lg user-avatar-icon"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUserNavbar">
+                            <li class="px-3 py-2 text-center">
+                                <img th:if="${loggedInUserAvatarUrl != null AND !loggedInUserAvatarUrl.isEmpty()}"
+                                     th:src="${loggedInUserAvatarUrl}"
+                                     alt="User Avatar" width="70" height="70"
+                                     class="rounded-circle mb-2 border user-avatar-dropdown">
+                                <div th:unless="${loggedInUserAvatarUrl != null AND !loggedInUserAvatarUrl.isEmpty()}"
+                                     class="default-avatar-dropdown mb-2">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <h5 class="mb-0 dropdown-username"
+                                    th:text="${loggedInUsername != null ? loggedInUsername : 'Username'}">
+                                    Username
+                                </h5>
+                                <p class="text-muted mb-0 dropdown-email"
+                                   th:text="${loggedInUserEmail != null ? loggedInUserEmail : 'Không có email'}">
+                                    email@example.com
+                                </p>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{/reader/profile}"><i class="fas fa-user-edit me-2"></i>Thông tin tài khoản</a></li>
+                            <li><a class="dropdown-item" th:href="@{/reader/borrowed-books}"><i class="fas fa-book-reader me-2"></i>Sách đang mượn</a></li>
+                            <li><a class="dropdown-item" th:href="@{/reader/borrowing-history}"><i class="fas fa-history me-2"></i>Lịch sử mượn sách</a></li>
+                            <li><a class="dropdown-item" th:href="@{/reader/reserved-books}"><i class="fas fa-calendar-check me-2"></i>Sách đã đặt trước</a></li>
+                            <li><a class="dropdown-item" th:href="@{/reader/change-password}"><i class="fas fa-key me-2"></i>Đổi mật khẩu</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/auth/logout}" method="post" class="d-block">
+                                    <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div th:if="${activeMarqueeMessage != null}" class="marquee-notification-bar">
+    <div class="marquee-text-wrapper">
+        <span class="marquee-text-item"><i class="fas fa-bullhorn me-2"></i> <th:block th:text="${activeMarqueeMessage}" /></span>
+        <span class="marquee-text-item" aria-hidden="true"><i class="fas fa-bullhorn me-2"></i> <th:block th:text="${activeMarqueeMessage}" /></span> </div>
+</div>
+
+<section class="page-header">
+    <video playsinline autoplay muted loop id="header-video-bg">
+        <source th:src="@{/videos/6.mp4}" type="video/mp4">
+        Trình duyệt của bạn không hỗ trợ thẻ video.
+    </video>
+
+    <div class="container">
+        <h1>Liên hệ với chúng tôi</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Liên hệ</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+<section class="contact-info py-5"> <div class="container">
+    <h2 class="section-title text-center">Thông tin liên hệ</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="contact-info-box">
+                <div class="contact-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h5>Địa chỉ</h5>
+                <p>Đại học UEF<br>276 Điện Biên Phủ<br>Phường 17, Quận Bình Thạnh<br>TP. Hồ Chí Minh</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="contact-info-box">
+                <div class="contact-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h5>Điện thoại</h5>
+                <p>Tổng đài: (028) 3838 6686<br>
+                    Hỗ trợ kỹ thuật: (028) 3838 6868<br>
+                    Fax: (028) 3838 6688</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="contact-info-box">
+                <div class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h5>Email</h5>
+                <p>Chung: thuvienso@uef.edu.vn<br>
+                    Hỗ trợ kỹ thuật: hotro.thuvien@uef.edu.vn<br>
+                    Góp ý: gopy.thuvien@uef.edu.vn</p>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<section class="contact-form-section pb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="contact-form">
+                    <h3 class="mb-4">Gửi tin nhắn cho chúng tôi</h3>
+                    <form id="contactForm" action="/contact/send" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="fullName" placeholder="Họ và tên *" required>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="email" class="form-control" name="email" placeholder="Email *" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="tel" class="form-control" name="phone" placeholder="Số điện thoại">
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" name="subject" required>
+                                    <option value="" selected disabled>Chọn chủ đề *</option>
+                                    <option value="account">Vấn đề tài khoản</option>
+                                    <option value="borrow">Mượn/trả sách</option>
+                                    <option value="technical">Hỗ trợ kỹ thuật</option>
+                                    <option value="feedback">Góp ý/Phản hồi</option>
+                                    <option value="other">Khác</option>
+                                </select>
+                            </div>
+                        </div>
+                        <textarea class="form-control" name="message" rows="5" placeholder="Nội dung tin nhắn *" required></textarea>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="privacy" name="privacyPolicy" required>
+                            <label class="form-check-label" for="privacy">
+                                Tôi đồng ý với <a href="#" >chính sách bảo mật</a> và cho phép lưu trữ thông tin.
+                            </label>
+                        </div>
+                        <button type="submit" class="btn contact-btn">Gửi tin nhắn</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="working-hours contact-info-box mb-4"> <div class="contact-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                    <h5>Giờ làm việc</h5>
+                    <div class="d-flex justify-content-between">
+                        <span>Thứ Hai - Thứ Sáu:</span>
+                        <span>07:30 - 17:30</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Thứ Bảy:</span>
+                        <span>08:00 - 16:00</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Chủ Nhật:</span>
+                        <span>Đóng cửa</span>
+                    </div>
+                    <div class="mt-3">
+                        <span class="badge bg-warning text-dark">Lưu ý:</span> Thời gian phục vụ có thể thay đổi trong các dịp lễ, Tết hoặc kỳ thi.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="map-section py-5"> <div class="container">
+    <h2 class="section-title text-center">Bản đồ vị trí</h2>
+    <div class="map-container">
+        <iframe class="map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.101956772799!2d106.70482931532873!3d10.803495292302074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528b5a6c6a23f%3A0x4602c37f103227f8!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBLaW5oIHThur8gL چارLiệuجVuIEPFUEhDSCAoVUVGKSAtIENodXllw6puIGfGsG0gY8OxdCAyNyY!5e0!3m2!1svi!2s!4v1685742895749!5m2!1svi!2s" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+</div>
+</section>
+
+<section class="faq-section"> <div class="container">
+    <h2 class="section-title text-center">Câu hỏi thường gặp</h2>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Làm thế nào để đăng ký tài khoản thư viện?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Bạn có thể đăng ký tài khoản bằng cách nhấp vào nút "Đăng ký" ở góc phải trên cùng của trang web. Điền đầy đủ thông tin yêu cầu trong biểu mẫu và làm theo hướng dẫn để hoàn tất quá trình đăng ký. Sinh viên và nhân viên UEF nên sử dụng email trường học để được tự động kích hoạt các quyền đặc biệt.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Tôi có thể mượn tối đa bao nhiêu sách và trong thời gian bao lâu?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Sinh viên được phép mượn tối đa 5 cuốn sách cùng một lúc trong thời hạn 14 ngày. Giảng viên và nhân viên có thể mượn tối đa 10 cuốn trong thời hạn 30 ngày. Bạn có thể gia hạn thời gian mượn sách thêm một lần nếu sách chưa bị đặt trước bởi người dùng khác.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Làm thế nào để gia hạn thời gian mượn sách?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Bạn có thể gia hạn sách từ tài khoản cá nhân bằng cách đăng nhập, chuyển đến mục "Sách đang mượn" và nhấp vào nút "Gia hạn" bên cạnh sách cần gia hạn. Việc gia hạn chỉ có thể thực hiện trước ngày hết hạn và nếu sách chưa được đặt trước bởi người dùng khác.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Có phạt phí khi trả sách trễ hạn không?
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Có, thư viện áp dụng phí phạt trả sách trễ hạn là 5.000đ/ngày/cuốn sách. Nếu bạn trễ hạn quá 30 ngày, tài khoản có thể bị tạm khóa cho đến khi hoàn trả sách và đóng phí phạt. Trong trường hợp làm mất hoặc hư hỏng sách, bạn sẽ cần bồi thường theo quy định của thư viện.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFive">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            Làm thế nào để đề xuất mua sách mới cho thư viện?
+                        </button>
+                    </h2>
+                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Bạn có thể gửi đề xuất mua sách mới thông qua mục "Đề xuất sách" trong tài khoản cá nhân hoặc gửi email trực tiếp đến địa chỉ dexuat.thuvien@uef.edu.vn với đầy đủ thông tin về tựa sách, tác giả, nhà xuất bản và lý do đề xuất. Thư viện sẽ xem xét và phản hồi trong vòng 7 ngày làm việc.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<footer>
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-md-4">
+                <h4 class="footer-title">Thư viện Số</h4>
+                <p>Hệ thống quản lý thư viện trực tuyến hiện đại, giúp kết nối người đọc với kho tàng tri thức qua nền tảng số.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <h4 class="footer-title">Liên kết nhanh</h4>
+                <ul class="footer-links">
+                    <li><a href="/"><i class="fas fa-angle-right me-2"></i>Trang chủ</a></li>
+                    <li><a href="/catalog"><i class="fas fa-angle-right me-2"></i>Danh mục sách</a></li>
+                    <li><a href="/search"><i class="fas fa-angle-right me-2"></i>Tìm kiếm</a></li>
+                    <li><a href="/about"><i class="fas fa-angle-right me-2"></i>Giới thiệu</a></li>
+                    <li><a href="/contact"><i class="fas fa-angle-right me-2"></i>Liên hệ</a></li>
+                    <li><a href="/faq"><i class="fas fa-angle-right me-2"></i>Hỏi đáp</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <h4 class="footer-title">Thông tin thư viện</h4>
+                <ul class="footer-links">
+                    <li><i class="fas fa-map-marker-alt me-2"></i>276 Điện Biên Phủ, P.17, Q.Bình Thạnh, TP.HCM</li>
+                    <li><i class="fas fa-phone-alt me-2"></i>(028) 3838 6686</li>
+                    <li><i class="fas fa-envelope me-2"></i>thuvienso@uef.edu.vn</li>
+                    <li><i class="fas fa-clock me-2"></i>Thứ 2 - Thứ 6: 7:30 - 17:30</li>
+                    <li><i class="fas fa-clock me-2"></i>Thứ 7: 8:00 - 16:00</li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <div class="row">
+                <div class="col-md-6 text-md-start mb-2 mb-md-0">
+                    <p class="mb-0">© 2025 Thư viện Số UEF. Đã đăng ký bản quyền.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <p class="mb-0">
+                        <a href="/terms" class="me-3">Điều khoản sử dụng</a>
+                        <a href="/privacy" >Chính sách bảo mật</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Navbar active link
+        const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+        const currentPath = window.location.pathname;
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === '/contact' && currentPath.includes('/contact')) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+
+        // Back to top button
+        const backToTopButton = document.querySelector('.back-to-top');
+        if (backToTopButton) {
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.style.display = 'flex'; /* Use flex for icon centering */
+                    backToTopButton.style.alignItems = 'center';
+                    backToTopButton.style.justifyContent = 'center';
+                } else {
+                    backToTopButton.style.display = 'none';
+                }
+            });
+
+            backToTopButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }
+
+
+        // Form validation & submission simulation
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Basic validation example (Bootstrap 5 handles :required)
+                let isValid = true;
+                contactForm.querySelectorAll('[required]').forEach(input => {
+                    if (!input.value.trim() || (input.type === 'checkbox' && !input.checked)) {
+                        isValid = false;
+                        // You might want to add custom error messages or styles here
+                    }
+                });
+
+                if (!isValid) {
+                    // Optionally show a general error message
+                    // For now, Bootstrap's default validation UI will work
+                    return;
+                }
+
+                const submitBtn = contactForm.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Đang gửi...';
+
+                setTimeout(function() {
+                    // Remove existing alert if any
+                    const existingAlert = contactForm.querySelector('.alert-form-submission');
+                    if (existingAlert) {
+                        existingAlert.remove();
+                    }
+
+                    const alert = document.createElement('div');
+                    alert.className = 'alert alert-success mt-3 alert-form-submission'; // Added a class
+                    alert.role = 'alert';
+                    alert.innerHTML = '<i class="fas fa-check-circle me-2"></i>Tin nhắn của bạn đã được gửi thành công. Chúng tôi sẽ phản hồi trong thời gian sớm nhất!';
+
+                    // Insert alert after the button or at the end of the form
+                    submitBtn.parentNode.insertBefore(alert, submitBtn.nextSibling);
+                    contactForm.reset();
+
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+
+                    setTimeout(function() {
+                        alert.remove();
+                    }, 5000);
+                }, 1500);
+            });
+        }
+
+        // Fixed navbar padding adjustment and scroll shadow
+        const navbar = document.querySelector('.navbar.fixed-top'); // Ensure it's the fixed one
+        if (navbar) {
+            const navHeight = navbar.offsetHeight;
+            document.body.style.paddingTop = navHeight + 'px';
+
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.style.paddingTop = '8px'; // Adjust padding to shrink navbar
+                    navbar.style.paddingBottom = '8px';
+                    navbar.style.boxShadow = '0 2px 15px rgba(139, 69, 19, 0.1)'; // Wood theme shadow
+                } else {
+                    navbar.style.paddingTop = '12px';
+                    navbar.style.paddingBottom = '12px';
+                    navbar.style.boxShadow = '0 2px 10px rgba(139, 69, 19, 0.07)'; // Wood theme shadow
+                }
+            });
+        }
+    });
+    // Đảm bảo code này được chạy sau khi toàn bộ trang đã tải xong
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // --- LOGIC CHO NAVBAR SCROLL & MENU ACTIVE ---
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            // Hiệu ứng co nhỏ navbar khi cuộn
+            window.addEventListener('scroll', function() {
+                if (window.scrollY > 50) {
+                    navbar.style.padding = '8px 0';
+                    navbar.style.boxShadow = '0 2px 15px rgba(139, 69, 19, 0.1)';
+                } else {
+                    navbar.style.padding = '12px 0';
+                    navbar.style.boxShadow = '0 2px 10px rgba(139, 69, 19, 0.07)';
+                }
+            });
+
+            // Tự động tô sáng mục menu đang active
+            const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+            const currentPath = window.location.pathname;
+            let isMatched = false;
+            navLinks.forEach(link => {
+                const linkPath = new URL(link.href, window.location.origin).pathname;
+                if (linkPath !== '/' && currentPath.startsWith(linkPath)) {
+                    link.classList.add('active');
+                    isMatched = true;
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            if (!isMatched && document.querySelector('.navbar-nav .nav-link[href="/"]')) {
+                document.querySelector('.navbar-nav .nav-link[href="/"]').classList.add('active');
+            }
+        }
+
+        // --- LOGIC CHO NOTIFICATION DROPDOWN ---
+        const notificationDropdownToggle = document.getElementById('notificationDropdownToggle');
+        if (notificationDropdownToggle) {
+            const notificationList = document.getElementById('notificationList');
+            const notificationBadge = document.getElementById('notificationBadge');
+            const markAllReadBtn = document.getElementById('markAllReadBtn');
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            const emptyState = document.getElementById('notificationEmptyState');
+            let currentNotificationPage = 0;
+            let isLastPage = false;
+            let isLoading = false;
+
+            function formatTimeAgo(dateString) { /* ... code format thời gian ... */ }
+            function createNotificationElement(notification) { /* ... code tạo element thông báo ... */ }
+            function checkEmptyState() { /* ... code kiểm tra trạng thái rỗng ... */ }
+            function renderNotifications(notifications, append = false) { /* ... code render thông báo ... */ }
+            async function fetchNotifications(page) { /* ... code fetch thông báo ... */ }
+            async function deleteNotification(id) { /* ... code xóa thông báo ... */ }
+            async function markAllAsRead() { /* ... code đánh dấu đã đọc ... */ }
+
+            fetchNotifications(0);
+            loadMoreBtn.addEventListener('click', () => { currentNotificationPage++; fetchNotifications(currentNotificationPage); });
+            notificationDropdownToggle.addEventListener('show.bs.dropdown', markAllAsRead);
+            markAllReadBtn.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); markAllAsRead(); });
+        }
+    });
+</script>
+<div class="chat-widget-container">
+    <div class="chat-welcome-message">
+        <span class="swaying-text">Chat với nhân viên</span>
+    </div>
+
+    <div id="chat-toggle-button">
+        <div class="main-chat-icon">
+            <video playsinline autoplay muted loop class="chat-logo-be-heo-video">
+                <source th:src="@{/videos/2.mp4}" type="video/mp4">
+            </video>
+        </div>
+        <div class="close-chat-icon">
+            <i class="fas fa-times"></i>
+        </div>
+    </div>
+
+    <div id="chat-box">
+        <div class="chat-header">
+            <div class="staff-info">
+                <video playsinline autoplay muted loop class="staff-avatar">
+                    <source th:src="@{/videos/2.mp4}" type="video/mp4">
+                </video>
+                <div>
+                    <div class="staff-name">Bé Heo</div>
+                    <div class="staff-status">
+                        <span class="online-indicator"></span>
+                        Đang hoạt động
+                    </div>
+                </div>
+            </div>
+            <button id="close-chatbox-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="message-wrapper" id="thinking-indicator">
+                <video playsinline autoplay muted loop class="staff-avatar">
+                    <source th:src="@{/videos/2.mp4}" type="video/mp4">
+                </video>
+                <div class="message-content">
+                    <span class="thinking-text">Đang suy nghĩ...</span>
+                </div>
+            </div>
+            <div id="faq-container" class="faq-container"></div>
+        </div>
+
+        <div class="chat-footer">
+            <input type="text" id="chat-input" placeholder="Nhập tin nhắn của bạn...">
+            <button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+</body>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // === JAVASCRIPT HOÀN CHỈNH CUỐI CÙNG CHO CHAT WIDGET ===
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Khai báo các element ---
+        const chatWidgetContainer = document.querySelector('.chat-widget-container');
+        const chatToggleButton = document.getElementById('chat-toggle-button');
+        const chatBody = document.getElementById('chat-body');
+        const chatInput = document.getElementById('chat-input');
+        const chatSendBtn = document.getElementById('chat-send-btn');
+        const faqContainer = document.getElementById('faq-container');
+        const thinkingIndicator = document.getElementById('thinking-indicator');
+        const closeChatboxBtn = document.getElementById('close-chatbox-btn'); // Đã thêm
+
+        // --- Biến trạng thái ---
+        let welcomeSequenceShown = false;
+        let isAiThinking = false;
+
+        // === CÁC HÀM TIỆN ÍCH ===
+        function formatMessageTime(date) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        function addMessage(text, type) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `message-wrapper ${type}`;
+            const bubble = document.createElement('div');
+            bubble.className = 'message-content';
+            bubble.innerHTML = text.replace(/\n/g, '<br>');
+            const meta = document.createElement('div');
+            meta.className = 'message-meta';
+            const timestamp = document.createElement('span');
+            timestamp.className = 'message-timestamp';
+            timestamp.textContent = formatMessageTime(new Date());
+            meta.appendChild(timestamp);
+            wrapper.appendChild(bubble);
+            wrapper.appendChild(meta);
+            if (type === 'user') {
+                const status = document.createElement('span');
+                status.className = 'message-status';
+                status.innerHTML = '<i class="fas fa-check"></i> Đã gửi';
+                meta.appendChild(status);
+            }
+            chatBody.insertBefore(wrapper, thinkingIndicator);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            return wrapper;
+        }
+
+        // === CÁC HÀM LOGIC CHÍNH ===
+        async function sendMessage(messageText) {
+            const userMessage = messageText || chatInput.value.trim();
+            if (userMessage === '' || isAiThinking) return;
+            isAiThinking = true;
+            let userMessageElement;
+            if (!messageText) {
+                userMessageElement = addMessage(userMessage, 'user');
+            } else {
+                const userMessages = chatBody.querySelectorAll('.message-wrapper.user');
+                userMessageElement = userMessages[userMessages.length - 1];
+            }
+            chatInput.value = '';
+            if (faqContainer) faqContainer.style.display = 'none';
+            setTimeout(() => {
+                if (userMessageElement) {
+                    const statusEl = userMessageElement.querySelector('.message-status');
+                    if (statusEl) {
+                        statusEl.innerHTML = '<i class="fas fa-check-double"></i> Đã xem';
+                    }
+                }
+            }, 800);
+            thinkingIndicator.style.display = 'flex';
+            chatBody.scrollTop = chatBody.scrollHeight;
+            try {
+                const response = await fetch('/api/ai/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userMessage })
+                });
+                if (!response.ok) throw new Error('API response error');
+                const data = await response.json();
+                setTimeout(() => {
+                    thinkingIndicator.style.display = 'none';
+                    addMessage(data.reply, 'staff');
+                }, 1200);
+            } catch (error) {
+                console.error('Lỗi khi gửi tin nhắn:', error);
+                thinkingIndicator.style.display = 'none';
+                addMessage('Xin lỗi, đã có lỗi xảy ra. Bạn thử lại nhé.', 'staff');
+            } finally {
+                isAiThinking = false;
+            }
+        }
+
+        function showFaqButtons() {
+            if (!faqContainer) return;
+            faqContainer.innerHTML = '';
+            faqContainer.style.display = 'flex';
+            const faqs = [
+                { question: "Giờ mở cửa?", prompt: "Thư viện mở cửa lúc mấy giờ?" },
+                { question: "Quy định mượn sách?", prompt: "Quy định mượn sách của sinh viên là gì?" },
+                { question: "Làm sao để gia hạn?", prompt: "Làm thế nào để gia hạn sách?" }
+            ];
+            faqs.forEach(faq => {
+                const button = document.createElement('button');
+                button.className = 'faq-button';
+                button.textContent = faq.question;
+                button.addEventListener('click', () => {
+                    addMessage(faq.prompt, 'user');
+                    sendMessage(faq.prompt);
+                });
+                faqContainer.appendChild(button);
+            });
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function startWelcomeSequence() {
+            if (welcomeSequenceShown) return;
+            welcomeSequenceShown = true;
+            chatBody.innerHTML = '';
+            chatBody.appendChild(thinkingIndicator);
+            if (faqContainer) chatBody.appendChild(faqContainer);
+            thinkingIndicator.style.display = 'flex';
+            setTimeout(() => {
+                thinkingIndicator.style.display = 'none';
+                addMessage("Dạ em là bé heo trợ lí AI thông minh của thư viện số UEF, anh chị cần em hỗ trợ gì ạ 😊", 'staff');
+                setTimeout(() => {
+                    showFaqButtons();
+                }, 2000);
+            }, 1500);
+        }
+
+        // === GÁN CÁC SỰ KIỆN ===
+        if (chatToggleButton) {
+            chatToggleButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const isActive = chatWidgetContainer.classList.toggle('active');
+                if (isActive) {
+                    startWelcomeSequence();
+                }
+            });
+        }
+
+        if (closeChatboxBtn) { // Đã thêm
+            closeChatboxBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                chatWidgetContainer.classList.remove('active');
+            });
+        }
+
+        if (chatSendBtn) {
+            chatSendBtn.addEventListener('click', () => sendMessage());
+        }
+
+        if (chatInput) {
+            chatInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
+    });
+    /*]]>*/
+</script>
+</html>

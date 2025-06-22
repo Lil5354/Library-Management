@@ -1,0 +1,1353 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Thư viện Trực tuyến - Danh mục sách</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="/css/index.css" rel="stylesheet">
+    <link href="/js/index.js" rel="stylesheet">
+    <style>
+        :root {
+            /* Wood & Beige Theme */
+            --primary: #8B4513;
+            --primary-light: #A0522D;
+            --primary-dark: #5C3317;
+            --secondary: #D2B48C;
+            --light: #FAF0E6;
+            --dark: #4A3B31;
+            --card-bg: #FFFBF0;
+            --text-on-primary: #FAF0E6;
+            --text-on-secondary: #4A3B31;
+            --text-light-custom: #795548;
+            --feature-icon-bg-base: rgba(139, 69, 19, 0.1);
+            --roles-section-bg-base: rgba(210, 180, 140, 0.07);
+            --footer-bg-custom: #3D2B1F;
+            --footer-text-custom: #D3C5BC;
+            --footer-link-hover-custom: #FAF0E6;
+            --nav-bar-bg: rgba(255, 251, 240, 0.95);
+            --box-shadow-base-color-rgb: 139, 69, 19;
+            --border-subtle: #E0D6CC;
+            /* Thêm màu cho Status */
+            --status-available-bg: #e8f5e9;
+            --status-available-text: #2e7d32;
+            --status-borrowed-bg: #fbe9e7;
+            --status-borrowed-text: #d84315;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            position: relative;
+            padding-top: 76px; /* Cho fixed navbar */
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: var(--nav-bar-bg);
+            box-shadow: 0 2px 10px rgba(var(--box-shadow-base-color-rgb), 0.07);
+            padding: 12px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary) !important;
+        }
+
+        .navbar-brand span {
+            color: var(--secondary);
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--dark) !important;
+            margin: 0 10px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .nav-link.active {
+            color: var(--primary) !important;
+        }
+
+        .nav-link:before {
+            content: "";
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover:before, .nav-link.active:before {
+            width: 100%;
+        }
+
+        .nav-btn {
+            border-radius: 30px;
+            padding: 8px 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary) !important;
+        }
+
+        .btn-login:hover {
+            background-color: var(--primary);
+            color: var(--text-on-primary) !important;
+        }
+
+        .btn-register {
+            background-color: var(--primary);
+            border: 2px solid var(--primary);
+            color: var(--text-on-primary) !important;
+        }
+
+        .btn-register:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+            color: var(--text-on-primary) !important;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--footer-bg-custom);
+            color: var(--footer-text-custom);
+            padding: 60px 0 20px;
+            margin-top: 50px; /* Add some margin top to the footer */
+        }
+
+        .footer-title {
+            color: var(--light);
+            font-weight: 600;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: var(--footer-text-custom);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--footer-link-hover-custom);
+            padding-left: 5px;
+        }
+        .footer-links i.me-2 {
+            color: var(--footer-text-custom);
+        }
+        .footer-links a:hover i.me-2 {
+            color: var(--footer-link-hover-custom);
+        }
+
+        .social-links {
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background-color: rgba(250, 240, 230, 0.1);
+            color: var(--footer-link-hover-custom);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            color: var(--text-on-primary);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(250, 240, 230, 0.15);
+            padding-top: 20px;
+            margin-top: 40px;
+            font-size: 0.9rem;
+        }
+        .footer-bottom p a {
+            color: var(--footer-text-custom) !important;
+            opacity: 0.8;
+        }
+        .footer-bottom p a:hover {
+            color: var(--footer-link-hover-custom) !important;
+            opacity: 1;
+        }
+
+        /* === CSS CHO NAVBAR VÀ USER DROPDOWN === */
+        .wave-hand-navbar {
+            display: inline-block;
+            animation: waveNavbar 2.5s infinite;
+            transform-origin: 70% 70%;
+            font-size: 1.1em;
+            margin-left: 5px;
+            cursor: default;
+        }
+        @keyframes waveNavbar {
+            0% { transform: rotate(0.0deg); }
+            10% { transform: rotate(14.0deg); }
+            20% { transform: rotate(-8.0deg); }
+            30% { transform: rotate(14.0deg); }
+            40% { transform: rotate(-4.0deg); }
+            50% { transform: rotate(10.0deg); }
+            60% { transform: rotate(0.0deg); }
+            100% { transform: rotate(0.0deg); }
+        }
+        .navbar .user-avatar-icon { color: var(--primary); cursor: pointer; font-size: 1.75rem; transition: color 0.2s ease-in-out; vertical-align: middle; }
+        .navbar .user-avatar-icon:hover { color: var(--primary-dark); }
+        .navbar .user-notification-icon { color: var(--primary); cursor: pointer; font-size: 1.6rem; transition: color 0.2s ease-in-out; vertical-align: middle; text-decoration: none; }
+        .navbar .user-notification-icon:hover { color: var(--primary-dark); }
+        .navbar .nav-icon-link { text-decoration: none; padding: 0.25rem 0.5rem; }
+        .navbar .nav-icon-link .badge { font-size: 0.6em; padding: 0.3em 0.5em; }
+        .navbar .dropdown-toggle::after { display: none; }
+        .navbar .dropdown-menu { border-radius: 0.75rem; border: 1px solid var(--border-subtle); background-color: var(--card-bg); box-shadow: 0 0.5rem 1.5rem rgba(var(--box-shadow-base-color-rgb), 0.15); padding-top: 0.5rem; padding-bottom: 0.5rem; min-width: 260px; margin-top: 0.75rem !important; }
+        .navbar .dropdown-menu .dropdown-item { color: var(--dark); padding: 0.6rem 1.5rem; font-size: 0.95rem; font-weight: 500; display: flex; align-items: center; transition: background-color 0.2s ease, color 0.2s ease; }
+        .navbar .dropdown-menu .dropdown-item:hover, .navbar .dropdown-menu .dropdown-item:focus { background-color: var(--light); color: var(--primary); }
+        .navbar .dropdown-menu .dropdown-item i.me-2 { color: var(--text-light-custom); width: 20px; text-align: center; margin-right: 0.75rem !important; transition: color 0.2s ease; }
+        .navbar .dropdown-menu .dropdown-item:hover i.me-2, .navbar .dropdown-menu .dropdown-item:focus i.me-2 { color: var(--primary); }
+        .navbar .dropdown-menu form .dropdown-item { width: 100%; text-align: left; border: none; background-color: transparent; }
+        .navbar .dropdown-menu .px-3.py-2.text-center { border-bottom: 1px solid var(--border-subtle); margin-bottom: 0.5rem; padding-bottom: 1rem !important; }
+        .navbar .dropdown-menu img.user-avatar-dropdown { width: 70px; height: 70px; object-fit: cover; border-color: var(--border-subtle) !important; }
+        .navbar .dropdown-menu .default-avatar-dropdown { width: 70px; height: 70px; border-radius: 50%; color: var(--secondary); display: flex; align-items: center; justify-content: center; margin-left: auto; margin-right: auto; }
+        .navbar .dropdown-menu .default-avatar-dropdown i { font-size: 2.5rem; }
+        .navbar .dropdown-menu .dropdown-username { color: var(--primary-dark); font-weight: 600; font-size: 1.1rem; margin-top: 0.5rem; }
+        .navbar .dropdown-menu .dropdown-email { color: var(--text-light-custom); font-size: 0.85rem; word-break: break-all; }
+        .navbar .dropdown-menu .dropdown-divider { border-top-color: var(--border-subtle); margin: 0.5rem 0; }
+
+        /* --- Thanh thông báo chạy chữ --- */
+        .marquee-notification-bar { color: #D32F2F; padding: 2px 0; font-size: 0.9rem; font-weight: 500; overflow: hidden; white-space: nowrap; border-bottom: 1px solid var(--border-subtle); box-shadow: 0 2px 5px rgba(var(--box-shadow-base-color-rgb), 0.05); }
+        .marquee-text-wrapper { display: inline-block; animation: marqueeAnimation 40s linear infinite; }
+        .marquee-text-item { display: inline-block; padding-right: 50px; }
+        .marquee-text-item i { color: var(--primary-dark); }
+        @keyframes marqueeAnimation { 0% { transform: translateX(0%); } 100% { transform: translateX(-50%); } }
+
+        /* === CSS CHO DROPDOWN THÔNG BÁO === */
+        .notification-dropdown { width: 380px; padding: 0; border-radius: 0.75rem; border: 1px solid var(--border-subtle); background-color: var(--card-bg); }
+        .notification-header, .notification-footer { padding: 0.75rem 1rem; background-color: rgba(var(--box-shadow-base-color-rgb), 0.03); }
+        .notification-header { display: flex; justify-content: space-between; align-items: center; }
+        .notification-header a { font-size: 0.8rem; color: var(--primary); text-decoration: none; cursor: pointer; }
+        .notification-body { max-height: 400px; overflow-y: auto; position: relative; }
+        #notificationList { list-style: none; padding: 0; margin: 0; }
+        #notificationEmptyState { display: none; text-align: center; padding: 2.5rem 1rem; color: var(--text-light-custom); }
+        #notificationEmptyState i { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+        .notification-item { display: flex; align-items: flex-start; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-subtle); transition: background-color 0.2s ease; text-decoration: none; position: relative; }
+        .notification-item:hover { background-color: var(--light); }
+        .notification-item.unread { background-color: rgba(var(--box-shadow-base-color-rgb), 0.05); }
+        .notification-item .icon { font-size: 1.2rem; color: var(--secondary); margin-right: 1rem; flex-shrink: 0; padding-top: 2px; }
+        .notification-item .content { flex-grow: 1; }
+        .notification-item .title { font-weight: 600; color: var(--dark); font-size: 0.95rem; margin-bottom: 0.25rem; }
+        .notification-item .message { font-size: 0.85rem; color: var(--text-light-custom); line-height: 1.4; white-space: normal; }
+        .notification-item .timestamp { font-size: 0.75rem; color: #999; margin-top: 0.35rem; }
+        .notification-item .delete-btn { opacity: 0; visibility: hidden; transition: all 0.2s ease; font-size: 0.8rem; color: #dc3545; background: none; border: none; padding: 0.25rem 0.5rem; cursor: pointer; position: absolute; top: 0.5rem; right: 0.5rem; }
+        .notification-item:hover .delete-btn { opacity: 0.6; visibility: visible; }
+        .notification-item .delete-btn:hover { opacity: 1; }
+        .notification-footer { text-align: center; }
+        .notification-footer .btn-load-more { width: 100%; border: none; background: transparent; color: var(--primary); font-weight: 600; padding: 0.5rem; border-radius: 0.35rem; transition: background-color 0.2s ease; }
+        .notification-footer .btn-load-more:hover { background-color: rgba(var(--box-shadow-base-color-rgb), 0.05); }
+        .notification-footer .btn-load-more:disabled { color: var(--text-light-custom); cursor: not-allowed; }
+
+        /* === CSS CHO NÚT CHAT & KHUNG CHAT === */
+        .chat-widget-container { position: fixed; bottom: 25px; right: 25px; z-index: 1050; display: flex; align-items: flex-end; transition: all 0.3s ease-in-out; }
+        @keyframes sway { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(2deg) translateX(1px); } }
+        .swaying-text { display: inline-block; animation: sway 0.5s ease-in-out infinite alternate; }
+        .chat-welcome-message { background-color: white; color: var(--dark); padding: 5px 7px; border-radius: 10px; margin-right: 15px; font-weight: 500; font-size: 0.9rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); position: relative; opacity: 1; transform: scale(1); transition: opacity 0.3s ease, transform 0.3s ease; white-space: nowrap; }
+        .chat-welcome-message::after { content: ''; position: absolute; top: 50%; right: -8px; margin-top: -8px; border-width: 8px; border-style: solid; border-color: transparent transparent transparent white; }
+        #chat-toggle-button { width: 60px; height: 60px; background: linear-gradient(45deg, var(--primary), var(--primary-light)); border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); transition: all 0.3s ease-in-out; position: relative; overflow: hidden; flex-shrink: 0; }
+        .chat-logo-be-heo { width: 100%; height: 100%; object-fit: cover; transition: opacity 0.3s, transform 0.3s; border-radius: 50%; }
+        /* Animation nhún lên xuống nhẹ nhàng */
+        @keyframes bobbing {
+            0% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px); /* Nhún lên 5px */
+            }
+            100% {
+                transform: translateY(0);
+            }
+        }
+        /* === CSS CƠ BẢN CHO TRANG DANH MỤC SÁCH === */
+        .page-header {
+            /* background-color: var(--dark); <-- Dòng này đã được thay thế bằng video */
+            position: relative;
+            overflow: hidden;
+            color: var(--light);
+            padding: 40px 0;
+            margin-bottom: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* --- BỔ SUNG: CSS CHO VIDEO NỀN VÀ HIỆU ỨNG HEADER --- */
+
+        /* Cấu hình cho video nền */
+        #header-video-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -2; /* Đẩy video ra lớp sau cùng */
+            object-fit: cover;
+        }
+
+        /* Tạo lại lớp phủ màu tối để chữ dễ đọc */
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6); /* Lớp phủ tối màu */
+            z-index: -1; /* Nằm trên video, dưới chữ */
+        }
+
+        /* Định nghĩa animation trượt lên */
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Áp dụng animation cho tiêu đề */
+        .fadeUp-header {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            /* Các thuộc tính ban đầu cho animation */
+            opacity: 0;
+            transform: translateY(20px);
+            /* Gọi animation */
+            animation: fadeUp 1s forwards 0.3s;
+        }
+        .page-header h1 { font-family: 'Playfair Display', serif; font-size: 2.8rem; margin-bottom: 10px; }
+        .breadcrumb { background: transparent; justify-content: flex-start; margin-bottom: 0; padding: 0; }
+        .breadcrumb-item, .breadcrumb-item a { color: rgba(250, 240, 230, 0.7); text-decoration: none; font-size: 0.9rem; }
+        .breadcrumb-item.active { color: var(--light); font-weight: 500; }
+        .breadcrumb-item + .breadcrumb-item::before { color: rgba(250, 240, 230, 0.7); }
+
+        /* === CSS NÂNG CẤP CHO TRANG DANH MỤC SÁCH === */
+
+        /* --- Sidebar Lọc --- */
+        .filter-sidebar {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(var(--box-shadow-base-color-rgb), 0.05);
+            border: 1px solid var(--border-subtle);
+        }
+        .filter-widget {
+            margin-bottom: 30px;
+        }
+        .filter-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-dark);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+        .filter-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .filter-list li a {
+            color: var(--text-light-custom);
+            text-decoration: none;
+            display: block;
+            padding: 8px 10px;
+            border-radius: 5px;
+            transition: all 0.2s ease-in-out;
+        }
+        .filter-list li a:hover, .filter-list li.active a {
+            background-color: var(--light);
+            color: var(--primary);
+            font-weight: 500;
+        }
+        .form-check-label {
+            color: var(--text-light-custom);
+        }
+
+        /* --- Khung chính & Thanh điều khiển --- */
+        .shop-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            background-color: var(--card-bg);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+        }
+        .shop-controls .form-select {
+            max-width: 200px;
+            font-size: 0.9rem;
+        }
+        .result-count {
+            color: var(--text-light-custom);
+            font-size: 0.9rem;
+        }
+
+        /* --- Thẻ Sách (Book Card) --- */
+        .book-card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(var(--box-shadow-base-color-rgb), 0.05);
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-subtle);
+        }
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(var(--box-shadow-base-color-rgb), 0.1);
+        }
+        .book-thumb {
+            position: relative;
+            height: 250px;
+            overflow: hidden;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+        .book-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s ease;
+        }
+        .book-card:hover .book-thumb img {
+            transform: scale(1.05);
+        }
+        .book-category, .book-availability {
+            position: absolute;
+            top: 10px;
+            padding: 4px 10px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .book-category {
+            left: 10px;
+            background-color: var(--secondary);
+            color: var(--text-on-secondary);
+        }
+        .book-availability {
+            right: 10px;
+            background-color: var(--status-available-bg);
+            color: var(--status-available-text);
+        }
+        .book-availability.borrowed {
+            background-color: var(--status-borrowed-bg);
+            color: var(--status-borrowed-text);
+        }
+        .book-info {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .book-title {
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 1.1rem;
+            line-height: 1.4;
+            height: 46px;
+            overflow: hidden;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        .book-author {
+            color: var(--text-light-custom);
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+        .book-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .book-rating {
+            color: #fabb05;
+        }
+        .book-actions .btn-view {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--text-on-primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: 20px;
+            padding: 6px 18px;
+            transition: all 0.2s ease;
+        }
+        .book-actions .btn-view:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        /* --- Phân Trang --- */
+        .pagination {
+            margin: 40px 0 0;
+            justify-content: center;
+        }
+        .pagination .page-item .page-link {
+            color: var(--primary);
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            margin: 0 3px;
+            border-radius: 5px;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            color: var(--text-on-primary);
+        }
+        .pagination .page-item.disabled .page-link {
+            background-color: var(--light);
+        }
+
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/"><i class="fas fa-book-open me-2"></i>Thư viện<span>Số</span></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav mx-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Trang chủ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/categories">Danh mục sách</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">Giới thiệu</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/contact">Liên hệ</a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <div th:if="${!isAuthenticated}" class="ms-auto">
+                    <a th:href="@{/auth/login}" class="btn nav-btn btn-login me-2">Đăng nhập</a>
+                    <a th:href="@{/auth/register}" class="btn nav-btn btn-register">Đăng ký</a>
+                </div>
+
+                <div th:if="${isAuthenticated}" class="d-flex align-items-center ms-auto">
+                    <span class="me-2 navbar-text" style="color: var(--dark); white-space: nowrap;">
+                        Chào <span th:text="${loggedInUserFullName != null ? loggedInUserFullName : 'bạn'}">bạn</span>!<span class="wave-hand-navbar">👋</span>
+                    </span>
+
+                    <div class="dropdown me-3">
+                        <a href="#" class="nav-icon-link position-relative" id="notificationDropdownToggle" data-bs-toggle="dropdown" aria-expanded="false"
+                           th:title="${unreadNotificationCount > 0 ? 'Bạn có ' + unreadNotificationCount + ' thông báo chưa đọc' : 'Không có thông báo mới'}">
+                            <i class="fas fa-bell user-notification-icon"></i>
+                            <span th:if="${unreadNotificationCount > 0}" id="notificationBadge"
+                                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            [[${unreadNotificationCount}]]
+        </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow notification-dropdown" aria-labelledby="notificationDropdownToggle">
+                            <li class="notification-header">
+                                <h6 class="mb-0">Thông báo</h6>
+                                <a href="javascript:void(0);" id="markAllReadBtn">Đánh dấu tất cả đã đọc</a>
+                            </li>
+                            <li><hr class="dropdown-divider my-0"></li>
+
+                            <li class="notification-body">
+                                <ul class="list-unstyled mb-0" id="notificationList"></ul>
+
+                                <div id="notificationEmptyState">
+                                    <i class="far fa-envelope-open"></i>
+                                    <p class="mb-0">Bạn chưa có thông báo nào.</p>
+                                </div>
+                            </li>
+
+                            <li class="notification-footer">
+                                <button class="btn-load-more" id="loadMoreBtn">
+                                    Tải thêm
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="dropdown">
+                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUserNavbar" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle fa-lg user-avatar-icon"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUserNavbar">
+                            <li class="px-3 py-2 text-center">
+                                <img th:if="${loggedInUserAvatarUrl != null AND !loggedInUserAvatarUrl.isEmpty()}"
+                                     th:src="${loggedInUserAvatarUrl}"
+                                     alt="User Avatar" width="70" height="70"
+                                     class="rounded-circle mb-2 border user-avatar-dropdown">
+                                <div th:unless="${loggedInUserAvatarUrl != null AND !loggedInUserAvatarUrl.isEmpty()}"
+                                     class="default-avatar-dropdown mb-2">
+                                    <i class="fas fa-user-circle"></i>
+                                </div>
+                                <h5 class="mb-0 dropdown-username"
+                                    th:text="${loggedInUsername != null ? loggedInUsername : 'Username'}">
+                                    Username
+                                </h5>
+                                <p class="text-muted mb-0 dropdown-email"
+                                   th:text="${loggedInUserEmail != null ? loggedInUserEmail : 'Không có email'}">
+                                    email@example.com
+                                </p>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" th:href="@{/reader/profile}"><i class="fas fa-user-edit me-2"></i>Thông tin tài khoản</a></li>
+                            <li><a class="dropdown-item" th:href="@{/reader/borrowed-books}"><i class="fas fa-book-reader me-2"></i>Sách đang mượn</a></li>
+                            <li><a class="dropdown-item" th:href="@{/reader/borrowing-history}"><i class="fas fa-history me-2"></i>Lịch sử mượn sách</a></li>
+                            <li><a class="dropdown-item" th:href="@{/reader/reserved-books}"><i class="fas fa-calendar-check me-2"></i>Sách đã đặt trước</a></li>
+                            <li><a class="dropdown-item" th:href="@{/reader/change-password}"><i class="fas fa-key me-2"></i>Đổi mật khẩu</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/auth/logout}" method="post" class="d-block">
+                                    <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div th:if="${activeMarqueeMessage != null}" class="marquee-notification-bar">
+    <div class="marquee-text-wrapper">
+        <span class="marquee-text-item"><i class="fas fa-bullhorn me-2"></i> <th:block th:text="${activeMarqueeMessage}" /></span>
+        <span class="marquee-text-item" aria-hidden="true"><i class="fas fa-bullhorn me-2"></i> <th:block th:text="${activeMarqueeMessage}" /></span> </div>
+</div>
+
+<header class="page-header">
+    <video playsinline autoplay muted loop id="header-video-bg">
+        <source th:src="@{/videos/4.mp4}" type="video/mp4">
+        Trình duyệt của bạn không hỗ trợ thẻ video.
+    </video>
+
+    <div class="container text-center">
+        <h1 class="fadeUp-header">Danh mục sách</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Danh mục sách</li>
+            </ol>
+        </nav>
+    </div>
+</header>
+
+<main class="container py-5">
+    <div class="row">
+
+        <aside class="col-lg-3">
+            <div class="filter-sidebar">
+
+                <div class="filter-widget">
+                    <h4 class="filter-title">Tìm kiếm sách</h4>
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Tên sách, tác giả...">
+                        <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+
+                <div class="filter-widget">
+                    <h4 class="filter-title">Danh mục</h4>
+                    <ul class="filter-list">
+                        <li class="active"><a href="#">Tất cả</a></li>
+                        <li><a href="#">Văn học</a></li>
+                        <li><a href="#">Khoa học</a></li>
+                        <li><a href="#">Lịch sử</a></li>
+                        <li><a href="#">Tâm lý học</a></li>
+                        <li><a href="#">Kinh tế</a></li>
+                        <li><a href="#">Công nghệ</a></li>
+                        <li><a href="#">Thiếu nhi</a></li>
+                    </ul>
+                </div>
+
+                <div class="filter-widget">
+                    <h4 class="filter-title">Tình trạng</h4>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="availability" id="avail_all" checked>
+                        <label class="form-check-label" for="avail_all">Tất cả</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="availability" id="avail_yes">
+                        <label class="form-check-label" for="avail_yes">Còn sách</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="availability" id="avail_no">
+                        <label class="form-check-label" for="avail_no">Đang mượn</label>
+                    </div>
+                </div>
+
+                <div class="filter-widget">
+                    <h4 class="filter-title">Xếp hạng</h4>
+                    <ul class="filter-list">
+                        <li><a href="#"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i></a></li>
+                        <li><a href="#"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="far fa-star text-warning"></i> &amp; trở lên</a></li>
+                        <li><a href="#"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="far fa-star text-warning"></i><i class="far fa-star text-warning"></i> &amp; trở lên</a></li>
+                    </ul>
+                </div>
+
+            </div>
+        </aside>
+
+        <section class="col-lg-9">
+            <div class="shop-controls">
+                <p class="result-count mb-0">Hiển thị 1–8 trên 24 kết quả</p>
+                <select class="form-select">
+                    <option selected>Sắp xếp theo: Mới nhất</option>
+                    <option value="1">Sắp xếp theo: Phổ biến</option>
+                    <option value="2">Sắp xếp theo: Tên A-Z</option>
+                    <option value="3">Sắp xếp theo: Tên Z-A</option>
+                </select>
+            </div>
+
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3">
+
+                <div class="col mb-4">
+                    <div class="book-card">
+                        <div class="book-thumb">
+                            <a href="#"><img src="https://source.unsplash.com/500x650/?book,oldcover&sig=1" alt="Sách Trăm năm cô đơn"></a>
+                            <span class="book-category">Văn học</span>
+                            <span class="book-availability">Còn sách</span>
+                        </div>
+                        <div class="book-info">
+                            <h5 class="book-title"><a href="#" class="text-decoration-none text-dark">Trăm năm cô đơn</a></h5>
+                            <p class="book-author">Tác giả: Gabriel García Márquez</p>
+                            <div class="book-meta">
+                                <div class="book-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                                <div class="book-actions"><a href="#" class="btn btn-view">Chi tiết</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col mb-4">
+                    <div class="book-card">
+                        <div class="book-thumb">
+                            <a href="#"><img src="https://source.unsplash.com/500x650/?book,sciencecover&sig=2" alt="Sách Vũ trụ"></a>
+                            <span class="book-category">Khoa học</span>
+                            <span class="book-availability borrowed">Đang mượn</span>
+                        </div>
+                        <div class="book-info">
+                            <h5 class="book-title"><a href="#" class="text-decoration-none text-dark">Vũ trụ trong vỏ hạt dẻ</a></h5>
+                            <p class="book-author">Tác giả: Stephen Hawking</p>
+                            <div class="book-meta">
+                                <div class="book-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+                                <div class="book-actions"><a href="#" class="btn btn-view">Chi tiết</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col mb-4">
+                    <div class="book-card">
+                        <div class="book-thumb">
+                            <a href="#"><img src="https://source.unsplash.com/500x650/?book,historycover&sig=4" alt="Sách Lược sử"></a>
+                            <span class="book-category">Lịch sử</span>
+                            <span class="book-availability">Còn sách</span>
+                        </div>
+                        <div class="book-info">
+                            <h5 class="book-title"><a href="#" class="text-decoration-none text-dark">Sapiens: Lược sử loài người</a></h5>
+                            <p class="book-author">Tác giả: Yuval Noah Harari</p>
+                            <div class="book-meta">
+                                <div class="book-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                                <div class="book-actions"><a href="#" class="btn btn-view">Chi tiết</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col mb-4">
+                    <div class="book-card">
+                        <div class="book-thumb">
+                            <a href="#"><img src="https://source.unsplash.com/500x650/?book,techcover&sig=6" alt="Sách Clean Code"></a>
+                            <span class="book-category">Công nghệ</span>
+                            <span class="book-availability">Còn sách</span>
+                        </div>
+                        <div class="book-info">
+                            <h5 class="book-title"><a href="#" class="text-decoration-none text-dark">Clean Code</a></h5>
+                            <p class="book-author">Tác giả: Robert C. Martin</p>
+                            <div class="book-meta">
+                                <div class="book-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                                <div class="book-actions"><a href="#" class="btn btn-view">Chi tiết</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col mb-4">
+                    <div class="book-card">
+                        <div class="book-thumb"><a href="#"><img src="https://source.unsplash.com/500x650/?book,fantasycover&sig=7" alt="Sách Harry Potter"></a><span class="book-category">Thiếu nhi</span><span class="book-availability">Còn sách</span></div>
+                        <div class="book-info"><h5 class="book-title"><a href="#" class="text-decoration-none text-dark">Harry Potter và Hòn đá Phù thủy</a></h5><p class="book-author">Tác giả: J.K. Rowling</p><div class="book-meta"><div class="book-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><div class="book-actions"><a href="#" class="btn btn-view">Chi tiết</a></div></div></div>
+                    </div>
+                </div>
+
+                <div class="col mb-4">
+                    <div class="book-card">
+                        <div class="book-thumb"><a href="#"><img src="https://source.unsplash.com/500x650/?book,adventurecover&sig=8" alt="Sách Nhà Giả Kim"></a><span class="book-category">Văn học</span><span class="book-availability borrowed">Đang mượn</span></div>
+                        <div class="book-info"><h5 class="book-title"><a href="#" class="text-decoration-none text-dark">Nhà Giả Kim</a></h5><p class="book-author">Tác giả: Paulo Coelho</p><div class="book-meta"><div class="book-rating"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div><div class="book-actions"><a href="#" class="btn btn-view">Chi tiết</a></div></div></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li class="page-item disabled"><a class="page-link" href="#"><span>&laquo;</span></a></li>
+                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#"><span>&raquo;</span></a></li>
+                </ul>
+            </nav>
+
+        </section>
+
+    </div>
+</main>
+
+
+<footer>
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-md-4">
+                <h4 class="footer-title">Thư viện Số</h4>
+                <p>Hệ thống quản lý thư viện trực tuyến hiện đại, giúp kết nối người đọc với kho tàng tri thức qua nền tảng số.</p>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <h4 class="footer-title">Liên kết</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Trang chủ</a></li>
+                    <li><a href="#">Danh mục sách</a></li>
+                    <li><a href="#">Tìm kiếm nâng cao</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h4 class="footer-title">Hỗ trợ</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Hướng dẫn sử dụng</a></li>
+                    <li><a href="#">Điều khoản dịch vụ</a></li>
+                    <li><a href="#">Chính sách bảo mật</a></li>
+                    <li><a href="#">Liên hệ hỗ trợ</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h4 class="footer-title">Liên hệ</h4>
+                <p><i class="fas fa-map-marker-alt me-2"></i> Đại học UEF, Quận 1, TP.HCM</p>
+                <p><i class="fas fa-phone me-2"></i> (028) 3838 6686</p>
+                <p><i class="fas fa-envelope me-2"></i> thuvienso@uef.edu.vn</p>
+            </div>
+        </div>
+        <div class="footer-bottom text-center">
+            <p>&copy; 2025 - Hệ thống Thư viện Trực tuyến | Đồ án Java Web - Đại học UEF</p>
+        </div>
+    </div>
+</footer>
+
+<div class="chat-widget-container">
+    <div class="chat-welcome-message">
+        <span class="swaying-text">Chat với nhân viên</span>
+    </div>
+
+    <div id="chat-toggle-button">
+        <div class="main-chat-icon">
+            <video playsinline autoplay muted loop class="chat-logo-be-heo-video">
+                <source th:src="@{/videos/2.mp4}" type="video/mp4">
+            </video>
+        </div>
+        <div class="close-chat-icon">
+            <i class="fas fa-times"></i>
+        </div>
+    </div>
+
+    <div id="chat-box">
+        <div class="chat-header">
+            <div class="staff-info">
+                <video playsinline autoplay muted loop class="staff-avatar">
+                    <source th:src="@{/videos/2.mp4}" type="video/mp4">
+                </video>
+                <div>
+                    <div class="staff-name">Bé Heo</div>
+                    <div class="staff-status">
+                        <span class="online-indicator"></span>
+                        Đang hoạt động
+                    </div>
+                </div>
+            </div>
+            <button id="close-chatbox-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+            <div class="message-wrapper" id="thinking-indicator">
+                <video playsinline autoplay muted loop class="staff-avatar">
+                    <source th:src="@{/videos/2.mp4}" type="video/mp4">
+                </video>
+                <div class="message-content">
+                    <span class="thinking-text">Đang suy nghĩ...</span>
+                </div>
+            </div>
+            <div id="faq-container" class="faq-container"></div>
+        </div>
+
+        <div class="chat-footer">
+            <input type="text" id="chat-input" placeholder="Nhập tin nhắn của bạn...">
+            <button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Navigation effect on scroll
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (navbar) {
+            if (window.scrollY > 50) {
+                navbar.style.padding = '8px 0';
+                navbar.style.boxShadow = '0 2px 20px rgba(139, 69, 19, 0.1)';
+            } else {
+                navbar.style.padding = '12px 0';
+                navbar.style.boxShadow = '0 2px 10px rgba(139, 69, 19, 0.07)';
+            }
+        }
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetElement = document.querySelector(this.getAttribute('href'));
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+
+    // Active menu item for navbar
+    document.addEventListener('DOMContentLoaded', function() {
+        const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+        const currentPath = window.location.pathname;
+
+        navLinks.forEach(link => {
+            const linkPath = new URL(link.href, window.location.origin).pathname;
+            const normalizedCurrentPath = (currentPath !== '/' && currentPath.endsWith('/')) ? currentPath.slice(0, -1) : currentPath;
+            const normalizedLinkPath = (linkPath !== '/' && linkPath.endsWith('/')) ? linkPath.slice(0, -1) : linkPath;
+
+            if (link.getAttribute('href') === '/') { // Trang chủ là trường hợp đặc biệt
+                if (normalizedCurrentPath === '' || normalizedCurrentPath === '/index.html' || normalizedCurrentPath === '/') {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            } else {
+                if (normalizedCurrentPath.startsWith(normalizedLinkPath) && normalizedLinkPath !== '') {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            }
+        });
+    });
+</script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    document.addEventListener('DOMContentLoaded', function() {
+        // === KHAI BÁO BIẾN ===
+        const notificationDropdown = document.querySelector('.notification-dropdown');
+        const notificationList = document.getElementById('notificationList');
+        const notificationBadge = document.getElementById('notificationBadge');
+        const notificationDropdownToggle = document.getElementById('notificationDropdownToggle');
+        const markAllReadBtn = document.getElementById('markAllReadBtn');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const emptyState = document.getElementById('notificationEmptyState');
+
+        // Biến trạng thái
+        let currentNotificationPage = 0;
+        let isLastPage = false;
+        let isLoading = false;
+
+        // === CÁC HÀM XỬ LÝ ===
+
+        function formatTimeAgo(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " năm trước";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " tháng trước";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " ngày trước";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " giờ trước";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " phút trước";
+            return "Vừa xong";
+        }
+
+        function createNotificationElement(notification) {
+            const listItem = document.createElement('li');
+            listItem.className = 'notification-item';
+            listItem.classList.toggle('unread', !notification.read);
+            listItem.dataset.id = notification.id;
+
+            const iconDiv = document.createElement('div');
+            iconDiv.className = 'icon';
+            iconDiv.innerHTML = '<i class="fas fa-bell"></i>';
+
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content';
+
+            const titleDiv = document.createElement('div');
+            titleDiv.className = 'title';
+            if (notification.link) {
+                const titleLink = document.createElement('a');
+                titleLink.href = notification.link;
+                titleLink.textContent = notification.title;
+                titleLink.className = 'text-decoration-none text-reset';
+                titleDiv.appendChild(titleLink);
+            } else {
+                titleDiv.textContent = notification.title;
+            }
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.textContent = notification.message;
+
+            const timestampDiv = document.createElement('div');
+            timestampDiv.className = 'timestamp';
+            timestampDiv.textContent = formatTimeAgo(notification.createdAt);
+
+            contentDiv.appendChild(titleDiv);
+            contentDiv.appendChild(messageDiv);
+            contentDiv.appendChild(timestampDiv);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'delete-btn';
+            deleteBtn.innerHTML = '&times;';
+            deleteBtn.title = 'Xóa thông báo';
+            deleteBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                deleteNotification(notification.id);
+            });
+
+            listItem.appendChild(iconDiv);
+            listItem.appendChild(contentDiv);
+            listItem.appendChild(deleteBtn);
+
+            return listItem;
+        }
+
+        function checkEmptyState() {
+            if (!notificationList || !emptyState || !loadMoreBtn) return;
+            const hasItems = notificationList.children.length > 0;
+            emptyState.style.display = hasItems ? 'none' : 'block';
+            loadMoreBtn.style.display = hasItems && !isLastPage ? 'block' : 'none';
+        }
+
+        async function fetchNotifications(page) {
+            if (isLoading || isLastPage) return;
+            isLoading = true;
+            if(loadMoreBtn) {
+                loadMoreBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+                loadMoreBtn.disabled = true;
+            }
+
+            try {
+                const response = await fetch(`/api/notifications?page=${page}&size=5`);
+                if (!response.ok) throw new Error('Failed to fetch notifications');
+
+                const pageData = await response.json();
+                renderNotifications(pageData.content, page > 0);
+
+                isLastPage = pageData.last;
+                if (isLastPage && loadMoreBtn) {
+                    loadMoreBtn.style.display = 'none';
+                }
+
+            } catch (err) {
+                console.error('Lỗi tải thông báo:', err);
+                if(loadMoreBtn) loadMoreBtn.innerHTML = 'Không thể tải thêm';
+            } finally {
+                isLoading = false;
+                if (!isLastPage && loadMoreBtn) {
+                    loadMoreBtn.innerHTML = 'Tải thêm';
+                    loadMoreBtn.disabled = false;
+                }
+                checkEmptyState();
+            }
+        }
+
+        async function deleteNotification(id) {
+            if (!confirm('Bạn có chắc muốn xóa thông báo này?')) return;
+            try {
+                const response = await fetch(`/api/notifications/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    const itemToRemove = document.querySelector(`.notification-item[data-id='${id}']`);
+                    if(itemToRemove) itemToRemove.remove();
+                    checkEmptyState();
+                } else {
+                    alert('Lỗi khi xóa thông báo.');
+                }
+            } catch (err) {
+                console.error('Lỗi xóa thông báo:', err);
+            }
+        }
+
+        async function markAllAsRead() {
+            if (notificationBadge && parseInt(notificationBadge.textContent) > 0) {
+                try {
+                    await fetch('/api/notifications/mark-all-as-read', { method: 'POST' });
+                    notificationBadge.style.display = 'none';
+                    document.querySelectorAll('.notification-item.unread').forEach(item => {
+                        item.classList.remove('unread');
+                    });
+                } catch (err) {
+                    console.error('Lỗi đánh dấu đã đọc:', err);
+                }
+            }
+        }
+
+        if (notificationDropdownToggle) {
+            fetchNotifications(0);
+
+            if(loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', function() {
+                    currentNotificationPage++;
+                    fetchNotifications(currentNotificationPage);
+                });
+            }
+
+            notificationDropdownToggle.addEventListener('show.bs.dropdown', markAllAsRead);
+
+            if(markAllReadBtn){
+                markAllReadBtn.addEventListener('click', function(e){
+                    e.preventDefault();
+                    markAllAsRead();
+                });
+            }
+        }
+    });
+    /*]]>*/
+</script>
+</body>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // === JAVASCRIPT HOÀN CHỈNH CUỐI CÙNG CHO CHAT WIDGET ===
+    document.addEventListener('DOMContentLoaded', function() {
+        // --- Khai báo các element ---
+        const chatWidgetContainer = document.querySelector('.chat-widget-container');
+        const chatToggleButton = document.getElementById('chat-toggle-button');
+        const chatBody = document.getElementById('chat-body');
+        const chatInput = document.getElementById('chat-input');
+        const chatSendBtn = document.getElementById('chat-send-btn');
+        const faqContainer = document.getElementById('faq-container');
+        const thinkingIndicator = document.getElementById('thinking-indicator');
+        const closeChatboxBtn = document.getElementById('close-chatbox-btn'); // Đã thêm
+
+        // --- Biến trạng thái ---
+        let welcomeSequenceShown = false;
+        let isAiThinking = false;
+
+        // === CÁC HÀM TIỆN ÍCH ===
+        function formatMessageTime(date) {
+            const hours = String(date.getHours()).padStart(2, '0');
+            const minutes = String(date.getMinutes()).padStart(2, '0');
+            return `${hours}:${minutes}`;
+        }
+
+        function addMessage(text, type) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `message-wrapper ${type}`;
+            const bubble = document.createElement('div');
+            bubble.className = 'message-content';
+            bubble.innerHTML = text.replace(/\n/g, '<br>');
+            const meta = document.createElement('div');
+            meta.className = 'message-meta';
+            const timestamp = document.createElement('span');
+            timestamp.className = 'message-timestamp';
+            timestamp.textContent = formatMessageTime(new Date());
+            meta.appendChild(timestamp);
+            wrapper.appendChild(bubble);
+            wrapper.appendChild(meta);
+            if (type === 'user') {
+                const status = document.createElement('span');
+                status.className = 'message-status';
+                status.innerHTML = '<i class="fas fa-check"></i> Đã gửi';
+                meta.appendChild(status);
+            }
+            chatBody.insertBefore(wrapper, thinkingIndicator);
+            chatBody.scrollTop = chatBody.scrollHeight;
+            return wrapper;
+        }
+
+        // === CÁC HÀM LOGIC CHÍNH ===
+        async function sendMessage(messageText) {
+            const userMessage = messageText || chatInput.value.trim();
+            if (userMessage === '' || isAiThinking) return;
+            isAiThinking = true;
+            let userMessageElement;
+            if (!messageText) {
+                userMessageElement = addMessage(userMessage, 'user');
+            } else {
+                const userMessages = chatBody.querySelectorAll('.message-wrapper.user');
+                userMessageElement = userMessages[userMessages.length - 1];
+            }
+            chatInput.value = '';
+            if (faqContainer) faqContainer.style.display = 'none';
+            setTimeout(() => {
+                if (userMessageElement) {
+                    const statusEl = userMessageElement.querySelector('.message-status');
+                    if (statusEl) {
+                        statusEl.innerHTML = '<i class="fas fa-check-double"></i> Đã xem';
+                    }
+                }
+            }, 800);
+            thinkingIndicator.style.display = 'flex';
+            chatBody.scrollTop = chatBody.scrollHeight;
+            try {
+                const response = await fetch('/api/ai/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userMessage })
+                });
+                if (!response.ok) throw new Error('API response error');
+                const data = await response.json();
+                setTimeout(() => {
+                    thinkingIndicator.style.display = 'none';
+                    addMessage(data.reply, 'staff');
+                }, 1200);
+            } catch (error) {
+                console.error('Lỗi khi gửi tin nhắn:', error);
+                thinkingIndicator.style.display = 'none';
+                addMessage('Xin lỗi, đã có lỗi xảy ra. Bạn thử lại nhé.', 'staff');
+            } finally {
+                isAiThinking = false;
+            }
+        }
+
+        function showFaqButtons() {
+            if (!faqContainer) return;
+            faqContainer.innerHTML = '';
+            faqContainer.style.display = 'flex';
+            const faqs = [
+                { question: "Giờ mở cửa?", prompt: "Thư viện mở cửa lúc mấy giờ?" },
+                { question: "Quy định mượn sách?", prompt: "Quy định mượn sách của sinh viên là gì?" },
+                { question: "Làm sao để gia hạn?", prompt: "Làm thế nào để gia hạn sách?" }
+            ];
+            faqs.forEach(faq => {
+                const button = document.createElement('button');
+                button.className = 'faq-button';
+                button.textContent = faq.question;
+                button.addEventListener('click', () => {
+                    addMessage(faq.prompt, 'user');
+                    sendMessage(faq.prompt);
+                });
+                faqContainer.appendChild(button);
+            });
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function startWelcomeSequence() {
+            if (welcomeSequenceShown) return;
+            welcomeSequenceShown = true;
+            chatBody.innerHTML = '';
+            chatBody.appendChild(thinkingIndicator);
+            if (faqContainer) chatBody.appendChild(faqContainer);
+            thinkingIndicator.style.display = 'flex';
+            setTimeout(() => {
+                thinkingIndicator.style.display = 'none';
+                addMessage("Dạ em là bé heo trợ lí AI thông minh của thư viện số UEF, anh chị cần em hỗ trợ gì ạ 😊", 'staff');
+                setTimeout(() => {
+                    showFaqButtons();
+                }, 2000);
+            }, 1500);
+        }
+
+        // === GÁN CÁC SỰ KIỆN ===
+        if (chatToggleButton) {
+            chatToggleButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                const isActive = chatWidgetContainer.classList.toggle('active');
+                if (isActive) {
+                    startWelcomeSequence();
+                }
+            });
+        }
+
+        if (closeChatboxBtn) { // Đã thêm
+            closeChatboxBtn.addEventListener('click', (event) => {
+                event.stopPropagation();
+                chatWidgetContainer.classList.remove('active');
+            });
+        }
+
+        if (chatSendBtn) {
+            chatSendBtn.addEventListener('click', () => sendMessage());
+        }
+
+        if (chatInput) {
+            chatInput.addEventListener('keypress', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
+    });
+    /*]]>*/
+</script>
+</html>

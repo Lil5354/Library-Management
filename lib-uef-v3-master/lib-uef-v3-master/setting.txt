@@ -1,0 +1,36 @@
+lệnh build Maven:
+mvnw clean install
+
+lệnh diệt tiến trình chiếm dụng cổng 8080:
+sudo lsof -i tcp:8080
+kill -9 +pid
+
+
+
+
+
+
+
+# ======================================================================================================
+# CẤU HÌNH AUTO CALL (Stringee API) trong trang ADMIN
+# ======================================================================================================
+# Lấy thông tin này từ Stringee Developer Console của tài khoản bạn: https://developer.stringee.com/
+# Đăng nhập -> API Key (hoặc Projects -> chọn Project của bạn)
+#   - API Key SID: Mã định danh API Key của bạn (bắt đầu bằng SK.)
+#   - API Key Secret: Chuỗi bí mật dùng để xác thực API (rất quan trọng, giữ bí mật)
+# stringee.from.number: Số điện thoại gọi đi được mua/kích hoạt trong tài khoản Stringee của bạn (ví dụ: 8424xxxxxxx)
+# stringee.webhook.url: URL công khai mà Stringee sẽ gửi các sự kiện cuộc gọi về ứng dụng của bạn.
+#                       Bạn cần dùng Ngrok (hoặc tương tự) để tạo URL này.
+#                       Ví dụ: https://<PUBLIC_NGROK_URL>/stringee-webhook
+#                       Hướng dẫn Ngrok: https://ngrok.com/download
+#                       Sau khi chạy "ngrok http 8080", lấy "Forwarding https://..." và thêm "/stringee-webhook" vào.
+#                       Đảm bảo cập nhật URL này trong Stringee Console (Numbers hoặc Project Settings)
+#                       và trong file này mỗi khi URL ngrok thay đổi (với tài khoản free).
+
+stringee.api.key.sid=YOUR_STRINGEE_API_KEY_SID_HERE
+stringee.api.key.secret=YOUR_STRINGEE_API_KEY_SECRET_HERE
+stringee.from.number=YOUR_STRINGEE_FROM_NUMBER_HERE
+stringee.webhook.url=YOUR_NGROK_PUBLIC_URL_HERE/stringee-webhook    cái này quan trọng vì nó giống như cái ống nước.
+
+
+ném cục này vào AI kêu nó chỉ là được

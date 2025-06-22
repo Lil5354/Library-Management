@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/fragments/layout_admin}">
+
+<head>
+  <title>Auto Call Phone Thông Báo</title>
+  <style>
+    /* CSS cho Template Cards */
+    .script-template-card {
+      background-color: #f8f9fc;
+      border: 1px solid #eaecf4;
+      border-radius: 0.35rem;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      display: flex;
+      align-items: center;
+    }
+    .script-template-card:hover {
+      background-color: #e2e5ec;
+      border-color: #d1d3e2;
+      transform: translateY(-2px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .script-template-card.selected {
+      border-color: #4e73df;
+      background-color: rgba(78, 115, 223, 0.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .script-template-card .icon {
+      font-size: 1.5rem;
+      color: #4e73df;
+      margin-right: 0.75rem;
+    }
+    .script-template-card .details {
+      flex-grow: 1;
+    }
+    .script-template-card .details h6 {
+      margin-bottom: 0.2rem;
+      color: #5a5c69;
+      font-weight: 700;
+    }
+    .script-template-card .details small {
+      color: #858796;
+    }
+    .script-template-card .check-icon {
+      font-size: 1.25rem;
+      color: transparent;
+    }
+    .script-template-card.selected .check-icon {
+      color: #4e73df;
+    }
+  </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+  <div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+      <h1 class="h3 mb-0 text-gray-800">Auto Call Phone Thông Báo</h1>
+      <a th:href="@{/admin/dashboard}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+        <i class="fas fa-arrow-left fa-sm text-white-50"></i> Quay lại Dashboard
+      </a>
+    </div>
+
+    <div th:if="${successMessageAutoCall}" class="alert alert-success alert-dismissible fade show" role="alert">
+      <i class="fas fa-check-circle me-2"></i><span th:text="${successMessageAutoCall}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div th:if="${errorMessageAutoCall}" class="alert alert-danger alert-dismissible fade show" role="alert">
+      <i class="fas fa-exclamation-triangle me-2"></i><span th:text="${errorMessageAutoCall}"></span>
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+
+    <div class="card shadow mb-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Cấu hình Cuộc gọi Tự động</h6>
+      </div>
+      <div class="card-body">
+        <form th:action="@{/admin/notifications/auto-call/send}" method="post">
+
+          <div class="mb-3">
+            <label class="form-label fw-bold">Thực hiện cuộc gọi đến:</label>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="targetType" id="callTargetAll" value="all" checked>
+              <label class="form-check-label" for="callTargetAll">Tất cả người dùng (Nhân viên & Độc giả)</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="targetType" id="callTargetRole" value="role">
+              <label class="form-check-label" for="callTargetRole">Một nhóm vai trò</label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="targetType" id="callTargetSingle" value="single">
+              <label class="form-check-label" for="callTargetSingle">Một người dùng cụ thể</label>
+            </div>
+          </div>
+
+          <div id="callRoleSelectContainer" class="mb-3" style="display: none;">
+            <label for="callRole" class="form-label">Chọn vai trò:</label>
+            <select class="form-select" name="role" id="callRole">
+              <option value="">-- Chọn vai trò --</option>
+              <option value="READER">READER</option>
+              <option value="STAFF">STAFF</option>
+            </select>
+          </div>
+
+          <div id="callUsernameInputContainer" class="mb-3" style="display: none;">
+            <label for="callUsername" class="form-label">Tên đăng nhập người dùng:</label>
+            <input type="text" class="form-control" id="callUsername" name="username" placeholder="Nhập tên đăng nhập...">
+          </div>
+
+          <h5 class="mt-4 mb-3 fw-bold">Chọn từ các Mẫu Kịch bản Cuộc gọi có sẵn:</h5>
+          <div class="row">
+            <div class="col-md-6 mb-3" th:each="template : ${scriptTemplates}">
+              <div class="script-template-card" th:data-template-id="${template.id}"
+                   th:data-script-content="${template.script}">
+                <div class="icon"><i class="fas fa-robot"></i></div>
+                <div class="details">
+                  <h6 th:text="${template.name}">Tên mẫu</h6>
+                  <small th:text="${template.script.length() > 70 ? #strings.substring(template.script, 0, 70) + '...' : template.script}">Nội dung tóm tắt...</small>
+                </div>
+                <div class="check-icon"><i class="fas fa-check-circle"></i></div>
+              </div>
+            </div>
+          </div>
+          <p class="mt-3 text-muted">Click vào một mẫu để tự động điền kịch bản vào ô bên dưới.</p>
+          <div class="mb-3">
+            <label for="scriptContent" class="form-label fw-bold">Nội dung Kịch bản cuộc gọi (Text-to-Speech):</label>
+            <textarea class="form-control" id="scriptContent" name="scriptContent" rows="6" required placeholder="Nhập nội dung mà bot sẽ nói khi thực hiện cuộc gọi. Ví dụ: Chào mừng quý khách..."></textarea>
+            <small class="form-text text-muted">Đây là nội dung sẽ được chuyển đổi thành giọng nói và phát cho người nghe.</small>
+          </div>
+
+          <button type="submit" class="btn btn-primary"><i class="fas fa-phone-alt me-2"></i>Thực hiện Cuộc gọi</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<th:block layout:fragment="page_scripts">
+  <script>
+    $(document).ready(function() {
+      // Logic ẩn/hiện input username/role
+      const radios = document.querySelectorAll('input[name="targetType"]');
+      const roleContainer = document.getElementById('callRoleSelectContainer');
+      const usernameContainer = document.getElementById('callUsernameInputContainer');
+      const roleSelect = document.getElementById('callRole');
+      const usernameInput = document.getElementById('callUsername');
+
+      function toggleTargetInputs() {
+        const selectedValue = document.querySelector('input[name="targetType"]:checked').value;
+        if (roleContainer) roleContainer.style.display = (selectedValue === 'role') ? 'block' : 'none';
+        if (usernameContainer) usernameContainer.style.display = (selectedValue === 'single') ? 'block' : 'none';
+
+        if (roleSelect) roleSelect.required = (selectedValue === 'role');
+        if (usernameInput) usernameInput.required = (selectedValue === 'single');
+      }
+
+      radios.forEach(radio => radio.addEventListener('change', toggleTargetInputs));
+      toggleTargetInputs(); // Chạy lần đầu
+
+
+      // Logic chọn template kịch bản và điền dữ liệu
+      $('.script-template-card').on('click', function() {
+        $('.script-template-card').removeClass('selected');
+        $(this).addClass('selected');
+
+        const scriptContent = $(this).data('script-content');
+        $('#scriptContent').val(scriptContent);
+      });
+    });
+  </script>
+</th:block>
+</body>
+</html>

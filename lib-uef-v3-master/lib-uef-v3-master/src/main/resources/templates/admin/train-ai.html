@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/index}">
+
+<head>
+  <meta charset="UTF-8">
+  <title>AI Studio - Quản lý tính cách Bé Heo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* Elegant Color Palette */
+    :root {
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --success: #10b981;
+      --success-light: #34d399;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --ring: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --radius: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(to bottom right, var(--gray-50), var(--gray-100));
+      color: var(--gray-900);
+      line-height: 1.6;
+      margin: 0;
+      min-height: 100vh;
+    }
+
+    /* Clean Layout */
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Modern Typing Effect CSS */
+    .typewriter {
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 3px solid transparent;
+      width: 0;
+      opacity: 0;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gray-900), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    .typewriter.animate {
+      animation: modern-typing 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+      modern-caret 1s step-end infinite;
+      opacity: 1;
+      width: 100%;
+    }
+
+    .typewriter-subtitle {
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid transparent;
+      width: 0;
+      opacity: 0;
+      color: var(--gray-600);
+      position: relative;
+    }
+
+    .typewriter-subtitle.animate {
+      animation: modern-typing-subtitle 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards,
+      modern-caret-subtitle 1s step-end infinite 0.8s;
+      opacity: 1;
+      width: 100%;
+    }
+
+    .typewriter-create {
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 3px solid transparent;
+      width: 0;
+      opacity: 0;
+      background: linear-gradient(135deg, var(--primary), var(--info));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+    }
+
+    .typewriter-create.animate {
+      animation: modern-typing 2.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+      modern-caret-create 1s step-end infinite;
+      opacity: 1;
+      width: 100%;
+    }
+
+    .typewriter-create-subtitle {
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid transparent;
+      width: 0;
+      opacity: 0;
+      color: var(--gray-600);
+      position: relative;
+    }
+
+    .typewriter-create-subtitle.animate {
+      animation: modern-typing-subtitle-long 4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards,
+      modern-caret-subtitle 1s step-end infinite 0.8s;
+      opacity: 1;
+      width: 100%;
+    }
+
+    /* Modern Typing Animations */
+    @keyframes modern-typing {
+      0% {
+        width: 0;
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      10% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      100% {
+        width: 100%;
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes modern-typing-subtitle {
+      0% {
+        width: 0;
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+      10% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      100% {
+        width: 100%;
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes modern-typing-subtitle-long {
+      0% {
+        width: 0;
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+      8% {
+        opacity: 1;
+        transform: translateX(0);
+      }
+      100% {
+        width: 100%;
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* Modern Caret Animations */
+    @keyframes modern-caret {
+      0%, 50% {
+        border-right-color: var(--primary);
+        box-shadow: 0 0 8px rgba(99, 102, 241, 0.5);
+      }
+      51%, 100% {
+        border-right-color: transparent;
+        box-shadow: none;
+      }
+    }
+
+    @keyframes modern-caret-create {
+      0%, 50% {
+        border-right-color: var(--info);
+        box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+      }
+      51%, 100% {
+        border-right-color: transparent;
+        box-shadow: none;
+      }
+    }
+
+    @keyframes modern-caret-subtitle {
+      0%, 50% {
+        border-right-color: var(--gray-400);
+        box-shadow: 0 0 4px rgba(156, 163, 175, 0.3);
+      }
+      51%, 100% {
+        border-right-color: transparent;
+        box-shadow: none;
+      }
+    }
+
+    /* Completed state - stop caret blinking and add glow */
+    .typewriter.completed {
+      border-right: none;
+      animation: none;
+      text-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+      width: 100%;
+      opacity: 1;
+    }
+
+    .typewriter-create.completed {
+      border-right: none;
+      animation: none;
+      text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+      width: 100%;
+      opacity: 1;
+    }
+
+    .typewriter-subtitle.completed,
+    .typewriter-create-subtitle.completed {
+      border-right: none;
+      animation: none;
+      width: 100%;
+      opacity: 1;
+    }
+
+    /* Welcome Header */
+    .welcome-header {
+      background: var(--white);
+      border-radius: var(--radius-xl);
+      padding: 2rem 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-200);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--info));
+    }
+
+    .welcome-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .welcome-text h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin: 0 0 0.5rem 0;
+      max-width: fit-content;
+    }
+
+    .welcome-text p {
+      color: var(--gray-600);
+      margin: 0;
+      font-size: 1rem;
+      max-width: fit-content;
+    }
+
+    .admin-greeting {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: var(--gray-50);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--gray-200);
+    }
+
+    .admin-avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+
+    .admin-info h3 {
+      margin: 0;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+
+    .admin-info p {
+      margin: 0;
+      font-size: 0.875rem;
+      color: var(--gray-500);
+    }
+
+    /* Status Card */
+    .status-card {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-200);
+      text-align: center;
+    }
+
+    .status-icon {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--success), var(--success-light));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      color: var(--white);
+      font-size: 1.5rem;
+      animation: statusPulse 2s infinite;
+    }
+
+    @keyframes statusPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .status-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .status-subtitle {
+      color: var(--gray-600);
+      margin-bottom: 1rem;
+    }
+
+    .status-badges {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      background: var(--gray-100);
+      color: var(--gray-700);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      font-weight: 500;
+      border: 1px solid var(--gray-200);
+    }
+
+    .status-badge.active {
+      background: var(--success);
+      color: var(--white);
+      border-color: var(--success);
+    }
+
+    /* Personas Grid */
+    .personas-section {
+      margin-bottom: 3rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin: 0;
+    }
+
+    .personas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 1.5rem;
+    }
+
+    /* Persona Card */
+    .persona-card {
+      background: var(--white);
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .persona-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-4px);
+    }
+
+    /* Active Persona Styling */
+    .persona-card.active {
+      border-color: var(--success);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), var(--white));
+      box-shadow: var(--shadow-xl);
+      transform: translateY(-6px);
+    }
+
+    .persona-card.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--success), var(--success-light));
+    }
+
+    /* Active Badge */
+    .active-indicator {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: var(--success);
+      color: var(--white);
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      animation: activeBadge 2s infinite;
+      z-index: 10;
+    }
+
+    @keyframes activeBadge {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Persona Avatar with Enhanced Animations */
+    .persona-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+      transition: var(--transition);
+      animation: avatar-float 3s ease-in-out infinite;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    /* Floating animation for all avatars */
+    @keyframes avatar-float {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+      }
+      25% {
+        transform: translateY(-8px) rotate(2deg);
+      }
+      50% {
+        transform: translateY(-5px) rotate(0deg);
+      }
+      75% {
+        transform: translateY(-8px) rotate(-2deg);
+      }
+    }
+
+    /* Pulsing glow effect */
+    .persona-avatar::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      border-radius: 50%;
+      background: inherit;
+      opacity: 0.4;
+      z-index: -2;
+      animation: avatar-pulse 2s ease-in-out infinite alternate;
+      filter: blur(8px);
+    }
+
+    @keyframes avatar-pulse {
+      0% {
+        transform: scale(0.95);
+        opacity: 0.3;
+      }
+      100% {
+        transform: scale(1.1);
+        opacity: 0.6;
+      }
+    }
+
+    /* Rotating border effect */
+    .persona-avatar::after {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: -4px;
+      right: -4px;
+      bottom: -4px;
+      border-radius: 50%;
+      background: linear-gradient(45deg, transparent, currentColor, transparent);
+      opacity: 0;
+      transition: var(--transition);
+      z-index: -1;
+      animation: avatar-border-rotate 4s linear infinite;
+    }
+
+    @keyframes avatar-border-rotate {
+      0% {
+        transform: rotate(0deg);
+        opacity: 0.3;
+      }
+      50% {
+        opacity: 0.7;
+      }
+      100% {
+        transform: rotate(360deg);
+        opacity: 0.3;
+      }
+    }
+
+    /* Hover effects */
+    .persona-card:hover .persona-avatar {
+      animation: avatar-hover-dance 0.6s ease-in-out;
+      transform: scale(1.1);
+    }
+
+    @keyframes avatar-hover-dance {
+      0%, 100% {
+        transform: scale(1.1) rotate(0deg);
+      }
+      25% {
+        transform: scale(1.15) rotate(5deg);
+      }
+      50% {
+        transform: scale(1.2) rotate(0deg);
+      }
+      75% {
+        transform: scale(1.15) rotate(-5deg);
+      }
+    }
+
+    /* Active card avatar special animation */
+    .persona-card.active .persona-avatar {
+      animation: avatar-active-celebration 2s ease-in-out infinite;
+    }
+
+    @keyframes avatar-active-celebration {
+      0%, 100% {
+        transform: translateY(0px) rotate(0deg) scale(1);
+      }
+      25% {
+        transform: translateY(-12px) rotate(10deg) scale(1.05);
+      }
+      50% {
+        transform: translateY(-8px) rotate(0deg) scale(1.1);
+      }
+      75% {
+        transform: translateY(-12px) rotate(-10deg) scale(1.05);
+      }
+    }
+
+    .persona-card.active .persona-avatar::after {
+      opacity: 0.8;
+      animation: avatar-glow 3s ease-in-out infinite, avatar-border-rotate 2s linear infinite;
+    }
+
+    @keyframes avatar-glow {
+      0%, 100% {
+        box-shadow: 0 0 20px currentColor;
+        transform: rotate(0deg) scale(1);
+      }
+      50% {
+        box-shadow: 0 0 40px currentColor;
+        transform: rotate(180deg) scale(1.1);
+      }
+    }
+
+    /* Specific avatar animations based on persona type */
+    .avatar-gangster {
+      background: linear-gradient(135deg, #fee2e2, #fecaca);
+      color: var(--danger);
+      animation: avatar-float 3s ease-in-out infinite, gangster-swagger 4s ease-in-out infinite;
+    }
+
+    @keyframes gangster-swagger {
+      0%, 100% { filter: hue-rotate(0deg); }
+      50% { filter: hue-rotate(15deg); }
+    }
+
+    .avatar-genz {
+      background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+      color: #8b5cf6;
+      animation: avatar-float 3s ease-in-out infinite, genz-vibe 2.5s ease-in-out infinite;
+    }
+
+    @keyframes genz-vibe {
+      0%, 100% {
+        filter: hue-rotate(0deg) saturate(1);
+      }
+      33% {
+        filter: hue-rotate(120deg) saturate(1.2);
+      }
+      66% {
+        filter: hue-rotate(240deg) saturate(1.1);
+      }
+    }
+
+    .avatar-serious {
+      background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+      color: var(--info);
+      animation: avatar-float 3s ease-in-out infinite, serious-pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes serious-pulse {
+      0%, 100% {
+        box-shadow: 0 0 0 rgba(59, 130, 246, 0.4);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+      }
+    }
+
+    .avatar-custom {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: var(--warning);
+      animation: avatar-float 3s ease-in-out infinite, custom-sparkle 4s ease-in-out infinite;
+    }
+
+    @keyframes custom-sparkle {
+      0%, 100% {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+      }
+      25% {
+        background: linear-gradient(45deg, #fef3c7, #fbbf24, #fde68a);
+      }
+      50% {
+        background: linear-gradient(225deg, #fef3c7, #f59e0b, #fde68a);
+      }
+      75% {
+        background: linear-gradient(315deg, #fef3c7, #fbbf24, #fde68a);
+      }
+    }
+
+    /* Icon bounce animation */
+    .persona-avatar i {
+      animation: icon-bounce 2s ease-in-out infinite;
+      transition: var(--transition);
+    }
+
+    @keyframes icon-bounce {
+      0%, 100% {
+        transform: translateY(0px) scale(1);
+      }
+      50% {
+        transform: translateY(-3px) scale(1.1);
+      }
+    }
+
+    /* Click effect */
+    .persona-avatar:active {
+      animation: avatar-click-effect 0.3s ease-out;
+    }
+
+    @keyframes avatar-click-effect {
+      0% {
+        transform: scale(1.1) rotate(0deg);
+      }
+      50% {
+        transform: scale(0.95) rotate(5deg);
+      }
+      100% {
+        transform: scale(1.1) rotate(0deg);
+      }
+    }
+
+    /* Particle effect for active avatar */
+    .persona-card.active .persona-avatar::before {
+      animation: avatar-pulse 2s ease-in-out infinite alternate, particle-effect 3s linear infinite;
+    }
+
+    @keyframes particle-effect {
+      0% {
+        transform: scale(0.95) rotate(0deg);
+        opacity: 0.3;
+      }
+      25% {
+        transform: scale(1.1) rotate(90deg);
+        opacity: 0.6;
+      }
+      50% {
+        transform: scale(1.05) rotate(180deg);
+        opacity: 0.4;
+      }
+      75% {
+        transform: scale(1.15) rotate(270deg);
+        opacity: 0.7;
+      }
+      100% {
+        transform: scale(0.95) rotate(360deg);
+        opacity: 0.3;
+      }
+    }
+
+    /* Card Content */
+    .persona-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .persona-card.active .persona-title {
+      color: var(--success);
+    }
+
+    .persona-description {
+      color: var(--gray-600);
+      margin-bottom: 1.5rem;
+      flex-grow: 1;
+      line-height: 1.5;
+    }
+
+    /* Card Footer */
+    .persona-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 1rem;
+      border-top: 1px solid var(--gray-200);
+      margin-top: auto;
+    }
+
+    .time-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      color: var(--gray-500);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .time-indicator.default {
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    .persona-actions {
+      display: flex;
+      gap: 0.5rem;
+      position: relative;
+      z-index: 20;
+    }
+
+    /* Buttons */
+    .btn {
+      border: none;
+      border-radius: var(--radius);
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      position: relative;
+      z-index: 20;
+    }
+
+    .btn-sm {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: var(--white);
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+      transform: scale(1.05);
+    }
+
+    /* Create Section */
+    .create-section {
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--gray-200);
+      position: relative;
+    }
+
+    .create-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--info));
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .create-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .create-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 0.5rem;
+      max-width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .create-subtitle {
+      color: var(--gray-600);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      transition: var(--transition);
+      background: var(--white);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: var(--ring);
+    }
+
+    .form-textarea {
+      min-height: 240px;
+      resize: vertical;
+      font-family: 'JetBrains Mono', monospace;
+      line-height: 1.6;
+      background: var(--gray-50);
+    }
+
+    /* Submit Button */
+    .submit-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: var(--white);
+      padding: 1rem 2rem;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin: 0 auto;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Loading States */
+    .loading-spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Notifications */
+    .notification {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: var(--white);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 1rem 1.5rem;
+      box-shadow: var(--shadow-lg);
+      z-index: 9999;
+      transform: translateX(400px);
+      transition: var(--transition);
+      max-width: 400px;
+      min-width: 300px;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification.success {
+      border-left: 4px solid var(--success);
+    }
+
+    .notification.error {
+      border-left: 4px solid var(--danger);
+    }
+
+    .notification-content {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .notification-text {
+      flex: 1;
+      color: var(--gray-700);
+      font-size: 0.875rem;
+    }
+
+    .notification-close {
+      background: none;
+      border: none;
+      color: var(--gray-400);
+      cursor: pointer;
+      padding: 0;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Hidden Submit - Fixed z-index issue */
+    .invisible-submit {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    /* Fix for delete button to prevent being covered */
+    .delete-form {
+      position: relative;
+      z-index: 21;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .main-container {
+        padding: 1rem;
+      }
+
+      .welcome-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .personas-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .status-badges {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .persona-footer {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      .typewriter {
+        font-size: 1.5rem;
+      }
+
+      .typewriter-subtitle {
+        font-size: 0.9rem;
+      }
+    }
+
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Hide default alerts */
+    .alert {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+  <div class="main-container">
+
+    <!-- Welcome Header -->
+    <div class="welcome-header fade-in">
+      <div class="welcome-content">
+        <div class="welcome-text">
+          <h1 class="typewriter">🤖 Quản lý Tính cách AI</h1>
+          <p class="typewriter-subtitle">Thiết kế và train cho trợ lý thông minh Bé Heo</p>
+        </div>
+        <div class="admin-greeting" th:if="${fullName != null}">
+          <div class="admin-avatar" th:text="${#strings.substring(fullName,0,1)}">A</div>
+          <div class="admin-info">
+            <h3 th:text="${'Xin chào, ' + fullName}">Xin chào, Admin</h3>
+            <p>Quản trị viên hệ thống</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Card -->
+    <div class="status-card fade-in">
+      <div class="status-icon"
+           th:classappend="${#lists.size(personas) > 0 ? 'avatar-' + activePersona : ''}">
+        <i th:class="${#lists.size(personas) > 0 ? personas.![icon].get(personas.![name].indexOf(activePersona)) : 'fas fa-robot'}"></i>
+      </div>
+      <h2 class="status-title">AI Đang Hoạt Động</h2>
+      <p class="status-subtitle"
+         th:text="${#lists.size(personas) > 0 ? personas.![displayName].get(personas.![name].indexOf(activePersona)) : 'Chưa có persona nào'}">
+        Bé Heo Mất Dạy
+      </p>
+      <div class="status-badges">
+        <span class="status-badge active">
+          <i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 0.5rem;"></i>
+          Trực tuyến
+        </span>
+        <span class="status-badge" th:text="${'Tổng cộng: ' + #lists.size(personas) + ' personas'}">
+          Tổng cộng: 3 model
+        </span>
+      </div>
+    </div>
+
+    <!-- Hidden alerts for JS -->
+    <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
+    <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+
+    <!-- Personas Section -->
+    <div class="personas-section">
+      <div class="section-header">
+        <h2 class="section-title">Danh sách model:</h2>
+      </div>
+
+      <div class="personas-grid">
+        <div th:each="persona : ${personas}" class="fade-in">
+          <div class="persona-card"
+               th:classappend="${activePersona == persona.name} ? 'active' : ''"
+               th:data-persona-name="${persona.displayName}">
+
+            <!-- Active Indicator -->
+            <div th:if="${activePersona == persona.name}" class="active-indicator">
+              <i class="fas fa-check-circle"></i>
+              Đang hoạt động
+            </div>
+
+            <!-- Invisible Submit Form -->
+            <form th:action="@{/admin/persona-management/activate}" method="post" class="persona-form">
+              <input type="hidden" name="personaName" th:value="${persona.name}" />
+              <button type="submit" class="invisible-submit" th:title="${'Kích hoạt ' + persona.displayName}"></button>
+            </form>
+
+            <!-- Avatar -->
+            <div class="persona-avatar" th:classappend="${'avatar-' + persona.name}">
+              <i th:class="${persona.icon}"></i>
+            </div>
+
+            <!-- Content -->
+            <h3 class="persona-title" th:text="${persona.displayName}">Tên Persona</h3>
+            <p class="persona-description" th:text="${persona.description}">Mô tả persona</p>
+
+            <!-- Footer -->
+            <div class="persona-footer">
+              <div class="time-indicator"
+                   th:classappend="${persona.name.startsWith('persona-custom')} ? '' : 'default'">
+                <i th:class="${persona.name.startsWith('persona-custom')} ? 'fas fa-clock' : 'fas fa-shield-alt'"></i>
+                <span th:if="${persona.name.startsWith('persona-custom')}"
+                      class="created-time"
+                      th:data-created="2025-06-17T00:00:00">Vừa tạo</span>
+                <span th:unless="${persona.name.startsWith('persona-custom')}">Mặc định</span>
+              </div>
+
+              <div class="persona-actions">
+                <form th:if="${persona.deletable}"
+                      th:action="@{/admin/persona-management/delete}"
+                      method="post"
+                      class="d-inline delete-form"
+                      th:data-persona-name="${persona.displayName}"
+                      onclick="event.stopPropagation();">
+                  <input type="hidden" name="personaName" th:value="${persona.name}" />
+                  <button type="submit" class="btn btn-danger btn-sm"
+                          title="Xóa persona">
+                    <i class="fas fa-trash-alt"></i>
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create New Persona Section -->
+    <div class="create-section fade-in">
+      <div class="create-header">
+        <h2 class="create-title typewriter-create">✨ Tạo Persona Mới</h2>
+        <p class="create-subtitle typewriter-create-subtitle">
+          Thiết kế một tính cách độc đáo cho Bé Heo với những đặc điểm riêng biệt. Persona mới sẽ được kích hoạt ngay sau khi tạo thành công.
+        </p>
+      </div>
+
+      <form th:action="@{/admin/persona-management/create}" method="post" id="createPersonaForm">
+        <div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+          <div class="form-group">
+            <label class="form-label" for="displayName">
+              <i class="fas fa-tag" style="margin-right: 0.5rem; color: var(--primary);"></i>
+              Tên hiển thị
+            </label>
+            <input type="text"
+                   id="displayName"
+                   name="displayName"
+                   class="form-control"
+                   placeholder="Ví dụ: Bé Heo Triết gia"
+                   required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="description">
+              <i class="fas fa-comment-dots" style="margin-right: 0.5rem; color: var(--primary);"></i>
+              Mô tả ngắn
+            </label>
+            <input type="text"
+                   id="description"
+                   name="description"
+                   class="form-control"
+                   placeholder="Ví dụ: Trầm tính, sâu sắc, hay trích dẫn triết lý">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="customKnowledge">
+            <i class="fas fa-code" style="margin-right: 0.5rem; color: var(--primary);"></i>
+            Kịch bản tính cách
+          </label>
+          <textarea class="form-control form-textarea"
+                    id="customKnowledge"
+                    name="knowledge"
+                    placeholder="Nhập nội dung định nghĩa tính cách và phong cách giao tiếp..."
+                    th:text="${customPersonaTemplate}"
+                    required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" id="createBtn">
+          <i class="fas fa-magic"></i>
+          <span>Tạo và Kích hoạt Persona</span>
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+  <script>
+    // Time display functionality
+    function updateTimeDisplay() {
+      document.querySelectorAll('.created-time').forEach(element => {
+        const createdTime = new Date(element.getAttribute('data-created'));
+        const now = new Date();
+        const diffInMinutes = Math.floor((now - createdTime) / (1000 * 60));
+
+        if (diffInMinutes < 1) {
+          element.textContent = 'Vừa tạo';
+        } else if (diffInMinutes < 60) {
+          element.textContent = `${diffInMinutes} phút trước`;
+        } else if (diffInMinutes < 1440) {
+          const hours = Math.floor(diffInMinutes / 60);
+          element.textContent = `${hours} giờ trước`;
+        } else {
+          const days = Math.floor(diffInMinutes / 1440);
+          element.textContent = `${days} ngày trước`;
+        }
+      });
+    }
+
+    // Notification system
+    function showNotification(message, type = 'success') {
+      // Remove existing notifications
+      document.querySelectorAll('.notification').forEach(notif => notif.remove());
+
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `
+        <div class="notification-content">
+          <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"
+             style="color: var(--${type === 'success' ? 'success' : 'danger'}); font-size: 1.25rem;"></i>
+          <div class="notification-text">${message}</div>
+          <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      `;
+
+      document.body.appendChild(notification);
+      setTimeout(() => notification.classList.add('show'), 100);
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+      }, 4000);
+    }
+
+    // Confirm dialog
+    function showConfirmDialog(title, message, onConfirm) {
+      const dialog = document.createElement('div');
+      dialog.innerHTML = `
+        <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; display: flex; align-items: center; justify-content: center;">
+          <div style="background: var(--white); border-radius: var(--radius-lg); padding: 2rem; max-width: 400px; box-shadow: var(--shadow-xl);">
+            <div style="text-align: center; margin-bottom: 1.5rem;">
+              <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: var(--danger); margin-bottom: 1rem;"></i>
+              <h3 style="margin: 0 0 0.5rem 0; color: var(--gray-900);">${title}</h3>
+              <p style="margin: 0; color: var(--gray-600);">${message}</p>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+              <button class="btn btn-danger confirm-yes" style="padding: 0.75rem 1.5rem;">
+                <i class="fas fa-trash-alt"></i>
+                Xóa ngay
+              </button>
+              <button class="btn cancel-btn" style="background: var(--gray-300); color: var(--gray-700); padding: 0.75rem 1.5rem;">
+                <i class="fas fa-times"></i>
+                Hủy bỏ
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(dialog);
+
+      dialog.querySelector('.confirm-yes').onclick = () => {
+        dialog.remove();
+        onConfirm();
+      };
+
+      dialog.querySelector('.cancel-btn').onclick = () => {
+        dialog.remove();
+      };
+
+      dialog.onclick = (e) => {
+        if (e.target === dialog.firstElementChild) {
+          dialog.remove();
+        }
+      };
+    }
+
+    // Document ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize time display
+      updateTimeDisplay();
+      setInterval(updateTimeDisplay, 60000); // Update every minute
+
+      // Handle server messages
+      const successAlert = document.querySelector('.alert-success');
+      if (successAlert) {
+        showNotification(successAlert.textContent.trim(), 'success');
+      }
+
+      const errorAlert = document.querySelector('.alert-danger');
+      if (errorAlert) {
+        showNotification(errorAlert.textContent.trim(), 'error');
+      }
+
+      // Persona activation
+      document.querySelectorAll('.persona-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+          const card = this.closest('.persona-card');
+          const personaName = card.querySelector('.persona-title').textContent;
+
+          // Visual feedback
+          card.style.opacity = '0.7';
+          card.style.transform = 'scale(0.98)';
+
+          showNotification(`Đang kích hoạt ${personaName}...`, 'success');
+        });
+      });
+
+      // Delete confirmation - Fixed event handling
+      document.querySelectorAll('.delete-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+
+          const personaName = this.dataset.personaName;
+          const currentForm = this;
+
+          showConfirmDialog(
+                  'Xác nhận xóa',
+                  `Bạn có chắc muốn xóa vĩnh viễn persona "${personaName}"? Hành động này không thể hoàn tác!`,
+                  () => {
+                    const button = currentForm.querySelector('button[type="submit"]');
+                    button.innerHTML = '<div class="loading-spinner"></div>';
+                    button.disabled = true;
+
+                    showNotification(`Đang xóa ${personaName}...`, 'error');
+                    setTimeout(() => currentForm.submit(), 500);
+                  }
+          );
+        });
+      });
+
+      // Create form handling
+      const createForm = document.getElementById('createPersonaForm');
+      if (createForm) {
+        createForm.addEventListener('submit', function(e) {
+          const createBtn = document.getElementById('createBtn');
+          const displayName = document.getElementById('displayName').value.trim();
+          const knowledge = document.getElementById('customKnowledge').value.trim();
+
+          if (!displayName || !knowledge) {
+            e.preventDefault();
+            showNotification('Vui lòng điền đầy đủ thông tin bắt buộc!', 'error');
+            return;
+          }
+
+          // Loading state
+          createBtn.innerHTML = `
+            <div class="loading-spinner"></div>
+            <span>Đang tạo persona...</span>
+          `;
+          createBtn.disabled = true;
+
+          showNotification(`Đang tạo persona "${displayName}"...`, 'success');
+        });
+      }
+
+      // Smooth card animations
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      };
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.style.opacity = '1';
+              entry.target.style.transform = 'translateY(0)';
+            }, index * 100);
+          }
+        });
+      }, observerOptions);
+
+      // Apply animations to cards
+      document.querySelectorAll('.persona-card').forEach((card, index) => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(card);
+      });
+
+      // Enhanced card hover effects
+      document.querySelectorAll('.persona-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+          if (!this.classList.contains('active')) {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+          }
+        });
+
+        card.addEventListener('mouseleave', function() {
+          if (!this.classList.contains('active')) {
+            this.style.transform = '';
+          }
+        });
+
+        card.addEventListener('click', function(e) {
+          // Prevent click if it's on delete button area
+          if (e.target.closest('.delete-form') || e.target.closest('.btn-danger')) {
+            return;
+          }
+
+          // Click feedback
+          this.style.transform = 'scale(0.98)';
+          setTimeout(() => {
+            this.style.transform = '';
+          }, 150);
+        });
+      });
+
+      // Auto-scroll to active persona - DISABLED
+      // const activeCard = document.querySelector('.persona-card.active');
+      // if (activeCard) {
+      //   setTimeout(() => {
+      //     activeCard.scrollIntoView({
+      //       behavior: 'smooth',
+      //       block: 'center'
+      //     });
+      //   }, 1000);
+      // }
+
+      // Form enhancements
+      document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('focus', function() {
+          this.parentElement.style.transform = 'scale(1.02)';
+        });
+
+        input.addEventListener('blur', function() {
+          this.parentElement.style.transform = '';
+        });
+      });
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', function(e) {
+        // ESC to close dialogs
+        if (e.key === 'Escape') {
+          const dialogs = document.querySelectorAll('[style*="position: fixed"]');
+          dialogs.forEach(dialog => {
+            if (dialog.style.zIndex === '10000') {
+              dialog.remove();
+            }
+          });
+        }
+
+        // Ctrl + N for new persona
+        if (e.ctrlKey && e.key === 'n') {
+          e.preventDefault();
+          document.getElementById('displayName').focus();
+          document.getElementById('displayName').scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          });
+        }
+      });
+
+      // Real-time character count for textarea
+      const textarea = document.getElementById('customKnowledge');
+      if (textarea) {
+        const charCount = document.createElement('div');
+        charCount.style.cssText = `
+          font-size: 0.75rem;
+          color: var(--gray-500);
+          text-align: right;
+          margin-top: 0.5rem;
+          font-family: 'JetBrains Mono', monospace;
+        `;
+        textarea.parentElement.appendChild(charCount);
+
+        function updateCharCount() {
+          const count = textarea.value.length;
+          const lines = textarea.value.split('\n').length;
+          charCount.textContent = `${count} ký tự • ${lines} dòng`;
+        }
+
+        textarea.addEventListener('input', updateCharCount);
+        updateCharCount(); // Initial count
+      }
+
+      // Set current timestamp for personas
+      document.querySelectorAll('.created-time').forEach(element => {
+        if (!element.getAttribute('data-created')) {
+          const now = new Date();
+          now.setMinutes(now.getMinutes() - Math.floor(Math.random() * 60));
+          element.setAttribute('data-created', now.toISOString());
+        }
+      });
+
+      // Enhanced loading states for buttons
+      document.querySelectorAll('button[type="submit"]').forEach(button => {
+        button.addEventListener('click', function(e) {
+          if (!this.disabled && !this.closest('.delete-form')) {
+            // Add ripple effect
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+
+            ripple.style.cssText = `
+              position: absolute;
+              width: ${size}px;
+              height: ${size}px;
+              left: ${x}px;
+              top: ${y}px;
+              background: rgba(255, 255, 255, 0.3);
+              border-radius: 50%;
+              transform: scale(0);
+              animation: ripple 0.6s linear;
+              pointer-events: none;
+            `;
+
+            this.style.position = 'relative';
+            this.style.overflow = 'hidden';
+            this.appendChild(ripple);
+
+            setTimeout(() => ripple.remove(), 600);
+          }
+        });
+      });
+
+      // Add ripple animation CSS
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes ripple {
+          to { transform: scale(2); opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+
+      // Modern Typewriter Effect with Intersection Observer
+      function initTypewriterEffect() {
+        const typewriterObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && !entry.target.classList.contains('animate')) {
+              // Add a small delay for smoother effect
+              setTimeout(() => {
+                entry.target.classList.add('animate');
+
+                // Add completed class after animation
+                const animationDuration = entry.target.classList.contains('typewriter-create') ? 2800 :
+                        entry.target.classList.contains('typewriter-create-subtitle') ? 4800 :
+                                entry.target.classList.contains('typewriter') ? 2500 : 3800;
+
+                setTimeout(() => {
+                  entry.target.classList.add('completed');
+                }, animationDuration);
+              }, 200);
+            }
+          });
+        }, {
+          threshold: 0.5,
+          rootMargin: '-50px 0px -50px 0px'
+        });
+
+        // Observe all typewriter elements
+        document.querySelectorAll('.typewriter, .typewriter-subtitle, .typewriter-create, .typewriter-create-subtitle').forEach(element => {
+          typewriterObserver.observe(element);
+        });
+      }
+
+      // Initialize typewriter effect
+      initTypewriterEffect();
+
+      console.log('🤖 AI Persona Manager với hiệu ứng gõ phím đã được khởi tạo thành công!');
+    });
+  </script>
+</div>
+</body>
+</html>

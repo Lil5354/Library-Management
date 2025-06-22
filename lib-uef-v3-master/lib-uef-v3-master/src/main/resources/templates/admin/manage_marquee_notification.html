@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/fragments/layout_admin}">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Quản lý Thông báo Chung</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Elegant Color Palette - From train-ai.html */
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-light: #34d399;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --ring: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+        }
+
+        /* Base styles from train-ai.html */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(to bottom right, var(--gray-50), var(--gray-100));
+            color: var(--gray-900);
+            line-height: 1.6;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Modern Typing Effect CSS - From train-ai.html */
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid transparent;
+            width: 0;
+            opacity: 0;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gray-900), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .typewriter.animate {
+            animation: modern-typing 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+            modern-caret 1s step-end infinite;
+            opacity: 1;
+            width: 100%;
+        }
+
+        .typewriter-subtitle {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid transparent;
+            width: 0;
+            opacity: 0;
+            color: var(--gray-600);
+            position: relative;
+        }
+
+        .typewriter-subtitle.animate {
+            animation: modern-typing-subtitle 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards,
+            modern-caret-subtitle 1s step-end infinite 0.8s;
+            opacity: 1;
+            width: 100%;
+        }
+
+        /* Animations for typewriter effect */
+        @keyframes modern-typing {
+            0% { width: 0; opacity: 0; transform: translateY(10px); }
+            10% { opacity: 1; transform: translateY(0); }
+            100% { width: 100%; opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes modern-typing-subtitle {
+            0% { width: 0; opacity: 0; transform: translateX(-10px); }
+            10% { opacity: 1; transform: translateX(0); }
+            100% { width: 100%; opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes modern-caret {
+            0%, 50% { border-right-color: var(--primary); box-shadow: 0 0 8px rgba(99, 102, 241, 0.5); }
+            51%, 100% { border-right-color: transparent; box-shadow: none; }
+        }
+
+        @keyframes modern-caret-subtitle {
+            0%, 50% { border-right-color: var(--gray-400); box-shadow: 0 0 4px rgba(156, 163, 175, 0.3); }
+            51%, 100% { border-right-color: transparent; box-shadow: none; }
+        }
+
+        .typewriter.completed, .typewriter-subtitle.completed {
+            border-right: none;
+            animation: none;
+            width: 100%;
+            opacity: 1;
+        }
+        .typewriter.completed {
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Welcome Header - Adapted from train-ai.html */
+        .welcome-header {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+        }
+        .welcome-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--info));
+        }
+        .welcome-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .welcome-text h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0 0 0.5rem 0;
+            max-width: fit-content;
+        }
+        .welcome-text p {
+            color: var(--gray-600);
+            margin: 0;
+            font-size: 1rem;
+            max-width: fit-content;
+        }
+        .admin-greeting { /* Adjusted for general admin display */
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--gray-50);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+        }
+        .admin-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        .admin-info h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        .admin-info p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        /* Card styles - Adapted from train-ai.html */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden; /* For pseudo-elements */
+        }
+        .card-header {
+            background: none;
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-header h6 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0;
+        }
+        .card-body {
+            padding: 0; /* Override default padding */
+        }
+
+        /* Form elements - Adapted from train-ai.html */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--white);
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: var(--ring);
+        }
+        .form-textarea {
+            min-height: 120px; /* Adjust height for marquee content */
+            resize: vertical;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.6;
+            background: var(--gray-50);
+        }
+        .form-check {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 1.25rem 1.5rem;
+            background: linear-gradient(135deg, var(--gray-50), var(--white));
+            border-radius: var(--radius-lg);
+            border: 2px solid var(--gray-200);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .form-check::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .form-check:hover {
+            background: var(--white);
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        .form-check:hover::before {
+            opacity: 1;
+        }
+        .form-check-input {
+            appearance: none;
+            width: 3.5rem;
+            height: 2rem;
+            background: var(--gray-300);
+            border-radius: 1rem;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-right: 1.25rem;
+            flex-shrink: 0;
+            border: none;
+            outline: none;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .form-check-input::before {
+            content: '';
+            position: absolute;
+            top: 0.125rem;
+            left: 0.125rem;
+            width: 1.75rem;
+            height: 1.75rem;
+            background: linear-gradient(135deg, var(--white), var(--gray-50));
+            border-radius: 50%;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        .form-check-input:checked {
+            background: linear-gradient(135deg, var(--success), var(--success-light));
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .form-check-input:checked::before {
+            transform: translateX(1.5rem);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, var(--white), var(--gray-50));
+        }
+        .form-check-input:focus {
+            outline: none;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+        .form-check-input:hover {
+            transform: scale(1.05);
+        }
+        .form-check-input:checked:hover {
+            transform: scale(1.05);
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+        .form-check-input:active::before {
+            width: 2rem;
+            transition: all 0.1s ease;
+        }
+        .form-check-input:checked:active::before {
+            width: 2rem;
+            transform: translateX(1.25rem);
+            transition: all 0.1s ease;
+        }
+        .form-check-label {
+            cursor: pointer;
+            color: var(--gray-800);
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            user-select: none;
+        }
+        .form-check-label:hover {
+            color: var(--primary);
+        }
+
+        /* Enhanced Button Styles */
+        .btn {
+            border: none;
+            border-radius: var(--radius);
+            padding: 0.875rem 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            justify-content: center;
+            min-width: 140px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--white);
+            box-shadow: var(--shadow);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: var(--white);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            min-width: auto;
+        }
+
+        /* Template Cards - Enhanced from original manage_marquee_notification.html */
+        .template-card {
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+            min-height: 120px;
+        }
+        .template-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        .template-card.selected {
+            border-color: var(--success);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), var(--white));
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+        .template-card.selected::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success), var(--success-light));
+        }
+        .template-card .icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-right: 1rem;
+            flex-shrink: 0;
+            transition: var(--transition);
+            margin-top: 0.25rem;
+        }
+        .template-card.selected .icon {
+            color: var(--success);
+            transform: scale(1.1);
+        }
+        .template-card .details {
+            flex-grow: 1;
+            min-width: 0;
+        }
+        .template-card .details h6 {
+            margin-bottom: 0.5rem;
+            color: var(--gray-900);
+            font-weight: 700;
+            font-size: 1.1rem;
+            line-height: 1.3;
+        }
+        .template-card.selected .details h6 {
+            color: var(--success);
+        }
+        .template-card .details small {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            display: block;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.4;
+            max-height: 4.5em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .template-card .check-icon {
+            font-size: 1.75rem;
+            color: transparent;
+            margin-left: 1rem;
+            transition: var(--transition);
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+        .template-card.selected .check-icon {
+            color: var(--success);
+            animation: bounceIn 0.6s forwards;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        /* Template Grid Layout */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Loading Spinner for Button */
+        .loading-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top: 2px solid var(--white);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Character Count Styling */
+        .char-count {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            text-align: right;
+            margin-top: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--gray-50);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+        }
+
+        /* Info Text Styling */
+        .info-text {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--info);
+            margin-top: 1.5rem;
+        }
+        .info-text i {
+            color: var(--info);
+            margin-right: 0.5rem;
+        }
+
+        /* Notifications - From train-ai.html */
+        .notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 9999;
+            transform: translateX(400px);
+            transition: var(--transition);
+            max-width: 400px;
+            min-width: 300px;
+            display: flex; /* Use flex for alignment */
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+        .notification.error {
+            border-left: 4px solid var(--danger);
+        }
+        .notification-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            flex-grow: 1; /* Allow content to take space */
+        }
+        .notification-text {
+            flex: 1;
+            color: var(--gray-700);
+            font-size: 0.875rem;
+        }
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0; /* Prevent button from shrinking */
+        }
+
+        /* Animations - From train-ai.html */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ripple effect for buttons */
+        @keyframes ripple {
+            to { transform: scale(2); opacity: 0; }
+        }
+
+        /* Hidden default alerts */
+        .alert {
+            display: none !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+            .welcome-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .welcome-text h1 {
+                font-size: 1.75rem;
+            }
+            .welcome-text p {
+                font-size: 0.9rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+            .card-header h6 {
+                font-size: 1.1rem;
+            }
+            .template-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .template-card {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+                min-height: auto;
+            }
+            .template-card .icon {
+                margin-bottom: 0.75rem;
+                margin-right: 0;
+                margin-top: 0;
+            }
+            .template-card .details h6 {
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            .template-card .details small {
+                font-size: 0.8rem;
+                max-height: none;
+            }
+            .template-card .check-icon {
+                position: absolute;
+                top: 0.75rem;
+                right: 0.75rem;
+                font-size: 1.5rem;
+                margin: 0;
+            }
+            .form-check {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+            }
+            .form-check-input {
+                margin-bottom: 0.75rem;
+                margin-right: 0;
+                width: 3rem;
+                height: 1.75rem;
+            }
+            .form-check-input::before {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+            .form-check-input:checked::before {
+                transform: translateX(1.25rem);
+            }
+            .form-check-label {
+                font-size: 1rem;
+                gap: 0.5rem;
+            }
+            .form-check-label::after {
+                font-size: 0.8rem;
+                padding: 0.2rem 0.6rem;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+                padding: 1rem 1.5rem;
+            }
+            .btn-sm {
+                width: auto;
+                padding: 0.5rem 1rem;
+            }
+            .char-count {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.4rem;
+            }
+            .info-text {
+                font-size: 0.8rem;
+                padding: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 0.75rem;
+            }
+            .welcome-header {
+                padding: 1.5rem;
+            }
+            .welcome-text h1 {
+                font-size: 1.5rem;
+            }
+            .card {
+                padding: 1rem;
+            }
+            .template-card {
+                padding: 0.75rem;
+            }
+            .template-card .details h6 {
+                font-size: 0.9rem;
+            }
+            .template-card .details small {
+                font-size: 0.75rem;
+            }
+            .form-control {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+            }
+            .btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div class="main-container">
+                <div class="welcome-header fade-in">
+                    <div class="welcome-content">
+                        <div class="welcome-text">
+                            <h1 class="typewriter">📢 Quản lý Thông báo Chung</h1>
+                            <p class="typewriter-subtitle">Cấu hình và gửi các thông báo quan trọng đến độc giả</p>
+                        </div>
+                        <div class="admin-greeting" th:if="${fullName != null}">
+                            <div class="admin-avatar" th:text="${#strings.substring(fullName,0,1)}">A</div>
+                            <div class="admin-info">
+                                <h3 th:text="${'Xin chào, ' + fullName}">Xin chào, Admin</h3>
+                                <p>Quản trị viên hệ thống</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${successMessageMarquee}" class="alert alert-success" role="alert" th:text="${successMessageMarquee}"></div>
+                <div th:if="${errorMessageMarquee}" class="alert alert-danger" role="alert" th:text="${errorMessageMarquee}"></div>
+
+                <div class="card shadow mb-4 fade-in">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Cấu hình Thông báo Marquee hiện tại</h6>
+                        <a th:href="@{/admin/dashboard}" class="btn btn-primary btn-sm shadow-sm">
+                            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Quay lại Dashboard
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/notifications/marquee/update}" method="post" id="marqueeUpdateForm">
+                            <div class="form-group">
+                                <label for="marqueeContent" class="form-label">
+                                    <i class="fas fa-bullhorn" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                                    Nội dung Thông báo:
+                                </label>
+                                <textarea class="form-control form-textarea" id="marqueeContent" name="marqueeContent" rows="3" required th:text="${currentMarqueeMessageContent}"></textarea>
+                                <div class="char-count" id="charCount">0 ký tự • 1 dòng</div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="marqueeEnabled" name="marqueeEnabled" th:checked="${isMarqueeEnabled}">
+                                <label class="form-check-label" for="marqueeEnabled">
+                                    Kích hoạt Thông báo Marquee
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary" id="saveMarqueeBtn">
+                                <i class="fas fa-save"></i>
+                                <span>Lưu cấu hình</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4 fade-in">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Chọn từ các Mẫu Thông báo có sẵn</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="template-grid">
+                            <div th:each="template : ${marqueeTemplates}" class="template-card"
+                                 th:data-template-id="${template.id}"
+                                 th:data-content="${template.content}"
+                                 th:data-name="${template.name}">
+                                <div class="icon">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </div>
+                                <div class="details">
+                                    <h6 th:text="${template.name}">Tên mẫu</h6>
+                                    <small th:text="${template.content}"></small>
+                                </div>
+                                <div class="check-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-text">
+                            <i class="fas fa-info-circle"></i>
+                            Click vào một mẫu để tự động điền nội dung vào ô trên. Mẫu đã chọn sẽ được đánh dấu.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="page_scripts">
+    <script>
+        // Notification system - Replicate from train-ai.html
+        function showNotification(message, type = 'success') {
+            document.querySelectorAll('.notification').forEach(notif => notif.remove());
+
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"
+                       style="color: var(--${type === 'success' ? 'success' : 'danger'}); font-size: 1.25rem;"></i>
+                    <div class="notification-text">${message}</div>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
+        // Ripple effect for buttons - Replicate from train-ai.html
+        document.querySelectorAll('button[type="submit"]').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!this.disabled) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(255, 255, 255, 0.3);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        pointer-events: none;
+                    `;
+
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+
+                    setTimeout(() => ripple.remove(), 600);
+                }
+            });
+        });
+
+        // Modern Typewriter Effect with Intersection Observer - Replicate from train-ai.html
+        function initTypewriterEffect() {
+            const typewriterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.classList.contains('animate')) {
+                        setTimeout(() => {
+                            entry.target.classList.add('animate');
+                            const animationDuration = entry.target.classList.contains('typewriter') ? 2500 : 3800; // Adjust if needed
+                            setTimeout(() => {
+                                entry.target.classList.add('completed');
+                            }, animationDuration);
+                        }, 200);
+                    }
+                });
+            }, {
+                threshold: 0.5,
+                rootMargin: '-50px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.typewriter, .typewriter-subtitle').forEach(element => {
+                typewriterObserver.observe(element);
+            });
+        }
+
+
+        $(document).ready(function() {
+            console.log("manage_marquee_notification: Script loaded and document ready.");
+
+            // Handle server messages - Replicate from train-ai.html
+            const successAlert = document.querySelector('.alert-success');
+            if (successAlert) {
+                showNotification(successAlert.textContent.trim(), 'success');
+            }
+
+            const errorAlert = document.querySelector('.alert-danger');
+            if (errorAlert) {
+                showNotification(errorAlert.textContent.trim(), 'error');
+            }
+
+            // Logic chọn template và điền dữ liệu
+            $('.template-card').on('click', function() {
+                console.log("manage_marquee_notification: template-card clicked.");
+                // Xóa trạng thái 'selected' của tất cả các thẻ
+                $('.template-card').removeClass('selected');
+                // Thêm trạng thái 'selected' cho thẻ được click
+                $(this).addClass('selected');
+
+                const content = $(this).data('content'); // Lấy nội dung từ data-content
+                const templateName = $(this).data('name'); // Lấy tên mẫu từ data-name (để log)
+
+                $('#marqueeContent').val(content); // Điền nội dung vào textarea chính
+
+                console.log(`manage_marquee_notification: Content from template '${templateName}' filled into textarea.`);
+            });
+
+            // Enhanced loading state for save button
+            $('#marqueeUpdateForm').on('submit', function() {
+                const saveBtn = $('#saveMarqueeBtn');
+                saveBtn.html('<div class="loading-spinner"></div> <span>Đang lưu...</span>');
+                saveBtn.prop('disabled', true);
+            });
+
+            // Form control focus effects
+            document.querySelectorAll('.form-control').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.01)';
+                    this.parentElement.style.transition = 'transform 0.2s ease-out';
+                });
+
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = '';
+                });
+            });
+
+            // Keyboard shortcuts - Escape to close notification
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const notifications = document.querySelectorAll('.notification.show');
+                    notifications.forEach(notif => {
+                        notif.classList.remove('show');
+                        setTimeout(() => notif.remove(), 300);
+                    });
+                }
+            });
+
+            // Real-time character count for textarea
+            const textarea = document.getElementById('marqueeContent');
+            const charCount = document.getElementById('charCount');
+            if (textarea && charCount) {
+                function updateCharCount() {
+                    const count = textarea.value.length;
+                    const lines = textarea.value.split('\n').length;
+                    charCount.textContent = `${count} ký tự • ${lines} dòng`;
+
+                    // Add visual feedback based on character count
+                    if (count > 200) {
+                        charCount.style.color = 'var(--warning)';
+                        charCount.style.borderColor = 'var(--warning)';
+                    } else if (count > 100) {
+                        charCount.style.color = 'var(--info)';
+                        charCount.style.borderColor = 'var(--info)';
+                    } else {
+                        charCount.style.color = 'var(--gray-500)';
+                        charCount.style.borderColor = 'var(--gray-200)';
+                    }
+                }
+
+                textarea.addEventListener('input', updateCharCount);
+                updateCharCount(); // Initial count
+            }
+
+            // Init typewriter effect on page load
+            initTypewriterEffect();
+
+            // Smooth card animations with Intersection Observer
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.card.fade-in').forEach((card) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                cardObserver.observe(card);
+            });
+
+            console.log('📢 Quản lý Thông báo Chung với hiệu ứng gõ phím đã được khởi tạo thành công!');
+
+            // iPhone-style toggle switch effects
+            const toggleSwitch = document.getElementById('marqueeEnabled');
+            if (toggleSwitch) {
+                toggleSwitch.addEventListener('change', function() {
+                    // Add haptic feedback effect
+                    this.style.transform = 'scale(0.95)';
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+
+                    // Add ripple effect
+                    const ripple = document.createElement('div');
+                    ripple.style.cssText = `
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        width: 0;
+                        height: 0;
+                        background: rgba(16, 185, 129, 0.3);
+                        border-radius: 50%;
+                        transform: translate(-50%, -50%);
+                        transition: all 0.6s ease;
+                        pointer-events: none;
+                        z-index: 1;
+                    `;
+
+                    this.parentElement.style.position = 'relative';
+                    this.parentElement.appendChild(ripple);
+
+                    setTimeout(() => {
+                        ripple.style.width = '100px';
+                        ripple.style.height = '100px';
+                        ripple.style.opacity = '0';
+                    }, 10);
+
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+
+                    // Show status notification
+                    const status = this.checked ? 'Bật' : 'Tắt';
+                    showNotification(`Thông báo Marquee đã được ${status.toLowerCase()}`, 'success');
+                });
+
+                // Add touch feedback for mobile
+                toggleSwitch.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                });
+
+                toggleSwitch.addEventListener('touchend', function() {
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 150);
+                });
+            }
+        });
+    </script>
+</th:block>
+</body>
+</html>

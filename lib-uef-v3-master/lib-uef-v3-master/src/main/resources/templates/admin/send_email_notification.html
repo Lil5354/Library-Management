@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/fragments/layout_admin}">
+
+<head>
+    <title>Gửi Thông Báo Email</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Elegant Color Palette */
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-light: #34d399;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --ring: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+        }
+        /* Các CSS tùy chỉnh cho Tabs */
+        .nav-tabs .nav-link {
+            color: #6e707e; /* Màu chữ mặc định cho tab */
+            font-weight: 600;
+            border: 1px solid transparent;
+            border-top-left-radius: 0.35rem;
+            border-top-right-radius: 0.35rem;
+            margin-bottom: -1px;
+            padding: 0.75rem 1.25rem;
+            transition: all 0.2s ease-in-out;
+        }
+        .nav-tabs .nav-link:hover {
+            border-color: #eaecf4 #eaecf4 #dddfeb; /* Giống border-left-info của SB Admin */
+            color: #4e73df; /* Màu primary */
+        }
+        .nav-tabs .nav-link.active {
+            color: #4e73df; /* Màu primary */
+            background-color: #fff;
+            border-color: #dddfeb #dddfeb #fff;
+            border-bottom-color: #fff; /* Tắt border dưới khi active */
+        }
+        .tab-content {
+            background-color: #fff;
+            border: 1px solid #dddfeb; /* Border chung cho tab content */
+            border-top: none; /* Bỏ border trên cùng để nối với tab header */
+            padding: 1.5rem;
+            border-bottom-left-radius: 0.35rem;
+            border-bottom-right-radius: 0.35rem;
+        }
+        .template-card {
+            background-color: #f8f9fc; /* Màu nền nhẹ hơn cho card template */
+            border: 1px solid #eaecf4;
+            border-radius: 0.35rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            display: flex;
+            align-items: center;
+        }
+        .template-card:hover {
+            background-color: #e2e5ec;
+            border-color: #d1d3e2;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .template-card.selected {
+            border-color: #4e73df; /* Màu primary */
+            background-color: rgba(78, 115, 223, 0.05); /* Primary nhạt */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .template-card .icon {
+            font-size: 1.5rem;
+            color: #4e73df; /* Primary */
+            margin-right: 0.75rem;
+        }
+        .template-card .details {
+            flex-grow: 1;
+        }
+        .template-card .details h6 {
+            margin-bottom: 0.2rem;
+            color: #5a5c69; /* Dark text */
+            font-weight: 700;
+        }
+        .template-card .details small {
+            color: #858796; /* Gray text */
+        }
+        .template-card .check-icon {
+            font-size: 1.25rem;
+            color: transparent; /* Mặc định ẩn */
+        }
+        .template-card.selected .check-icon {
+            color: #4e73df; /* Màu primary khi được chọn */
+        }
+        .template-preview {
+            background-color: #f0f2f5;
+            border: 1px solid #d1d3e2;
+            padding: 1rem;
+            border-radius: 0.35rem;
+            font-size: 0.9rem;
+            color: #5a5c69;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap; /* Giữ định dạng xuống dòng và khoảng trắng */
+            word-wrap: break-word; /* Ngắt từ nếu quá dài */
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div class="main-container">
+                <div class="welcome-header fade-in">
+                    <div class="welcome-content">
+                        <div class="welcome-text">
+                            <h1 class="typewriter">📧 Gửi Thông Báo Email</h1>
+                            <p class="typewriter-subtitle">Soạn và gửi email đến người dùng hệ thống</p>
+                        </div>
+                        <div class="admin-greeting" th:if="${fullName != null}">
+                            <div class="admin-avatar" th:text="${#strings.substring(fullName,0,1)}">A</div>
+                            <div class="admin-info">
+                                <h3 th:text="${'Xin chào, ' + fullName}">Xin chào, Admin</h3>
+                                <p>Quản trị viên hệ thống</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${successMessageEmail}" class="alert alert-success" role="alert" th:text="${successMessageEmail}"></div>
+                <div th:if="${errorMessageEmail}" class="alert alert-danger" role="alert" th:text="${errorMessageEmail}"></div>
+
+                <div class="card shadow mb-4 fade-in">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Soạn và Gửi Email</h6>
+                    </div>
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" id="emailFormTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="manual-tab" data-toggle="tab" data-target="#manualForm" type="button" role="tab" aria-controls="manualForm" aria-selected="true">Email Tùy chỉnh</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="staff-template-tab" data-toggle="tab" data-target="#staffTemplateContentDiv" type="button" role="tab" aria-controls="staffTemplateContentDiv" aria-selected="false">Form Nhân viên</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="reader-template-tab" data-toggle="tab" data-target="#readerTemplateContentDiv" type="button" role="tab" aria-controls="readerTemplateContentDiv" aria-selected="false">Form Độc giả</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="custom-html-tab" data-toggle="tab" data-target="#customHtmlForm" type="button" role="tab" aria-controls="customHtmlForm" aria-selected="false">Custom HTML Email</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="emailFormTabContent">
+                            <div class="tab-pane fade show active" id="manualForm" role="tabpanel" aria-labelledby="manual-tab">
+                                <form th:action="@{/admin/notifications/email/send}" method="post" enctype="multipart/form-data" id="manualEmailForm">
+                                    <input type="hidden" name="formType" value="manual">
+                                    <div class="form-group">
+                                        <label class="form-label fw-bold">Gửi đến:</label>
+                                        <div class="radio-group">
+                                            <div class="radio-option" data-value="all">
+                                                <input class="radio-input" type="radio" name="targetType" id="manualEmailTargetAll" value="all" checked>
+                                                <div class="radio-icon"><i class="fas fa-globe"></i></div>
+                                                <div class="radio-content">
+                                                    <div class="radio-title">Tất cả người dùng (Nhân viên & Độc giả)</div>
+                                                </div>
+                                                <div class="check-mark"></div>
+                                            </div>
+                                            <div class="radio-option" data-value="role">
+                                                <input class="radio-input" type="radio" name="targetType" id="manualEmailTargetRole" value="role">
+                                                <div class="radio-icon"><i class="fas fa-user-tag"></i></div>
+                                                <div class="radio-content">
+                                                    <div class="radio-title">Một nhóm vai trò</div>
+                                                </div>
+                                                <div class="check-mark"></div>
+                                            </div>
+                                            <div class="radio-option" data-value="single">
+                                                <input class="radio-input" type="radio" name="targetType" id="manualEmailTargetSingle" value="single">
+                                                <div class="radio-icon"><i class="fas fa-user"></i></div>
+                                                <div class="radio-content">
+                                                    <div class="radio-title">Một người dùng cụ thể</div>
+                                                </div>
+                                                <div class="check-mark"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="manualEmailRoleSelectContainer" class="form-group" style="display: none;">
+                                        <label for="manualEmailRole" class="form-label">Chọn vai trò:</label>
+                                        <select class="form-select" name="role" id="manualEmailRole">
+                                            <option value="">-- Chọn vai trò --</option>
+                                            <option value="READER">READER</option>
+                                            <option value="STAFF">STAFF</option>
+                                        </select>
+                                    </div>
+                                    <div id="manualEmailUsernameInputContainer" class="form-group" style="display: none;">
+                                        <label for="manualEmailUsername" class="form-label">Tên đăng nhập người dùng:</label>
+                                        <input type="text" class="form-control" id="manualEmailUsername" name="username" placeholder="Nhập tên đăng nhập...">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="manualEmailSubject" class="form-label fw-bold">Tiêu đề Email:</label>
+                                        <input type="text" class="form-control" id="manualEmailSubject" name="subject" required placeholder="Nhập tiêu đề email...">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="manualEmailContent" class="form-label fw-bold">Nội dung Email:</label>
+                                        <textarea class="form-control form-textarea" id="manualEmailContent" name="content" rows="8" required placeholder="Nhập nội dung email..."></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label fw-bold">Định dạng Email:</label>
+                                        <div class="radio-group">
+                                            <div class="radio-option" data-value="plain">
+                                                <input class="radio-input" type="radio" name="format" id="manualFormatPlain" value="plain" checked>
+                                                <div class="radio-icon"><i class="fas fa-font"></i></div>
+                                                <div class="radio-content">
+                                                    <div class="radio-title">Plain Text</div>
+                                                </div>
+                                                <div class="check-mark"></div>
+                                            </div>
+                                            <div class="radio-option" data-value="html">
+                                                <input class="radio-input" type="radio" name="format" id="manualFormatHtml" value="html">
+                                                <div class="radio-icon"><i class="fas fa-code"></i></div>
+                                                <div class="radio-content">
+                                                    <div class="radio-title">HTML</div>
+                                                </div>
+                                                <div class="check-mark"></div>
+                                            </div>
+                                        </div>
+                                        <small class="form-text text-muted">Chọn HTML nếu bạn muốn dùng các thẻ HTML trong nội dung.</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="manualAttachmentFile" class="form-label fw-bold">File đính kèm (Tùy chọn):</label>
+                                        <input class="form-control" type="file" id="manualAttachmentFile" name="attachment">
+                                        <small class="form-text text-muted">Kích thước file tối đa có thể bị giới hạn bởi cấu hình server.</small>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane me-2"></i>Gửi Email</button>
+                                </form>
+                            </div>
+
+                            <div class="tab-pane fade" id="staffTemplateContentDiv" role="tabpanel" aria-labelledby="staff-template-tab">
+                                <form th:action="@{/admin/notifications/email/send}" method="post" enctype="multipart/form-data" id="staffTemplateActualForm">
+                                    <input type="hidden" name="formType" value="template">
+                                    <input type="hidden" name="templateId" id="staffTemplateSelectedId">
+                                    <input type="hidden" name="format" id="staffTemplateFormat">
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Gửi đến:</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="targetType" id="staffTemplateTargetAll" value="all" checked>
+                                            <label class="form-check-label" for="staffTemplateTargetAll">Tất cả Nhân viên</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="targetType" id="staffTemplateTargetSingle" value="single">
+                                            <label class="form-check-label" for="staffTemplateTargetSingle">Một Nhân viên cụ thể</label>
+                                        </div>
+                                    </div>
+                                    <div id="staffTemplateUsernameInputContainer" class="mb-3" style="display: none;">
+                                        <label for="staffTemplateUsername" class="form-label">Tên đăng nhập Nhân viên:</label>
+                                        <input type="text" class="form-control" id="staffTemplateUsername" name="username" placeholder="Nhập tên đăng nhập...">
+                                    </div>
+
+                                    <h5 class="mt-4 mb-3 fw-bold">Chọn mẫu Email:</h5>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3" th:each="template : ${staffEmailTemplates}">
+                                            <div class="template-card" th:data-template-id="${template.id}"
+                                                 th:data-subject="${template.subject}"
+                                                 th:data-content="${template.content}"
+                                                 th:data-format="${template.format}">
+                                                <div class="icon"><i class="fas fa-file-alt"></i></div>
+                                                <div class="details">
+                                                    <h6 th:text="${template.name}">Tên mẫu</h6>
+                                                    <small>Click để chọn và xem trước</small>
+                                                </div>
+                                                <div class="check-icon"><i class="fas fa-check-circle"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="staffTemplateSubject" class="form-label fw-bold">Tiêu đề Email:</label>
+                                        <input type="text" class="form-control" id="staffTemplateSubject" name="subject" readonly required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="staffTemplateContent" class="form-label fw-bold">Nội dung Email:</label>
+                                        <textarea class="form-control" id="staffTemplateContent" name="content" rows="10" readonly required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="staffTemplateAttachment" class="form-label fw-bold">File đính kèm (Tùy chọn):</label>
+                                        <input class="form-control" type="file" id="staffTemplateAttachment" name="attachment">
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary" id="staffSendBtn" disabled><i class="fas fa-paper-plane me-2"></i>Gửi Email</button>
+                                </form>
+                            </div>
+
+                            <div class="tab-pane fade" id="readerTemplateContentDiv" role="tabpanel" aria-labelledby="reader-template-tab">
+                                <form th:action="@{/admin/notifications/email/send}" method="post" enctype="multipart/form-data" id="readerTemplateActualForm">
+                                    <input type="hidden" name="formType" value="template">
+                                    <input type="hidden" name="templateId" id="readerTemplateSelectedId">
+                                    <input type="hidden" name="format" id="readerTemplateFormat">
+
+                                    <div class="mb-3">
+                                        <label class="form-label fw-bold">Gửi đến:</label>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="targetType" id="readerTemplateTargetAll" value="all" checked>
+                                            <label class="form-check-label" for="readerTemplateTargetAll">Tất cả Độc giả</label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="targetType" id="readerTemplateTargetSingle" value="single">
+                                            <label class="form-check-label" for="readerTemplateTargetSingle">Một Độc giả cụ thể</label>
+                                        </div>
+                                    </div>
+                                    <div id="readerTemplateUsernameInputContainer" class="mb-3" style="display: none;">
+                                        <label for="readerTemplateUsername" class="form-label">Tên đăng nhập Độc giả:</label>
+                                        <input type="text" class="form-control" id="readerTemplateUsername" name="username" placeholder="Nhập tên đăng nhập...">
+                                    </div>
+
+                                    <h5 class="mt-4 mb-3 fw-bold">Chọn mẫu Email:</h5>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-3" th:each="template : ${readerEmailTemplates}">
+                                            <div class="template-card" th:data-template-id="${template.id}"
+                                                 th:data-subject="${template.subject}"
+                                                 th:data-content="${template.content}"
+                                                 th:data-format="${template.format}">
+                                                <div class="icon"><i class="fas fa-book"></i></div>
+                                                <div class="details">
+                                                    <h6 th:text="${template.name}">Tên mẫu</h6>
+                                                    <small>Click để chọn và xem trước</small>
+                                                </div>
+                                                <div class="check-icon"><i class="fas fa-check-circle"></i></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="readerTemplateSubject" class="form-label fw-bold">Tiêu đề Email:</label>
+                                        <input type="text" class="form-control" id="readerTemplateSubject" name="subject" readonly required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="readerTemplateContent" class="form-label fw-bold">Nội dung Email:</label>
+                                        <textarea class="form-control" id="readerTemplateContent" name="content" rows="10" readonly required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="readerTemplateAttachment" class="form-label fw-bold">File đính kèm (Tùy chọn):</label>
+                                        <input class="form-control" type="file" id="readerTemplateAttachment" name="attachment">
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary" id="readerSendBtn" disabled><i class="fas fa-paper-plane me-2"></i>Gửi Email</button>
+                                </form>
+                            </div>
+
+                            <div class="tab-pane fade" id="customHtmlForm" role="tabpanel" aria-labelledby="custom-html-tab">
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle me-2"></i>Tính năng này đang trong quá trình phát triển. Vui lòng sử dụng các tab khác.
+                                </div>
+                                <p>Bạn có thể phát triển chức năng cho phép tạo hoặc chỉnh sửa các template HTML email ở đây.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="page_scripts">
+    <script>
+        // SỬ DỤNG jQuery(document).ready() để đảm bảo jQuery và Bootstrap sẵn sàng
+        jQuery(document).ready(function($) { // Truyền $ vào để sử dụng an toàn
+            console.log("SEND_EMAIL_NOTIFICATION: Script started.");
+
+            // Hàm chung để xử lý ẩn/hiện input username/role cho các form
+            function setupTargetTypeToggle(formIdPrefix) {
+                const radios = $(`#${formIdPrefix} input[name="targetType"]`);
+                const usernameContainer = $(`#${formIdPrefix}UsernameInputContainer`);
+                const usernameInput = $(`#${formIdPrefix}Username`);
+                const roleSelectContainer = $(`#${formIdPrefix}RoleSelectContainer`);
+                const roleSelect = $(`#${formIdPrefix}Role`);
+
+                function toggleTargetInputs() {
+                    const selectedValue = $(`#${formIdPrefix} input[name="targetType"]:checked`).val();
+
+                    if (usernameContainer.length) usernameContainer.toggle(selectedValue === 'single');
+                    if (roleSelectContainer.length) roleSelectContainer.toggle(selectedValue === 'role');
+
+                    if (usernameInput.length) usernameInput.prop('required', selectedValue === 'single');
+                    if (roleSelect.length) roleSelect.prop('required', selectedValue === 'role');
+                }
+
+                radios.on('change', toggleTargetInputs);
+                toggleTargetInputs(); // Chạy lần đầu
+                console.log(`SEND_EMAIL_NOTIFICATION: setupTargetTypeToggle for ${formIdPrefix} completed.`);
+            }
+
+            // Thiết lập cho form Manual Email
+            setupTargetTypeToggle('manualEmail');
+
+            // Thiết lập cho form Staff Template
+            setupTargetTypeToggle('staffTemplateActual');
+
+            // Thiết lập cho form Reader Template
+            setupTargetTypeToggle('readerTemplateActual');
+
+
+            // Logic chọn template và điền dữ liệu cho Staff Form
+            const staffTemplateCards = $('#staffTemplateActualForm .template-card');
+            console.log("SEND_EMAIL_NOTIFICATION: Staff template cards found:", staffTemplateCards.length);
+            staffTemplateCards.on('click', function() {
+                console.log("SEND_EMAIL_NOTIFICATION: Clicked Staff template card.");
+                $('#staffTemplateActualForm .template-card').removeClass('selected');
+                $(this).addClass('selected');
+
+                const subject = $(this).data('subject');
+                const content = $(this).data('content');
+                const format = $(this).data('format');
+                const templateId = $(this).data('template-id');
+
+                $('#staffTemplateSubject').val(subject);
+                $('#staffTemplateContent').val(content);
+                $('#staffTemplateSelectedId').val(templateId);
+                $('#staffTemplateFormat').val(format);
+
+                $('#staffSendBtn').prop('disabled', false);
+            });
+
+            // Logic chọn template và điền dữ liệu cho Reader Form
+            const readerTemplateCards = $('#readerTemplateActualForm .template-card');
+            console.log("SEND_EMAIL_NOTIFICATION: Reader template cards found:", readerTemplateCards.length);
+            readerTemplateCards.on('click', function() {
+                console.log("SEND_EMAIL_NOTIFICATION: Clicked Reader template card.");
+                $('#readerTemplateActualForm .template-card').removeClass('selected');
+                $(this).addClass('selected');
+
+                const subject = $(this).data('subject');
+                const content = $(this).data('content');
+                const format = $(this).data('format');
+                const templateId = $(this).data('template-id');
+
+                $('#readerTemplateSubject').val(subject);
+                $('#readerTemplateContent').val(content);
+                $('#readerTemplateSelectedId').val(templateId);
+                $('#readerTemplateFormat').val(format);
+
+                $('#readerSendBtn').prop('disabled', false);
+            });
+
+            // Xử lý khi chuyển tab (để reset hoặc giữ trạng thái nếu cần)
+            $('#emailFormTabs').on('shown.bs.tab', function (event) {
+                const currentActiveFormTabTargetId = $(event.relatedTarget).data('target');
+
+                let actualFormToReset = null;
+                if (currentActiveFormTabTargetId === '#staffTemplateContentDiv') {
+                    actualFormToReset = $('#staffTemplateActualForm')[0];
+                } else if (currentActiveFormTabTargetId === '#readerTemplateContentDiv') {
+                    actualFormToReset = $('#readerTemplateActualForm')[0];
+                }
+
+                if (actualFormToReset) {
+                    actualFormToReset.reset();
+                    $(actualFormToReset).find('.template-card').removeClass('selected');
+                    if (currentActiveFormTabTargetId === '#staffTemplateContentDiv') {
+                        $('#staffSendBtn').prop('disabled', true);
+                    } else if (currentActiveFormTabTargetId === '#readerTemplateContentDiv') {
+                        $('#readerSendBtn').prop('disabled', true);
+                    }
+                }
+                console.log("SEND_EMAIL_NOTIFICATION: Tab changed.");
+            });
+
+            // Tự động kích hoạt tab đầu tiên khi tải trang
+            // Sử dụng tab của Bootstrap 4
+            $('[data-toggle="tab"]').tab(); // Khởi tạo tab bằng jQuery/Bootstrap
+            $('#manual-tab').tab('show'); // Hiển thị tab đầu tiên
+            console.log("SEND_EMAIL_NOTIFICATION: Initial tab shown.");
+        });
+    </script>
+</th:block>
+</body>
+</html>

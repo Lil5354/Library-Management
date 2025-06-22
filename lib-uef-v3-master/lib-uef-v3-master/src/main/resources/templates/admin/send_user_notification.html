@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/fragments/layout_admin}">
+
+<head>
+    <title>Admin - Gửi Thông Báo Người Dùng</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Elegant Color Palette */
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --success: #10b981;
+            --success-light: #34d399;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --ring: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --radius: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+        }
+
+        /* Base styles */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(to bottom right, var(--gray-50), var(--gray-100));
+            color: var(--gray-900);
+            line-height: 1.6;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Modern Typing Effect CSS */
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid transparent;
+            width: 0;
+            opacity: 0;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gray-900), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .typewriter.animate {
+            animation: modern-typing 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+            modern-caret 1s step-end infinite;
+            opacity: 1;
+            width: 100%;
+        }
+
+        .typewriter-subtitle {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid transparent;
+            width: 0;
+            opacity: 0;
+            color: var(--gray-600);
+            position: relative;
+        }
+
+        .typewriter-subtitle.animate {
+            animation: modern-typing-subtitle 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s forwards,
+            modern-caret-subtitle 1s step-end infinite 0.8s;
+            opacity: 1;
+            width: 100%;
+        }
+
+        /* Animations for typewriter effect */
+        @keyframes modern-typing {
+            0% { width: 0; opacity: 0; transform: translateY(10px); }
+            10% { opacity: 1; transform: translateY(0); }
+            100% { width: 100%; opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes modern-typing-subtitle {
+            0% { width: 0; opacity: 0; transform: translateX(-10px); }
+            10% { opacity: 1; transform: translateX(0); }
+            100% { width: 100%; opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes modern-caret {
+            0%, 50% { border-right-color: var(--primary); box-shadow: 0 0 8px rgba(99, 102, 241, 0.5); }
+            51%, 100% { border-right-color: transparent; box-shadow: none; }
+        }
+
+        @keyframes modern-caret-subtitle {
+            0%, 50% { border-right-color: var(--gray-400); box-shadow: 0 0 4px rgba(156, 163, 175, 0.3); }
+            51%, 100% { border-right-color: transparent; box-shadow: none; }
+        }
+
+        .typewriter.completed, .typewriter-subtitle.completed {
+            border-right: none;
+            animation: none;
+            width: 100%;
+            opacity: 1;
+        }
+        .typewriter.completed {
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Welcome Header */
+        .welcome-header {
+            background: var(--white);
+            border-radius: var(--radius-xl);
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+        }
+        .welcome-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light), var(--info));
+        }
+        .welcome-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .welcome-text h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0 0 0.5rem 0;
+            max-width: fit-content;
+        }
+        .welcome-text p {
+            color: var(--gray-600);
+            margin: 0;
+            font-size: 1rem;
+            max-width: fit-content;
+        }
+        .admin-greeting {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--gray-50);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+        }
+        .admin-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        .admin-info h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+        .admin-info p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--gray-500);
+        }
+
+        /* Card styles */
+        .card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+        }
+        .card-header {
+            background: none;
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .card-header h6 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0;
+        }
+        .card-body {
+            padding: 0;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .form-control, .form-select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--white);
+        }
+        .form-control:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: var(--ring);
+        }
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.6;
+            background: var(--gray-50);
+        }
+
+        /* Radio buttons styling - Modern Card Design */
+        .radio-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .radio-option {
+            position: relative;
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            min-height: 100px;
+            overflow: hidden;
+        }
+        
+        .radio-option:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .radio-option.selected {
+            border-color: var(--success);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), var(--white));
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+        
+        .radio-option.selected::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success), var(--success-light));
+        }
+        
+        .radio-option .radio-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--white);
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+        
+        .radio-option:nth-child(1) .radio-icon {
+            background: linear-gradient(135deg, var(--info), #60a5fa);
+        }
+        
+        .radio-option:nth-child(2) .radio-icon {
+            background: linear-gradient(135deg, var(--warning), #fbbf24);
+        }
+        
+        .radio-option:nth-child(3) .radio-icon {
+            background: linear-gradient(135deg, var(--success), #34d399);
+        }
+        
+        .radio-option.selected .radio-icon {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+        
+        .radio-option .radio-content {
+            flex-grow: 1;
+            min-width: 0;
+        }
+        
+        .radio-option .radio-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        
+        .radio-option.selected .radio-title {
+            color: var(--success);
+        }
+        
+        .radio-option .radio-description {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            line-height: 1.4;
+            margin-bottom: 0;
+        }
+        
+        .radio-option .radio-input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .radio-option .check-mark {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            opacity: 0;
+        }
+        
+        .radio-option.selected .check-mark {
+            background: var(--success);
+            opacity: 1;
+            animation: bounceIn 0.6s forwards;
+        }
+        
+        .radio-option .check-mark::before {
+            content: '✓';
+            color: var(--white);
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        
+        /* Responsive adjustments for radio options */
+        @media (max-width: 768px) {
+            .radio-group {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            
+            .radio-option {
+                padding: 1rem;
+                min-height: 80px;
+            }
+            
+            .radio-option .radio-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            
+            .radio-option .radio-title {
+                font-size: 1rem;
+            }
+            
+            .radio-option .radio-description {
+                font-size: 0.8rem;
+            }
+            
+            .radio-option .check-mark {
+                width: 20px;
+                height: 20px;
+                top: 0.75rem;
+                right: 0.75rem;
+            }
+        }
+
+        /* Template Cards */
+        .template-card {
+            background: var(--white);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: flex-start;
+            position: relative;
+            overflow: hidden;
+            min-height: 120px;
+        }
+        .template-card:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        .template-card.selected {
+            border-color: var(--success);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05), var(--white));
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+        .template-card.selected::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--success), var(--success-light));
+        }
+        .template-card .icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-right: 1rem;
+            flex-shrink: 0;
+            transition: var(--transition);
+            margin-top: 0.25rem;
+        }
+        .template-card.selected .icon {
+            color: var(--success);
+            transform: scale(1.1);
+        }
+        .template-card .details {
+            flex-grow: 1;
+            min-width: 0;
+        }
+        .template-card .details h6 {
+            margin-bottom: 0.5rem;
+            color: var(--gray-900);
+            font-weight: 700;
+            font-size: 1.1rem;
+            line-height: 1.3;
+        }
+        .template-card.selected .details h6 {
+            color: var(--success);
+        }
+        .template-card .details small {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            display: block;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.4;
+            max-height: 4.5em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .template-card .check-icon {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            font-size: 1.5rem;
+            margin: 0;
+        }
+        .template-card.selected .check-icon {
+            color: var(--success);
+            animation: bounceIn 0.6s forwards;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        /* Template Grid Layout */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Enhanced Button Styles */
+        .btn {
+            border: none;
+            border-radius: var(--radius);
+            padding: 0.875rem 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            justify-content: center;
+            min-width: 140px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: var(--white);
+            box-shadow: var(--shadow);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            background: linear-gradient(135deg, var(--primary-light), var(--primary));
+            color: var(--white);
+        }
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            min-width: auto;
+        }
+
+        /* Character Count Styling */
+        .char-count {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+            text-align: right;
+            margin-top: 0.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--gray-50);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius);
+            border: 1px solid var(--gray-200);
+        }
+
+        /* Info Text Styling */
+        .info-text {
+            color: var(--gray-600);
+            font-size: 0.9rem;
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: var(--radius);
+            border-left: 4px solid var(--info);
+            margin-top: 1.5rem;
+        }
+        .info-text i {
+            color: var(--info);
+            margin-right: 0.5rem;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            z-index: 9999;
+            transform: translateX(400px);
+            transition: var(--transition);
+            max-width: 400px;
+            min-width: 300px;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        .notification.show {
+            transform: translateX(0);
+        }
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+        .notification.error {
+            border-left: 4px solid var(--danger);
+        }
+        .notification-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            flex-grow: 1;
+        }
+        .notification-text {
+            flex: 1;
+            color: var(--gray-700);
+            font-size: 0.875rem;
+        }
+        .notification-close {
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ripple effect for buttons */
+        @keyframes ripple {
+            to { transform: scale(2); opacity: 0; }
+        }
+
+        /* Hidden default alerts */
+        .alert {
+            display: none !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+            .welcome-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .welcome-text h1 {
+                font-size: 1.75rem;
+            }
+            .welcome-text p {
+                font-size: 0.9rem;
+            }
+            .card {
+                padding: 1.5rem;
+            }
+            .card-header h6 {
+                font-size: 1.1rem;
+            }
+            .template-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            .template-card {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+                min-height: auto;
+            }
+            .template-card .icon {
+                margin-bottom: 0.75rem;
+                margin-right: 0;
+                margin-top: 0;
+            }
+            .template-card .details h6 {
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+            }
+            .template-card .details small {
+                font-size: 0.8rem;
+                max-height: none;
+            }
+            .template-card .check-icon {
+                position: absolute;
+                top: 0.75rem;
+                right: 0.75rem;
+                font-size: 1.5rem;
+                margin: 0;
+            }
+            .form-check {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 0.75rem;
+            }
+            .form-check-input[type="radio"] {
+                margin-bottom: 0.5rem;
+                margin-right: 0;
+            }
+            .form-check-label {
+                font-size: 0.9rem;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+                padding: 1rem 1.5rem;
+            }
+            .btn-sm {
+                width: auto;
+                padding: 0.5rem 1rem;
+            }
+            .char-count {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.4rem;
+            }
+            .info-text {
+                font-size: 0.8rem;
+                padding: 0.75rem;
+            }
+            .radio-group {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .radio-option {
+                padding: 1rem;
+                min-height: 80px;
+            }
+            .radio-option .radio-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+            .radio-option .radio-title {
+                font-size: 1rem;
+            }
+            .radio-option .radio-description {
+                font-size: 0.8rem;
+            }
+            .radio-option .check-mark {
+                width: 20px;
+                height: 20px;
+                top: 0.75rem;
+                right: 0.75rem;
+            }
+            .form-check {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 0.75rem;
+            }
+            .welcome-header {
+                padding: 1.5rem;
+            }
+            .welcome-text h1 {
+                font-size: 1.5rem;
+            }
+            .card {
+                padding: 1rem;
+            }
+            .template-card {
+                padding: 0.75rem;
+            }
+            .template-card .details h6 {
+                font-size: 0.9rem;
+            }
+            .template-card .details small {
+                font-size: 0.75rem;
+            }
+            .form-control, .form-select {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+            }
+            .btn {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div class="main-container">
+                <div class="welcome-header fade-in">
+                    <div class="welcome-content">
+                        <div class="welcome-text">
+                            <h1 class="typewriter">🔔 Gửi Thông Báo Người Dùng</h1>
+                            <p class="typewriter-subtitle">Soạn và gửi thông báo đến người dùng hệ thống</p>
+                        </div>
+                        <div class="admin-greeting" th:if="${fullName != null}">
+                            <div class="admin-avatar" th:text="${#strings.substring(fullName,0,1)}">A</div>
+                            <div class="admin-info">
+                                <h3 th:text="${'Xin chào, ' + fullName}">Xin chào, Admin</h3>
+                                <p>Quản trị viên hệ thống</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${successMessageUserNotify}" class="alert alert-success" role="alert" th:text="${successMessageUserNotify}"></div>
+                <div th:if="${errorMessageUserNotify}" class="alert alert-danger" role="alert" th:text="${errorMessageUserNotify}"></div>
+
+                <div class="card shadow mb-4 fade-in">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Soạn và Gửi Thông Báo</h6>
+                        <a th:href="@{/admin/dashboard}" class="btn btn-primary btn-sm shadow-sm">
+                            <i class="fas fa-arrow-left fa-sm text-white-50"></i> Quay lại Dashboard
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/admin/notifications/user/send}" method="post" id="userNotificationForm">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-users" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                                    Gửi đến:
+                                </label>
+                                <div class="radio-group">
+                                    <div class="radio-option" data-value="all">
+                                        <input type="radio" class="radio-input" name="targetType" id="userTargetAll" value="all" checked>
+                                        <div class="radio-icon">
+                                            <i class="fas fa-globe"></i>
+                                        </div>
+                                        <div class="radio-content">
+                                            <div class="radio-title">Tất cả người dùng</div>
+                                            <div class="radio-description">Nhân viên & Độc giả</div>
+                                        </div>
+                                        <div class="check-mark"></div>
+                                    </div>
+                                    
+                                    <div class="radio-option" data-value="role">
+                                        <input type="radio" class="radio-input" name="targetType" id="userTargetRole" value="role">
+                                        <div class="radio-icon">
+                                            <i class="fas fa-user-tag"></i>
+                                        </div>
+                                        <div class="radio-content">
+                                            <div class="radio-title">Một nhóm vai trò</div>
+                                            <div class="radio-description">Chọn theo vai trò cụ thể</div>
+                                        </div>
+                                        <div class="check-mark"></div>
+                                    </div>
+                                    
+                                    <div class="radio-option" data-value="single">
+                                        <input type="radio" class="radio-input" name="targetType" id="userTargetSingle" value="single">
+                                        <div class="radio-icon">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="radio-content">
+                                            <div class="radio-title">Một người dùng cụ thể</div>
+                                            <div class="radio-description">Nhập tên đăng nhập</div>
+                                        </div>
+                                        <div class="check-mark"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="userRoleSelectContainer" class="form-group" style="display: none;">
+                                <label for="userRole" class="form-label">
+                                    <i class="fas fa-user-tag" style="margin-right: 0.5rem; color: var(--warning);"></i>
+                                    Chọn vai trò:
+                                </label>
+                                <select class="form-select" name="role" id="userRole">
+                                    <option value="">-- Chọn vai trò --</option>
+                                    <option value="READER">READER</option>
+                                    <option value="STAFF">STAFF</option>
+                                </select>
+                            </div>
+
+                            <div id="userUsernameInputContainer" class="form-group" style="display: none;">
+                                <label for="userUsername" class="form-label">
+                                    <i class="fas fa-user" style="margin-right: 0.5rem; color: var(--success);"></i>
+                                    Tên đăng nhập người dùng:
+                                </label>
+                                <input type="text" class="form-control" id="userUsername" name="username" placeholder="Nhập tên đăng nhập...">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="notificationTitle" class="form-label">
+                                    <i class="fas fa-heading" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                                    Tiêu đề thông báo:
+                                </label>
+                                <input type="text" class="form-control" id="notificationTitle" name="title" required placeholder="Nhập tiêu đề...">
+                                <div class="char-count" id="titleCharCount">0 ký tự</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="notificationMessage" class="form-label">
+                                    <i class="fas fa-comment" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                                    Nội dung thông báo:
+                                </label>
+                                <textarea class="form-control form-textarea" id="notificationMessage" name="message" rows="4" required placeholder="Ví dụ: Sách 'Lập trình Java' bạn đặt trước đã có sẵn tại quầy."></textarea>
+                                <div class="char-count" id="messageCharCount">0 ký tự • 1 dòng</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="notificationLink" class="form-label">
+                                    <i class="fas fa-link" style="margin-right: 0.5rem; color: var(--primary);"></i>
+                                    Đường dẫn (Tùy chọn):
+                                </label>
+                                <input type="text" class="form-control" id="notificationLink" name="link" placeholder="Ví dụ: /books/details/123">
+                                <small class="form-text text-muted">Người dùng sẽ được chuyển đến link này khi nhấp vào thông báo.</small>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" id="sendNotificationBtn">
+                                <i class="fas fa-paper-plane"></i>
+                                <span>Gửi thông báo</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4 fade-in">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Chọn từ các Mẫu Thông báo có sẵn</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="template-grid">
+                            <div th:each="template : ${userNotificationTemplates}" class="template-card"
+                                 th:data-template-id="${template.id}"
+                                 th:data-title="${template.title}"
+                                 th:data-message="${template.message}">
+                                <div class="icon">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                                <div class="details">
+                                    <h6 th:text="${template.name}">Tên mẫu</h6>
+                                    <small th:text="${template.message.length() > 50 ? #strings.substring(template.message, 0, 50) + '...' : template.message}">Nội dung tóm tắt...</small>
+                                </div>
+                                <div class="check-icon">
+                                    <i class="fas fa-check-circle"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-text">
+                            <i class="fas fa-info-circle"></i>
+                            Click vào một mẫu để tự động điền nội dung vào ô trên. Mẫu đã chọn sẽ được đánh dấu.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block layout:fragment="page_scripts">
+    <script>
+        // Notification system
+        function showNotification(message, type = 'success') {
+            document.querySelectorAll('.notification').forEach(notif => notif.remove());
+
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"
+                       style="color: var(--${type === 'success' ? 'success' : 'danger'}); font-size: 1.25rem;"></i>
+                    <div class="notification-text">${message}</div>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+            setTimeout(() => notification.classList.add('show'), 100);
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+        }
+
+        // Ripple effect for buttons
+        document.querySelectorAll('button[type="submit"]').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!this.disabled) {
+                    const ripple = document.createElement('span');
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+
+                    ripple.style.cssText = `
+                        position: absolute;
+                        width: ${size}px;
+                        height: ${size}px;
+                        left: ${x}px;
+                        top: ${y}px;
+                        background: rgba(255, 255, 255, 0.3);
+                        border-radius: 50%;
+                        transform: scale(0);
+                        animation: ripple 0.6s linear;
+                        pointer-events: none;
+                    `;
+
+                    this.style.position = 'relative';
+                    this.style.overflow = 'hidden';
+                    this.appendChild(ripple);
+
+                    setTimeout(() => ripple.remove(), 600);
+                }
+            });
+        });
+
+        // Modern Typewriter Effect with Intersection Observer
+        function initTypewriterEffect() {
+            const typewriterObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting && !entry.target.classList.contains('animate')) {
+                        setTimeout(() => {
+                            entry.target.classList.add('animate');
+                            const animationDuration = entry.target.classList.contains('typewriter') ? 2500 : 3800;
+                            setTimeout(() => {
+                                entry.target.classList.add('completed');
+                            }, animationDuration);
+                        }, 200);
+                    }
+                });
+            }, {
+                threshold: 0.5,
+                rootMargin: '-50px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.typewriter, .typewriter-subtitle').forEach(element => {
+                typewriterObserver.observe(element);
+            });
+        }
+
+        $(document).ready(function() {
+            console.log("send_user_notification: Script loaded and document ready.");
+
+            // Handle server messages
+            const successAlert = document.querySelector('.alert-success');
+            if (successAlert) {
+                showNotification(successAlert.textContent.trim(), 'success');
+            }
+
+            const errorAlert = document.querySelector('.alert-danger');
+            if (errorAlert) {
+                showNotification(errorAlert.textContent.trim(), 'error');
+            }
+
+            // Modern Radio Button Interaction
+            const radioOptions = document.querySelectorAll('.radio-option');
+            radioOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove selected class from all options
+                    radioOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // Add selected class to clicked option
+                    this.classList.add('selected');
+                    
+                    // Check the radio input
+                    const radioInput = this.querySelector('.radio-input');
+                    radioInput.checked = true;
+                    
+                    // Trigger change event for existing logic
+                    radioInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    
+                    console.log(`send_user_notification: Radio option "${this.dataset.value}" selected`);
+                });
+            });
+
+            // Set initial selected state
+            const checkedRadio = document.querySelector('input[name="targetType"]:checked');
+            if (checkedRadio) {
+                const selectedOption = checkedRadio.closest('.radio-option');
+                if (selectedOption) {
+                    selectedOption.classList.add('selected');
+                }
+            }
+
+            // Logic ẩn/hiện input username/role
+            const radios = document.querySelectorAll('input[name="targetType"]');
+            const roleContainer = document.getElementById('userRoleSelectContainer');
+            const usernameContainer = document.getElementById('userUsernameInputContainer');
+            const roleSelect = document.getElementById('userRole');
+            const usernameInput = document.getElementById('userUsername');
+
+            function toggleTargetInputs() {
+                const selectedValue = document.querySelector('input[name="targetType"]:checked').value;
+                if (roleContainer) roleContainer.style.display = (selectedValue === 'role') ? 'block' : 'none';
+                if (usernameContainer) usernameContainer.style.display = (selectedValue === 'single') ? 'block' : 'none';
+
+                if (roleSelect) roleSelect.required = (selectedValue === 'role');
+                if (usernameInput) usernameInput.required = (selectedValue === 'single');
+                console.log(`send_user_notification: Target type changed to ${selectedValue}`);
+            }
+
+            radios.forEach(radio => radio.addEventListener('change', toggleTargetInputs));
+            toggleTargetInputs(); // Chạy lần đầu
+
+            // Logic chọn template và điền dữ liệu
+            $('.template-card').on('click', function() {
+                console.log("send_user_notification: template-card clicked.");
+                $('.template-card').removeClass('selected');
+                $(this).addClass('selected');
+
+                const title = $(this).data('title');
+                const message = $(this).data('message');
+                const link = $(this).data('link');
+                const templateId = $(this).data('template-id');
+
+                $('#notificationTitle').val(title);
+                $('#notificationMessage').val(message);
+                $('#notificationLink').val(link);
+                console.log(`send_user_notification: Content from template '${templateId}' filled. Title: "${title}"`);
+            });
+
+            // Enhanced loading state for send button
+            $('#userNotificationForm').on('submit', function() {
+                const sendBtn = $('#sendNotificationBtn');
+                sendBtn.html('<div class="loading-spinner"></div> <span>Đang gửi...</span>');
+                sendBtn.prop('disabled', true);
+            });
+
+            // Form control focus effects
+            document.querySelectorAll('.form-control, .form-select').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.01)';
+                    this.parentElement.style.transition = 'transform 0.2s ease-out';
+                });
+
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = '';
+                });
+            });
+
+            // Real-time character count for inputs
+            const titleInput = document.getElementById('notificationTitle');
+            const messageInput = document.getElementById('notificationMessage');
+            const titleCharCount = document.getElementById('titleCharCount');
+            const messageCharCount = document.getElementById('messageCharCount');
+
+            if (titleInput && titleCharCount) {
+                function updateTitleCharCount() {
+                    const count = titleInput.value.length;
+                    titleCharCount.textContent = `${count} ký tự`;
+
+                    if (count > 50) {
+                        titleCharCount.style.color = 'var(--warning)';
+                        titleCharCount.style.borderColor = 'var(--warning)';
+                    } else {
+                        titleCharCount.style.color = 'var(--gray-500)';
+                        titleCharCount.style.borderColor = 'var(--gray-200)';
+                    }
+                }
+
+                titleInput.addEventListener('input', updateTitleCharCount);
+                updateTitleCharCount();
+            }
+
+            if (messageInput && messageCharCount) {
+                function updateMessageCharCount() {
+                    const count = messageInput.value.length;
+                    const lines = messageInput.value.split('\n').length;
+                    messageCharCount.textContent = `${count} ký tự • ${lines} dòng`;
+
+                    if (count > 200) {
+                        messageCharCount.style.color = 'var(--warning)';
+                        messageCharCount.style.borderColor = 'var(--warning)';
+                    } else if (count > 100) {
+                        messageCharCount.style.color = 'var(--info)';
+                        messageCharCount.style.borderColor = 'var(--info)';
+                    } else {
+                        messageCharCount.style.color = 'var(--gray-500)';
+                        messageCharCount.style.borderColor = 'var(--gray-200)';
+                    }
+                }
+
+                messageInput.addEventListener('input', updateMessageCharCount);
+                updateMessageCharCount();
+            }
+
+            // Init typewriter effect on page load
+            initTypewriterEffect();
+
+            // Smooth card animations with Intersection Observer
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const cardObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.card.fade-in').forEach((card) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                cardObserver.observe(card);
+            });
+
+            console.log('🔔 Gửi Thông Báo Người Dùng với hiệu ứng gõ phím đã được khởi tạo thành công!');
+        });
+    </script>
+</th:block>
+</body>
+</html>

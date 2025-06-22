@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{admin/index}"> <head>
+    <meta charset="UTF-8">
+    <title>Admin - Quản lý Sách Toàn Diện</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                    <i class="fa fa-bars"></i>
+                </button>
+                <span class="navbar-text font-weight-bold text-dark mr-3 d-none d-lg-inline" th:if="${fullName != null}">
+                    <h4><span class="wave-hand">👋</span> Xin chào <span th:text="${fullName}">Admin</span>!</h4>
+                </span>
+            </nav>
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Quản lý Sách Toàn Diện (Góc độ Admin)</h1>
+                    <a th:href="@{/admin/dashboard}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-arrow-left fa-sm text-white-50"></i> Quay lại Dashboard
+                    </a>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">Nội dung cần phát triển</h6>
+                            </div>
+                            <div class="card-body">
+                                <p>Mặc dù Thủ thư (Staff) có thể là người thao tác chính, Admin thường cần các khả năng sau:</p>
+                                <ul>
+                                    <li><strong>Xem toàn bộ danh mục sách:</strong> Giao diện hiển thị tất cả sách với đầy đủ thông tin, bộ lọc và tìm kiếm nâng cao.</li>
+                                    <li><strong>Xem Lịch sử Thay đổi Sách (Book Audit Log):</strong>
+                                        <ul>
+                                            <li>Ai đã thêm/sửa/xóa sách nào.</li>
+                                            <li>Thời gian thực hiện.</li>
+                                            <li>Chi tiết thay đổi (nếu có thể).</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Thống kê Sách Nâng cao:</strong>
+                                        <ul>
+                                            <li>Sách được mượn nhiều nhất (theo tuần/tháng/năm).</li>
+                                            <li>Sách tồn kho lâu chưa được mượn.</li>
+                                            <li>Thống kê sách theo thể loại, tác giả, nhà xuất bản.</li>
+                                            <li>Tình trạng sách (mới, cũ, hỏng, mất).</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Quyền Ghi Đè/Quản lý Đặc biệt (nếu cần):**
+                                        <ul>
+                                            <li>Khả năng sửa thông tin sách quan trọng mà có thể Staff không có quyền.</li>
+                                            <li>Xóa hẳn sách khỏi hệ thống (khác với việc Thủ thư chỉ đánh dấu là hỏng/mất).</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Quản lý Đặt Trước/Yêu Cầu Sách (nếu có):** Xem và quản lý các yêu cầu đặt trước từ người dùng.</li>
+                                </ul>
+                                <p class="mt-4"><em>(Đây là trang ghi chú các chức năng cần phát triển cho "Quản lý Sách Toàn Diện" từ góc độ Admin. Các chức năng chi tiết về sách sẽ được Nhân viên thao tác chính ở giao diện của họ.)</em></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Your Website 2025</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+</body>
+</html>
