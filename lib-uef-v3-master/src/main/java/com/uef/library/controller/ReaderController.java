@@ -33,7 +33,7 @@ public class ReaderController {
     }
 
     // API ĐỂ XỬ LÝ CẬP NHẬT PROFILE
-    @PostMapping("/first-update")
+    @PostMapping("/update")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, String>> handleFirstUpdate(Authentication authentication,
                                                                  @RequestBody UserDetail userDetailFromForm,

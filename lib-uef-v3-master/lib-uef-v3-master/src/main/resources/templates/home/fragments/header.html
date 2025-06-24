@@ -32,7 +32,7 @@
 
           <div th:if="${isAuthenticated}" class="d-flex align-items-center ms-auto">
                     <span class="me-2 navbar-text" style="color: var(--dark); white-space: nowrap;">
-                        Chào <span id="userDropdownFullName" th:text="${loggedInUserFullName}">bạn</span>!<span class="wave-hand-navbar">👋</span>
+                      Chào <span id="userDropdownFullName" th:text="${loggedInUserFullName != null ? loggedInUserFullName : 'bạn'}">bạn</span>!<span class="wave-hand-navbar">👋</span>
                     </span>
 
             <div class="dropdown me-3">
