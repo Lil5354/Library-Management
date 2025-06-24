@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="footer-content">
+  <footer>
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-md-4">
+          <h4 class="footer-title">Thư viện Số</h4>
+          <p>Hệ thống quản lý thư viện trực tuyến hiện đại, giúp kết nối người đọc với kho tàng tri thức qua nền tảng số.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <h4 class="footer-title">Liên kết</h4>
+          <ul class="footer-links">
+            <li><a href="#">Trang chủ</a></li>
+            <li><a href="#">Danh mục sách</a></li>
+            <li><a href="#">Tìm kiếm nâng cao</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h4 class="footer-title">Hỗ trợ</h4>
+          <ul class="footer-links">
+            <li><a href="#">Hướng dẫn sử dụng</a></li>
+            <li><a href="#">Điều khoản dịch vụ</a></li>
+            <li><a href="#">Chính sách bảo mật</a></li>
+            <li><a href="#">Liên hệ hỗ trợ</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h4 class="footer-title">Liên hệ</h4>
+          <p><i class="fas fa-map-marker-alt me-2"></i> Đại học UEF, Quận 1, TP.HCM</p>
+          <p><i class="fas fa-phone me-2"></i> (028) 3838 6686</p>
+          <p><i class="fas fa-envelope me-2"></i> thuvienso@uef.edu.vn</p>
+        </div>
+      </div>
+      <div class="footer-bottom text-center">
+        <p>&copy; 2025 - Hệ thống Thư viện Trực tuyến | Đồ án Java Web - Đại học UEF</p>
+      </div>
+    </div>
+  </footer>
+  <div class="chat-widget-container">
+    <div class="chat-welcome-message">
+      <span class="swaying-text">Chat với nhân viên</span>
+    </div>
+
+    <div id="chat-toggle-button">
+      <div class="main-chat-icon">
+        <video playsinline autoplay muted loop class="chat-logo-be-heo-video">
+          <source th:src="@{/videos/2.mp4}" type="video/mp4">
+        </video>
+      </div>
+      <div class="close-chat-icon">
+        <i class="fas fa-times"></i>
+      </div>
+    </div>
+
+    <div id="chat-box">
+      <div class="chat-header">
+        <div class="staff-info">
+          <video playsinline autoplay muted loop class="staff-avatar">
+            <source th:src="@{/videos/2.mp4}" type="video/mp4">
+          </video>
+          <div>
+            <div class="staff-name">Bé Heo trợ lí </div>
+            <div class="staff-status">
+              <span class="online-indicator"></span>
+              Đang hoạt động
+            </div>
+          </div>
+        </div>
+        <button id="close-chatbox-btn" class="close-btn">&times;</button>
+      </div>
+      <div class="chat-body" id="chat-body">
+        <div class="message-wrapper" id="thinking-indicator">
+          <video playsinline autoplay muted loop class="staff-avatar">
+            <source th:src="@{/videos/2.mp4}" type="video/mp4">
+          </video>
+          <div class="message-content">
+            <span class="thinking-text">Đang suy nghĩ...</span>
+          </div>
+        </div>
+
+        <div id="faq-container" class="faq-container"></div>
+      </div>
+
+      <div class="chat-footer">
+        <input type="text" id="chat-input" placeholder="Nhập tin nhắn của bạn...">
+        <button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>  <div class="modal fade" id="editProfileModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Chỉnh sửa Thông tin Cá nhân</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editProfileForm">
+            <div class="row mb-3">
+              <div class="col-md-6"><label class="form-label">Tên đăng nhập</label><input type="text" class="form-control" id="profileUsername" disabled></div>
+              <div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" id="profileEmail" disabled></div>
+            </div>
+            <div class="mb-3"><label for="profileFullName" class="form-label">Họ và Tên</label><input type="text" class="form-control" id="profileFullName" name="fullName"></div>
+            <div class="mb-3"><label for="profilePhone" class="form-label">Số điện thoại</label><input type="tel" class="form-control" id="profilePhone" name="phone"></div>
+            <div class="mb-3"><label for="profileAddress" class="form-label">Địa chỉ</label><input type="text" class="form-control" id="profileAddress" name="address"></div>
+            <div class="row">
+              <div class="col-md-6 mb-3"><label for="profileDob" class="form-label">Ngày sinh</label><input type="date" class="form-control" id="profileDob" name="dob"></div>
+              <div class="col-md-6 mb-3"><label for="profileGender" class="form-label">Giới tính</label><select class="form-select" id="profileGender" name="gender"><option value="Chưa xác định">Chưa xác định</option><option value="Nam">Nam</option><option value="Nữ">Nữ</option><option value="Khác">Khác</option></select></div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+          <button type="button" class="btn btn-primary" id="saveProfileChangesBtn">Lưu thay đổi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script th:src="@{/js/index.js}"></script>
+
+  <th:block layout:fragment="page_scripts"></th:block>
+
+</div>
+
+</body>
+</html>
