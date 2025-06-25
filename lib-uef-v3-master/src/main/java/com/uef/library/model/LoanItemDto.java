@@ -3,7 +3,6 @@ package com.uef.library.model;
 import lombok.Data;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.LocalDate;
 
 @Data
 public class LoanItemDto {
@@ -12,7 +11,7 @@ public class LoanItemDto {
     private String bookAuthor;
     private String bookCoverImage;
     private LocalDateTime borrowDate;
-    private LocalDate dueDate;
+    private LocalDateTime dueDate;
     private LocalDateTime returnDate;
     private String status;
     private double lateFee;
@@ -37,17 +36,17 @@ public class LoanItemDto {
     }
 
     private double calculateLateFee(LoanItem loanItem) {
-        final double LATE_FEE_PER_DAY = 2000; // Phí phạt từ đồ án 1
+        final double LATE_FEE_PER_DAY = 5000; // 5,000 VND mỗi ngày
 
         // Nếu đã trả sách và ngày trả sau ngày hẹn trả
-        if (loanItem.getReturnDate() != null && loanItem.getReturnDate().toLocalDate().isAfter(loanItem.getBookLoan().getDueDate())) {
-            long daysOverdue = ChronoUnit.DAYS.between(loanItem.getBookLoan().getDueDate(), loanItem.getReturnDate().toLocalDate());
+        if (loanItem.getReturnDate() != null && loanItem.getReturnDate().isAfter(loanItem.getBookLoan().getDueDate())) {
+            long daysOverdue = ChronoUnit.DAYS.between(loanItem.getBookLoan().getDueDate(), loanItem.getReturnDate());
             return daysOverdue * LATE_FEE_PER_DAY;
         }
 
         // Nếu chưa trả sách và hôm nay đã quá ngày hẹn trả
-        if (loanItem.getReturnDate() == null && LocalDate.now().isAfter(loanItem.getBookLoan().getDueDate())) {
-            long daysOverdue = ChronoUnit.DAYS.between(loanItem.getBookLoan().getDueDate(), LocalDate.now());
+        if (loanItem.getReturnDate() == null && LocalDateTime.now().isAfter(loanItem.getBookLoan().getDueDate())) {
+            long daysOverdue = ChronoUnit.DAYS.between(loanItem.getBookLoan().getDueDate(), LocalDateTime.now());
             return daysOverdue * LATE_FEE_PER_DAY;
         }
 

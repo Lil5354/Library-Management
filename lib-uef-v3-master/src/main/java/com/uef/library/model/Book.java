@@ -1,6 +1,10 @@
 package com.uef.library.model;
 
+// === IMPORT THÊM 2 DÒNG NÀY ===
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+// =============================
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +37,6 @@ public class Book {
     @Column
     private String publisher;
 
-    // <<< MERGE: THÊM TỪ ĐỒ ÁN 2 >>>
     @Column(name = "sample_pdf_url", length = 500)
     private String samplePdfUrl;
 

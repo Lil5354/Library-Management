@@ -948,3 +948,48 @@ footer {
 #chat-input { flex-grow: 1; border: none; outline: none; background: transparent; padding: 10px; font-size: 0.9rem; }
 #chat-send-btn { background: none; border: none; color: var(--primary); font-size: 1.2rem; cursor: pointer; padding: 10px; border-radius: 50%; transition: background-color 0.2s; }
 /* ... */
+/* === CSS CHO POPUP SÁCH ĐANG MƯỢN === */
+.borrowed-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.borrowed-item:last-child {
+    border-bottom: none;
+}
+.borrowed-item-cover {
+    width: 60px;
+    height: 85px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+.borrowed-item-info {
+    flex-grow: 1;
+}
+.borrowed-item-info h6 {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--primary-dark);
+}
+.borrowed-item-info p {
+    font-size: 0.85rem;
+    color: var(--text-light-custom);
+    margin-bottom: 2px;
+}
+.borrowed-item-info .due-date {
+    color: var(--danger); /* Màu đỏ cho ngày hết hạn */
+    font-weight: 500;
+}
+.modal-body-scrollable {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+.status-badge { padding: .25em .6em; font-size: .75em; font-weight: 700; border-radius: .25rem; }
+.status-borrowed { background-color: #ffc107; color: #343a40; }
+.status-returned { background-color: #28a745; color: white; }
+.status-overdue { background-color: #dc3545; color: white; }
+.fee-text { color: #dc3545; font-weight: bold; }
+.re-borrow-btn { padding: 2px 6px; font-size: 0.8rem; }

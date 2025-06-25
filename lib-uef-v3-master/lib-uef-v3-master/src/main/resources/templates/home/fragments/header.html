@@ -68,8 +68,9 @@
             </div>
 
             <div class="dropdown">
-              <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUserNavbar" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="fas fa-user-circle fa-lg user-avatar-icon"></i>
+              <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                <img th:if="${loggedInUserAvatarUrl}" th:src="${loggedInUserAvatarUrl}" alt="Avatar" width="32" height="32" class="rounded-circle">
+                <i th:unless="${loggedInUserAvatarUrl}" class="fas fa-user-circle fa-lg user-avatar-icon"></i>
               </a>
               <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUserNavbar">
                 <li class="px-3 py-2 text-center">
@@ -92,8 +93,8 @@
                 </li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="#" id="editProfileBtn"><i class="fas fa-user-edit me-2"></i>Thông tin tài khoản</a></li>
-                <li><a class="dropdown-item" th:href="@{/reader/borrowed-books}"><i class="fas fa-book-reader me-2"></i>Sách đang mượn</a></li>
-                <li><a class="dropdown-item" th:href="@{/reader/borrowing-history}"><i class="fas fa-history me-2"></i>Lịch sử mượn sách</a></li>
+                <li><a class="dropdown-item" href="#" id="borrowedBooksBtn"><i class="fas fa-book-reader me-2"></i>Sách đang mượn</a></li>
+                <li><a class="dropdown-item" href="#" id="borrowHistoryBtn"><i class="fas fa-history me-2"></i>Lịch sử mượn sách</a></li>
                 <li><a class="dropdown-item" th:href="@{/reader/reserved-books}"><i class="fas fa-calendar-check me-2"></i>Sách đã đặt trước</a></li>
                 <li><a class="dropdown-item" th:href="@{/reader/change-password}"><i class="fas fa-key me-2"></i>Đổi mật khẩu</a></li>
                 <li><hr class="dropdown-divider"></li>

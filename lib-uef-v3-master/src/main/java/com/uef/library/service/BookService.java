@@ -31,7 +31,6 @@ public interface BookService {
     void importBooksFromExcel(MultipartFile file) throws IOException, IllegalArgumentException;
 
     void exportBooksToExcel(HttpServletResponse response) throws IOException;
-
-    // <<< MERGE: THÊM TỪ ĐỒ ÁN 2 >>>
+    
     List<Book> getBooksByIds(List<Long> bookIds);
 }

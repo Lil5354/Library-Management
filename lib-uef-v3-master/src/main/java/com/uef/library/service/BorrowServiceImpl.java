@@ -10,14 +10,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate; // <<< NHỚ IMPORT LocalDate
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class BorrowServiceImpl implements BorrowService {
+public class BorrowServiceImpl implements BorrowService { // <<< Triển khai từ BorrowService
 
     private final BookRepository bookRepository;
     private final BookLoanRepository bookLoanRepository;
@@ -43,12 +43,7 @@ public class BorrowServiceImpl implements BorrowService {
         }
         BookLoan newLoan = new BookLoan();
         newLoan.setUser(user);
-
-        // =================================================================
-        // <<< SỬA LỖI TẠI ĐÂY: Dùng LocalDate.now() thay vì LocalDateTime.now() >>>
-        newLoan.setDueDate(LocalDate.now().plusDays(LOAN_DURATION_DAYS));
-        // =================================================================
-
+        newLoan.setDueDate(LocalDateTime.now().plusDays(LOAN_DURATION_DAYS));
         newLoan.setStatus("ACTIVE");
 
         List<LoanItem> loanItems = new ArrayList<>();
