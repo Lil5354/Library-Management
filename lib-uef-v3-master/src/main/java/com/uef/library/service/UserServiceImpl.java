@@ -70,22 +70,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public boolean emailExists(String email, String currentUsername) {
-        Optional<User> userByEmail = userRepository.findByUserDetail_Email(email);
-        return userByEmail.isPresent() && !userByEmail.get().getUsername().equals(currentUsername);
-    }
-
-    // === PHẦN TRIỂN KHAI MỚI ===
-    @Override
-    @Transactional(readOnly = true)
-    public List<User> findByRole(String role) {
-        // Gọi trực tiếp phương thức từ repository đã có sẵn
-        return userRepository.findByRole(role);
-    }
-    // ===========================
-
-    @Override
     @Transactional
     public String registerUser(String username, String rawPassword) {
         if (isUsernameTaken(username)) {
@@ -144,6 +128,11 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+//    @Override
+//    public Optional<User> findById(String userId) {
+//        return userRepository.findById(userId);
+//    }
+
     @Override
     @Transactional
     public boolean deleteUser(String userId) {
@@ -172,21 +161,30 @@ public class UserServiceImpl implements UserService {
             return false;
         }
     }
-
     @Override
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true) // Thêm Transactional cho việc fetch UserDetail nếu LAZY
     public Page<User> findPaginatedUsersWithFilter(String keyword, String role, Boolean status, Pageable pageable) {
-        Specification<User> spec = UserSpecification.filterGeneric(keyword, role, status);
+        Specification<User> spec = UserSpecification.filterBy(keyword, role, status);
         Page<User> userPage = userRepository.findAll(spec, pageable);
 
+        // Đảm bảo UserDetail được load nếu cần thiết và LAZY loading
+        // (Mặc dù @JsonManagedReference/@JsonBackReference đã giải quyết lỗi serialize,
+        // việc này đảm bảo dữ liệu có sẵn trước khi trả về nếu có template nào đó render trực tiếp)
         userPage.getContent().forEach(user -> {
             if (user.getUserDetail() != null) {
-                user.getUserDetail().getId();
+                user.getUserDetail().getId(); // "Chạm" vào userDetail
             }
         });
         return userPage;
     }
 
+    @Override
+    public List<User> findByRole(String role) {
+        return userRepository.findByRole(role);
+    }
+
+    // ... (các phương thức findByUsername, updateUserRole, findById, deleteUser, saveUser giữ nguyên) ...
+    // Đảm bảo findById cũng @Transactional(readOnly = true) và chạm vào userDetail
     @Override
     @Transactional(readOnly = true)
     public Optional<User> findById(String userId) {
@@ -197,5 +195,12 @@ public class UserServiceImpl implements UserService {
             }
         });
         return userOpt;
+    }
+
+    @Override
+    public boolean emailExists(String email, String currentUsername) {
+        Optional<User> userOpt = userRepository.findByUserDetail_Email(email);
+        // Email được coi là tồn tại nếu nó được tìm thấy VÀ không thuộc về chính người dùng đang sửa
+        return userOpt.isPresent() && !userOpt.get().getUsername().equals(currentUsername);
     }
 }

@@ -19,15 +19,6 @@ public interface UserService {
     boolean usernameExists(String username);
     boolean isUsernameTaken(String username);
 
-    boolean emailExists(String email, String currentUsername);
-
-    /**
-     * Tìm tất cả người dùng theo một vai trò (role) cụ thể.
-     * @param role Vai trò cần tìm (VD: "STAFF", "READER").
-     * @return Danh sách các User có vai trò tương ứng.
-     */
-    List<User> findByRole(String role);
-
     String registerUser(String username, String rawPassword);
     Optional<User> findByUsername(String username);
     boolean updateUserRole(String userId, String newRole);
@@ -35,4 +26,7 @@ public interface UserService {
     boolean deleteUser(String userId);
     boolean saveUser(User user);
     Page<User> findPaginatedUsersWithFilter(String keyword, String role, Boolean status, Pageable pageable);
+    List<User> findByRole(String upperCase);
+    boolean emailExists(String email, String currentUsername);
+
 }

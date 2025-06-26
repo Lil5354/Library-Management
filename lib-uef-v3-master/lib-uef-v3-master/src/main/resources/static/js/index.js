@@ -75,6 +75,149 @@ document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(anchor => {
 });
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    // === LOGIC CHO ĐỔI MẬT KHẨU ===
+    const changePasswordBtn = document.getElementById('changePasswordBtn');
+    const changePasswordModalEl = document.getElementById('changePasswordModal');
+
+    if (changePasswordBtn && changePasswordModalEl) {
+        const changePasswordModal = new bootstrap.Modal(changePasswordModalEl);
+
+        // Lấy tất cả các panel và các nút
+        const requestPanel = document.getElementById('requestPanel');
+        const validatePanel = document.getElementById('validatePanel');
+        const resetPanel = document.getElementById('resetPanel');
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        const validateOtpBtn = document.getElementById('validateOtpBtn');
+        const resetPasswordBtn = document.getElementById('resetPasswordBtn');
+        const countdownTimerEl = document.getElementById('countdownTimer');
+        const resendOtpBtn = document.getElementById('resendOtpBtn');
+
+        let countdownTimer;
+        let validToken = '';
+
+        // Hàm bắt đầu đếm ngược
+        function startCountdown() {
+            // Ẩn nút "Gửi lại" và hiện đồng hồ đếm ngược
+            resendOtpBtn.classList.add('d-none');
+            countdownTimerEl.classList.remove('d-none');
+
+            let timeLeft = 60;
+            countdownTimerEl.textContent = `Bạn có thể gửi lại mã sau ${timeLeft}s`;
+
+            clearInterval(countdownTimer); // Dừng bộ đếm cũ nếu có
+
+            countdownTimer = setInterval(() => {
+                timeLeft--;
+                countdownTimerEl.textContent = `Bạn có thể gửi lại mã sau ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    countdownTimerEl.classList.add('d-none'); // Ẩn đồng hồ
+                    resendOtpBtn.classList.remove('d-none'); // Hiện nút "Gửi lại"
+                }
+            }, 1000);
+        }
+
+        // Hàm xử lý việc gửi mã (dùng cho cả nút đầu và nút gửi lại)
+        async function handleSendOtp() {
+            sendOtpBtn.disabled = true;
+            sendOtpBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang gửi...';
+            resendOtpBtn.classList.add('d-none'); // Ẩn nút gửi lại trong lúc xử lý
+
+            try {
+                const response = await fetch('/api/password/request', { method: 'POST' });
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert(result.message);
+                    requestPanel.classList.add('d-none');
+                    validatePanel.classList.remove('d-none');
+                    startCountdown(); // Bắt đầu đếm ngược
+                } else {
+                    alert('Lỗi: ' + (result.error === 'NO_EMAIL' ? 'Tài khoản chưa có email. Vui lòng cập nhật thông tin.' : 'Lỗi không xác định.'));
+                    changePasswordModal.hide();
+                }
+            } catch (error) {
+                alert('Lỗi kết nối. Vui lòng thử lại.');
+            } finally {
+                // Dù thành công hay thất bại, trả lại trạng thái cho nút gửi ban đầu
+                sendOtpBtn.disabled = false;
+                sendOtpBtn.innerHTML = 'Gửi mã đến Email';
+            }
+        }
+
+        // Sự kiện khi mở popup: Reset về trạng thái ban đầu
+        changePasswordBtn.addEventListener('click', e => {
+            e.preventDefault();
+            clearInterval(countdownTimer);
+            requestPanel.classList.remove('d-none');
+            validatePanel.classList.add('d-none');
+            resetPanel.classList.add('d-none');
+            changePasswordModal.show();
+        });
+
+        // Gán sự kiện cho các nút
+        sendOtpBtn.addEventListener('click', handleSendOtp);
+        resendOtpBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            handleSendOtp(); // Nút gửi lại cũng gọi hàm này
+        });
+
+        validateOtpBtn.addEventListener('click', async () => {
+            const token = otpInput.value;
+            otpError.textContent = '';
+
+            if (!token || token.length !== 6) {
+                otpError.textContent = 'Vui lòng nhập đủ 6 chữ số.';
+                return;
+            }
+
+            validateOtpBtn.disabled = true;
+            validateOtpBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+            try {
+                const response = await fetch('/api/password/validate-token', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ token: token })
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    validToken = token;
+                    validatePanel.classList.add('d-none');
+                    resetPanel.classList.remove('d-none');
+                } else {
+                    otpError.textContent = 'Mã không hợp lệ hoặc đã hết hạn.';
+                }
+            } catch (e) {
+                otpError.textContent = 'Lỗi kết nối. Vui lòng thử lại.';
+            } finally {
+                validateOtpBtn.disabled = false;
+                validateOtpBtn.textContent = 'Xác nhận';
+            }
+        });
+        resetPasswordBtn.addEventListener('click', async () => {
+            const newPassword = document.getElementById('newPasswordInput').value;
+            const confirmPassword = document.getElementById('confirmPasswordInput').value;
+            if (newPassword !== confirmPassword) {
+                document.getElementById('resetError').textContent = 'Mật khẩu xác nhận không khớp.';
+                return;
+            }
+            const response = await fetch('/api/password/reset', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ token: validToken, newPassword: newPassword })
+            });
+            const result = await response.json();
+            if (response.ok) {
+                alert(result.message);
+                window.location.href = '/auth/login';
+            } else {
+                document.getElementById('resetError').textContent = 'Có lỗi xảy ra, vui lòng bắt đầu lại.';
+            }
+        });
+    }
+
     // === LOGIC CHO CART MƯỢN SÁCH ===
     const bookContainer = document.querySelector('.book-list-container');
     const cartContainer = document.getElementById('borrowCartContainer');
@@ -399,6 +542,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
     //XỬ LÝ SỰ KIỆN XEM CHI TIẾT SÁCH
     const bookDetailModalEl = document.getElementById('bookDetailModal');
 
@@ -431,26 +575,31 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.getElementById('bookDetailAvailable').textContent = book.availableCopies;
                     // === KẾT THÚC PHẦN CODE HOÀN THIỆN ===
 
-                    // Xử lý nút Mượn sách
-                    const modalFooter = bookDetailModalEl.querySelector('.modal-footer');
-                    // Luôn có nút Đóng
-                    modalFooter.innerHTML = '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>';
+                    // === CẬP NHẬT LOGIC HIỂN THỊ NÚT ===
+                    const modalFooter = document.getElementById('bookDetailModalFooter');
+                    modalFooter.innerHTML = ''; // Xóa các nút cũ
 
-                    if (book.availableCopies > 0) {
-                        // Nếu còn sách, thêm nút Mượn sách vào trước nút Đóng
-                        const borrowForm = `
-                        <form action="/borrow/${book.id}" method="post" class="ms-auto">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-hand-holding-heart me-2"></i>Mượn sách
-                            </button>
-                        </form>
-                    `;
-                        modalFooter.insertAdjacentHTML('afterbegin', borrowForm);
+                    // 1. Tạo nút Đọc thử dựa trên sự tồn tại của samplePdfUrl
+                    let readSampleBtnHtml = '';
+                    if (book.samplePdfUrl) {
+                        // Nếu có link -> tạo thẻ <a> mở tab mới
+                        readSampleBtnHtml = `
+                            <a href="${book.samplePdfUrl}" target="_blank" class="btn btn-read-sample">
+                                <i class="fas fa-eye me-2"></i>Đọc thử
+                            </a>`;
                     } else {
-                        // Nếu hết sách, thêm thông báo vào trước nút Đóng
-                        const outOfStockMessage = '<p class="text-danger mb-0 me-auto">Sách đã được mượn hết.</p>';
-                        modalFooter.insertAdjacentHTML('afterbegin', outOfStockMessage);
+                        // Nếu không có link -> tạo nút bị vô hiệu hóa
+                        readSampleBtnHtml = `
+                            <button type="button" class="btn btn-read-sample-disabled" disabled title="Sách này chưa có bản đọc thử">
+                                <i class="fas fa-eye-slash me-2"></i>Đọc thử
+                            </button>`;
                     }
+
+                    // 3. Nút Đóng
+                    const closeBtnHtml = '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>';
+
+                    // Gắn các nút vào footer
+                    modalFooter.innerHTML = readSampleBtnHtml + closeBtnHtml;
 
                     bookDetailModal.show();
 
@@ -460,6 +609,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
     // --- LOGIC CHUNG CHO NAVBAR ---
     const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
     const currentPath = window.location.pathname;
@@ -820,10 +970,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // === KHAI BÁO BIẾN CHUNG ===
     const editProfileBtn = document.getElementById('editProfileBtn');
     const editProfileModalEl = document.getElementById('editProfileModal');
-    const firstLoginModalEl = document.getElementById('firstLoginModal');
-
-    // === LOGIC CHUNG CHO NAVBAR, CHAT, NOTIFICATION... ===
-    // (Toàn bộ code xử lý chung khác của bạn đặt ở đây)
 
     // === LOGIC CHO POPUP CHỈNH SỬA PROFILE ===
     if (editProfileBtn && editProfileModalEl) {
@@ -921,6 +1067,74 @@ document.addEventListener('DOMContentLoaded', function() {
                 finally {
                     editProfileModal.hide();
                     window.location.reload();
+                }
+            });
+        }
+    }
+    // === LOGIC CHO POPUP CẬP NHẬT LẦN ĐẦU ===
+    // Biến 'showFirstLoginPopup' được lấy từ thẻ script trong layout.html
+
+    const firstLoginModalEl = document.getElementById('firstLoginModal');
+
+    // Chỉ thực hiện logic nếu popup tồn tại trên trang
+    if (firstLoginModalEl) {
+        // 1. Logic hiển thị popup khi đăng nhập lần đầu
+        if (typeof showFirstLoginPopup !== 'undefined' && showFirstLoginPopup) {
+            const firstLoginModal = new bootstrap.Modal(firstLoginModalEl);
+            firstLoginModal.show();
+        }
+
+        // 2. Logic xử lý nút lưu trong popup
+        const saveBtn = document.getElementById('saveFirstUpdateBtn');
+        if (saveBtn) {
+            saveBtn.addEventListener('click', async function() {
+                // Lấy dữ liệu từ các ô input trong form
+                const formData = {
+                    fullName: document.getElementById('ff_fullName').value,
+                    phone: document.getElementById('ff_phone').value,
+                    email: document.getElementById('ff_email').value,
+                    address: document.getElementById('ff_address').value,
+                    dob: document.getElementById('ff_dob').value,
+                    gender: document.getElementById('ff_gender').value,
+                };
+
+                // Ràng buộc dữ liệu (Validation)
+                let errors = [];
+                if (!formData.fullName.trim()) errors.push("Họ và Tên không được để trống.");
+                if (/\d/.test(formData.fullName)) errors.push("Họ và Tên không được chứa số.");
+                if (!/^\d{10}$/.test(formData.phone.trim())) errors.push("Số điện thoại phải gồm đúng 10 chữ số.");
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) errors.push("Định dạng email không hợp lệ.");
+
+                if (errors.length > 0) {
+                    alert("Vui lòng sửa các lỗi sau:\n\n- " + errors.join("\n- "));
+                    return; // Dừng lại nếu có lỗi
+                }
+
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang lưu...';
+
+                try {
+                    const response = await fetch('/reader/api/update', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        const firstLoginModal = bootstrap.Modal.getInstance(firstLoginModalEl);
+                        if (firstLoginModal) firstLoginModal.hide();
+
+                        alert(result.message);
+                        window.location.reload(); // Tải lại trang để cập nhật toàn bộ giao diện
+                    } else {
+                        alert('Lỗi: ' + (result.message || 'Không thể cập nhật.'));
+                    }
+                } catch (error) {
+                    alert('Lỗi kết nối, vui lòng thử lại.');
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = 'Lưu và Bắt đầu';
                 }
             });
         }
