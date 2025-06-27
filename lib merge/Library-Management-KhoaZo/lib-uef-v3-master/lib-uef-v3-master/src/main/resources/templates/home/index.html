@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{home/fragments/layout.html}">
+<head>
+    <title>Trang Chủ</title>
+
+    <th:block layout:fragment="page_css">
+        <link th:href="@{/css/index.css}" rel="stylesheet">
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+
+<section class="hero">
+
+    <video playsinline autoplay muted loop class="hero-video">
+        <source th:src="@{/videos/1.mp4}" type="video/mp4">
+        Trình duyệt của bạn không hỗ trợ video.
+    </video>
+
+    <div class="hero-content">
+        <h1>Khám phá thế giới qua từng trang sách</h1>
+        <p>Thư viện số hiện đại giúp bạn tìm kiếm, mượn và quản lý sách một cách thuận tiện nhất</p>
+        <div>
+            <a th:if="${!isAuthenticated}" href="/auth/register" class="btn btn-secondary hero-btn me-3">Đăng ký ngay</a>
+            <a href="#features" class="btn btn-outline-light hero-btn">Tìm hiểu thêm</a>
+        </div>
+    </div>
+
+</section>
+
+<div class="container">
+    <section id="features" class="text-center py-5">
+        <h2 class="section-title">Tính năng nổi bật</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <h5>Tìm kiếm & Mượn sách</h5>
+                    <p>Dễ dàng tìm kiếm theo tiêu đề, tác giả, thể loại hoặc ISBN. Quy trình mượn/trả trực tuyến hiện đại và thuận tiện.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <h5>Quản lý tài khoản</h5>
+                    <p>Đăng ký nhanh chóng, quản lý hồ sơ cá nhân và theo dõi lịch sử mượn sách trên một giao diện trực quan.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h5>Nhắc hạn & Gợi ý</h5>
+                    <p>Nhận thông báo tự động về hạn trả sách và gợi ý cá nhân hóa dựa trên sở thích đọc của bạn.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<section class="roles-section">
+    <div class="container">
+        <h2 class="section-title text-center">Chức năng theo vai trò</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="role-card">
+                    <h5><i class="fas fa-user-graduate me-2"></i>Thành viên</h5>
+                    <ul>
+                        <li>Đăng ký và quản lý tài khoản cá nhân</li>
+                        <li>Tìm kiếm, đặt trước và mượn/trả sách</li>
+                        <li>Đánh giá và nhận xét về sách đã đọc</li>
+                        <li>Nhận đề xuất cá nhân hóa dựa trên sở thích</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="role-card">
+                    <h5><i class="fas fa-book me-2"></i>Thủ thư</h5>
+                    <ul>
+                        <li>Quản lý kho sách và danh mục thư viện</li>
+                        <li>Xử lý yêu cầu mượn/trả/đặt trước</li>
+                        <li>Gửi thông báo và nhắc nhở tới thành viên</li>
+                        <li>Xem thống kê và báo cáo chi tiết</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="role-card">
+                    <h5><i class="fas fa-cogs me-2"></i>Quản trị viên</h5>
+                    <ul>
+                        <li>Quản lý người dùng và phân quyền hệ thống</li>
+                        <li>Theo dõi hoạt động toàn bộ thư viện</li>
+                        <li>Xem báo cáo phân tích dữ liệu nâng cao</li>
+                        <li>Cấu hình và tối ưu hóa hệ thống</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="benefits-section py-5">
+    <div class="container">
+        <h2 class="section-title text-center">Lợi ích hệ thống</h2>
+        <div class="row">
+            <div class="col-md-6 col-lg-3">
+                <div class="benefit-item">
+                    <i class="fas fa-clock benefit-icon"></i>
+                    Truy cập 24/7 mọi lúc mọi nơi
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="benefit-item">
+                    <i class="fas fa-mobile-alt benefit-icon"></i>
+                    Giao diện thân thiện đa thiết bị
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="benefit-item">
+                    <i class="fas fa-shield-alt benefit-icon"></i>
+                    Bảo mật & khả năng mở rộng cao
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="benefit-item">
+                    <i class="fas fa-brain benefit-icon"></i>
+                    Hệ thống quản lý thông minh
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section text-center" th:if="${!isAuthenticated}">
+    <div class="container">
+        <div class="cta-content">
+            <h3>Sẵn sàng khám phá thư viện số?</h3>
+            <p class="mb-4">Đăng ký tài khoản ngay hôm nay để trải nghiệm đầy đủ các tính năng</p>
+            <a href="/auth/register" class="btn cta-btn">Tham gia ngay</a>
+        </div>
+    </div>
+</section>
+    <elevenlabs-convai agent-id="agent_01jy79eddqfbsshcfq8f7p13nz"></elevenlabs-convai><script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript">
+</script>
+</main>
+
+</body>
+</html>

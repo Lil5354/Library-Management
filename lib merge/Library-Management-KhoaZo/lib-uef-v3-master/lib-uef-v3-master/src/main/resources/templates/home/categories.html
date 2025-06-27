@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{home/fragments/layout.html}">
+<head>
+    <title>Danh mục sách</title>
+
+    <th:block layout:fragment="page_css">
+        <link th:href="@{/css/categories.css}" rel="stylesheet">
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+<section  class="page-header">
+    <video playsinline autoplay muted loop id="header-video-bg">
+        <source th:src="@{/videos/7.mp4}" type="video/mp4">
+        Trình duyệt của bạn không hỗ trợ thẻ video.
+    </video>
+
+    <div class="container text-center">
+        <h1 class="fadeUp-header">Danh mục sách</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a th:href="@{/}">Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Danh mục sách</li>
+            </ol>
+        </nav>
+    </div>
+</section >
+<div class="container py-5">
+    <div th:if="${borrowSuccess}" class="alert alert-success" th:text="${borrowSuccess}"></div>
+    <div th:if="${borrowError}" class="alert alert-danger" th:text="${borrowError}"></div>
+    <form th:action="@{/categories}" method="get" id="filterAndSortForm">
+        <div class="row">
+            <aside class="col-lg-3">
+                <div class="filter-sidebar">
+                    <!--                <input type="hidden" name="sort" th:value="${sort}">-->
+                    <input type="hidden" name="page" value="0"> <div class="filter-widget">
+                    <h4 class="filter-title">Tìm kiếm sách</h4>
+                    <div class="input-group">
+                        <input type="text" class="form-control" name="keyword" placeholder="Tên sách, tác giả..." th:value="${keyword}">
+                        <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+
+                    <div class="filter-widget">
+                        <h4 class="filter-title">Danh mục</h4>
+                        <ul class="filter-list">
+                            <li th:classappend="${categoryId == null} ? 'active'">
+                                <a th:href="@{/categories(keyword=${keyword}, sort=${sort}, availability=${availability})}">Tất cả</a>
+                            </li>
+                            <li th:each="cat : ${categories}" th:classappend="${categoryId != null && categoryId == cat.id} ? 'active'">
+                                <a th:href="@{/categories(keyword=${keyword}, categoryId=${cat.id}, sort=${sort}, availability=${availability})}" th:text="${cat.name}"></a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="filter-widget">
+                        <h4 class="filter-title">Tình trạng</h4>
+                        <ul class="filter-list">
+                            <li th:classappend="${availability == null or #strings.equalsIgnoreCase(availability, 'all')} ? 'active'">
+                                <a th:href="@{/categories(keyword=${keyword}, categoryId=${categoryId}, sort=${sort}, availability='all')}">Tất cả</a>
+                            </li>
+                            <li th:classappend="${#strings.equalsIgnoreCase(availability, 'available')} ? 'active'">
+                                <a th:href="@{/categories(keyword=${keyword}, categoryId=${categoryId}, sort=${sort}, availability='available')}">Còn sách</a>
+                            </li>
+                            <li th:classappend="${#strings.equalsIgnoreCase(availability, 'borrowed')} ? 'active'">
+                                <a th:href="@{/categories(keyword=${keyword}, categoryId=${categoryId}, sort=${sort}, availability='borrowed')}">Đã hết</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="filter-widget">
+                        <h4 class="filter-title">Xếp hạng</h4>
+                        <ul class="filter-list">
+                            <li><a href="#"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i></a></li>
+                            <li><a href="#"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="far fa-star text-warning"></i> &amp; trở lên</a></li>
+                            <li><a href="#"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="far fa-star text-warning"></i><i class="far fa-star text-warning"></i> &amp; trở lên</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="col-lg-9">
+                <div class="shop-controls">
+                    <p class="result-count mb-0"
+                       th:text="|Hiển thị ${bookPage.number * bookPage.size + 1}–${bookPage.number * bookPage.size + bookPage.numberOfElements} trên ${bookPage.totalElements} kết quả|">
+                    </p>
+                    <select class="form-select" name="sort" onchange="document.getElementById('filterAndSortForm').submit()">
+                        <option value="createdAt,desc" th:selected="${sort == 'createdAt,desc'}">Sắp xếp: Mới nhất</option>
+                        <option value="title,asc" th:selected="${sort == 'title,asc'}">Sắp xếp: Tên A-Z</option>
+                        <option value="title,desc" th:selected="${sort == 'title,desc'}">Sắp xếp: Tên Z-A</option>
+                    </select>
+                </div>
+
+                <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 book-list-container">
+                    <div th:if="${bookPage.empty}" class="col-12">
+                        <div class="alert alert-warning text-center" role="alert">
+                            Không tìm thấy sách nào phù hợp với tiêu chí của bạn.
+                        </div>
+                    </div>
+                    <div class="col mb-4" th:each="book : ${bookPage.content}">
+                        <div class="book-card">
+                            <div class="book-thumb">
+                                <th:block th:if="${isAuthenticated}">
+                                    <a href="#" class="btn-show-detail" th:data-book-id="${book.id}">
+                                        <img th:src="${book.coverImage != null and !book.coverImage.isEmpty() ? book.coverImage : 'https://source.unsplash.com/500x650/?book,cover'}" th:alt="${book.title}">
+                                    </a>
+                                </th:block>
+                                <th:block th:unless="${isAuthenticated}">
+                                    <a th:href="@{/auth/login}" class="text-decoration-none">
+                                        <img th:src="${book.coverImage != null and !book.coverImage.isEmpty() ? book.coverImage : 'https://source.unsplash.com/500x650/?book,cover'}" th:alt="${book.title}">
+                                    </a>
+                                </th:block>
+                                <span class="book-category" th:text="${book.category?.name} ?: 'Chưa phân loại'"></span>
+                                <span class="book-availability" th:text="${book.availableCopies > 0 ? 'Còn sách' : 'Đang mượn'}" th:classappend="${book.availableCopies > 0 ? '' : 'borrowed'}"></span>
+                            </div>
+                            <div class="book-info">
+                                <h5 class="book-title">
+                                    <th:block th:if="${isAuthenticated}">
+                                        <a href="#" class="text-decoration-none text-dark btn-show-detail" th:data-book-id="${book.id}" th:text="${book.title}"></a>
+                                    </th:block>
+                                    <th:block th:unless="${isAuthenticated}">
+                                        <a th:href="@{/auth/login}" class="text-decoration-none text-dark" th:text="${book.title}"></a>
+                                    </th:block>
+                                </h5>
+                                <p class="book-author" th:text="'Tác giả: ' + ${book.author}"></p>
+                                <div class="book-meta">
+                                    <div class="book-rating">
+                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                    <div class="book-actions">
+                                        <button th:if="${isAuthenticated and book.availableCopies > 0}"
+                                                type="button" class="btn btn-view btn-add-to-cart"
+                                                th:data-book-id="${book.id}"
+                                                th:data-book-title="${book.title}"
+                                                th:data-book-cover="${book.coverImage}">
+                                            <i class="fas fa-cart-plus"></i> Thêm vào giỏ
+                                        </button>
+                                        <span th:if="${isAuthenticated and book.availableCopies <= 0}" class="text-danger fw-bold">Đã hết sách</span>
+
+                                        <a th:if="!${isAuthenticated}" th:href="@{/auth/login}" class="btn btn-view">Chi tiết</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <nav aria-label="Page navigation" th:if="${bookPage.totalPages > 1}">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${bookPage.first} ? 'disabled'">
+                            <a class="page-link" th:href="@{/categories(page=${bookPage.number - 1}, size=${bookPage.size}, keyword=${keyword}, categoryId=${categoryId}, availability=${availability}, sort=${sort})}"><span>&laquo;</span></a>
+                        </li>
+                        <li class="page-item" th:each="i : ${#numbers.sequence(0, bookPage.totalPages - 1)}" th:classappend="${i == bookPage.number} ? 'active'">
+                            <a class="page-link" th:href="@{/categories(page=${i}, size=${bookPage.size}, keyword=${keyword}, categoryId=${categoryId}, availability=${availability}, sort=${sort})}" th:text="${i + 1}"></a>
+                        </li>
+                        <li class="page-item" th:classappend="${bookPage.last} ? 'disabled'">
+                            <a class="page-link" th:href="@{/categories(page=${bookPage.number + 1}, size=${bookPage.size}, keyword=${keyword}, categoryId=${categoryId}, availability=${availability}, sort=${sort})}"><span>&raquo;</span></a>
+                        </li>
+                    </ul>
+                </nav>
+            </section>
+        </div>
+    </form>>
+</div>
+</main>>
+<!--<th:block layout:fragment="page_scripts">-->
+<!--    <script th:inline="javascript">-->
+<!--        /*<![CDATA[*/-->
+<!--        // Bọc trong DOMContentLoaded để đảm bảo HTML đã tải xong-->
+<!--        document.addEventListener('DOMContentLoaded', function() {-->
+
+<!--            // Lấy các element của giỏ hàng-->
+<!--            const bookContainer = document.querySelector('.book-list-container');-->
+<!--            const cartContainer = document.getElementById('borrowCartContainer');-->
+<!--            const cartIcon = document.getElementById('borrowCartIcon');-->
+<!--            const cartPanel = document.getElementById('borrowCartPanel');-->
+<!--            const closeCartBtn = document.getElementById('closeCartBtn');-->
+<!--            const cartItemList = document.getElementById('cartItemList');-->
+<!--            const cartCountBadge = document.getElementById('cartCountBadge');-->
+<!--            const borrowAllBtn = document.getElementById('borrowAllBtn');-->
+<!--            const clearCartBtn = document.getElementById('clearCartBtn');-->
+
+<!--// Khởi tạo giỏ hàng-->
+<!--            let borrowCart = [];-->
+
+<!--// === CÁC HÀM XỬ LÝ GIỎ HÀNG ===-->
+
+<!--// -&#45;&#45; SỬA LỖI 1: LƯU VÀ TẢI GIỎ HÀNG TỪ SESSIONSTORAGE -&#45;&#45;-->
+<!--            function saveCartToSession() {-->
+<!--                sessionStorage.setItem('borrowCart', JSON.stringify(borrowCart));-->
+<!--            }-->
+
+<!--            function loadCartFromSession() {-->
+<!--                const savedCart = sessionStorage.getItem('borrowCart');-->
+<!--                if (savedCart) {-->
+<!--                    borrowCart = JSON.parse(savedCart);-->
+<!--                }-->
+<!--            }-->
+<!--// -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
+
+<!--            function updateCartUI() {-->
+<!--                if (!cartCountBadge || !cartItemList) return;-->
+
+<!--                cartCountBadge.textContent = borrowCart.length;-->
+<!--                cartCountBadge.style.display = borrowCart.length > 0 ? 'flex' : 'none';-->
+<!--                cartItemList.innerHTML = '';-->
+
+<!--                if (borrowCart.length === 0) {-->
+<!--                    cartItemList.innerHTML = '<p class="text-center text-muted p-3 empty-cart-message">Giỏ sách của bạn đang trống.</p>';-->
+<!--                    if(borrowAllBtn) borrowAllBtn.disabled = true;-->
+<!--                    if(clearCartBtn) clearCartBtn.style.display = 'none';-->
+<!--                } else {-->
+<!--                    borrowCart.forEach(book => {-->
+<!--                        const itemHTML = `-->
+<!--                <div class="cart-item" data-id="${book.id}">-->
+<!--                    <img src="${book.cover || 'https://source.unsplash.com/500x650/?book'}" class="cart-item-img">-->
+<!--                    <div class="cart-item-info">-->
+<!--                        <div class="cart-item-title">${book.title}</div>-->
+<!--                    </div>-->
+<!--                    <button class="btn btn-sm btn-outline-danger remove-item-btn" title="Xóa khỏi giỏ">&times;</button>-->
+<!--                </div>`;-->
+<!--                        cartItemList.insertAdjacentHTML('beforeend', itemHTML);-->
+<!--                    });-->
+<!--                    if(borrowAllBtn) borrowAllBtn.disabled = false;-->
+<!--                    if(clearCartBtn) clearCartBtn.style.display = 'inline-block';-->
+<!--                }-->
+<!--            }-->
+
+<!--            function addToCart(book) {-->
+<!--                if (borrowCart.some(item => item.id === book.id)) {-->
+<!--                    alert('Sách này đã có trong giỏ của bạn.');-->
+<!--                    return;-->
+<!--                }-->
+<!--                if (borrowCart.length >= 5) {-->
+<!--                    alert('Bạn chỉ có thể thêm tối đa 5 sách vào giỏ.');-->
+<!--                    return;-->
+<!--                }-->
+<!--                borrowCart.push(book);-->
+<!--                saveCartToSession(); // <&#45;&#45; Lưu vào session-->
+<!--                updateCartUI();-->
+<!--                cartContainer.classList.add('active');-->
+<!--            }-->
+
+<!--            function removeFromCart(bookId) {-->
+<!--                borrowCart = borrowCart.filter(item => String(item.id) !== String(bookId));-->
+<!--                saveCartToSession(); // <&#45;&#45; Lưu vào session-->
+<!--                updateCartUI();-->
+<!--            }-->
+
+<!--// === GÁN SỰ KIỆN ===-->
+<!--            if (cartIcon) {-->
+<!--                cartIcon.addEventListener('click', () => cartContainer.classList.toggle('active'));-->
+<!--            }-->
+<!--            if (closeCartBtn) {-->
+<!--                closeCartBtn.addEventListener('click', () => cartContainer.classList.remove('active'));-->
+<!--            }-->
+
+<!--            if (bookContainer) {-->
+<!--                bookContainer.addEventListener('click', e => {-->
+<!--                    const button = e.target.closest('.btn-add-to-cart');-->
+<!--                    if (button) {-->
+<!--                        e.preventDefault();-->
+<!--                        const book = {-->
+<!--                            id: button.dataset.bookId,-->
+<!--                            title: button.dataset.bookTitle,-->
+<!--                            cover: button.dataset.bookCover-->
+<!--                        };-->
+<!--                        addToCart(book);-->
+<!--                    }-->
+<!--                });-->
+<!--            }-->
+
+<!--            if(cartItemList){-->
+<!--                cartItemList.addEventListener('click', e => {-->
+<!--                    const removeButton = e.target.closest('.remove-item-btn');-->
+<!--                    if (removeButton) {-->
+<!--                        e.preventDefault();-->
+<!--                        const bookId = removeButton.closest('.cart-item').dataset.id;-->
+<!--                        removeFromCart(bookId);-->
+<!--                    }-->
+<!--                });-->
+<!--            }-->
+
+<!--            if(clearCartBtn) {-->
+<!--                clearCartBtn.addEventListener('click', () => {-->
+<!--                    if(confirm('Bạn có chắc muốn xóa tất cả sách khỏi giỏ?')) {-->
+<!--                        borrowCart = [];-->
+<!--                        saveCartToSession(); // <&#45;&#45; Lưu vào session-->
+<!--                        updateCartUI();-->
+<!--                    }-->
+<!--                });-->
+<!--            }-->
+
+<!--            if(borrowAllBtn) {-->
+<!--                borrowAllBtn.addEventListener('click', async () => {-->
+<!--                    if (borrowCart.length === 0) return;-->
+
+<!--                    const bookIds = borrowCart.map(item => item.id);-->
+
+<!--                    borrowAllBtn.disabled = true;-->
+<!--                    borrowAllBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang xử lý...';-->
+
+<!--                    try {-->
+<!--                        // Yêu cầu fetch đã được đơn giản hóa, không cần header CSRF-->
+<!--                        const response = await fetch('/borrow/multiple', {-->
+<!--                            method: 'POST',-->
+<!--                            headers: {-->
+<!--                                'Content-Type': 'application/json'-->
+<!--                            },-->
+<!--                            body: JSON.stringify(bookIds)-->
+<!--                        });-->
+
+<!--                        // Phản hồi từ server có thể không phải là JSON nếu có lỗi-->
+<!--                        if (!response.ok) {-->
+<!--                            // Đọc lỗi dưới dạng text để tránh lỗi parse JSON-->
+<!--                            const errorText = await response.text();-->
+<!--                            throw new Error(`Lỗi từ server: ${response.status} - ${errorText}`);-->
+<!--                        }-->
+
+<!--                        const result = await response.json();-->
+<!--                        alert(result.message);-->
+<!--                        borrowCart = [];-->
+<!--                        saveCartToSession();-->
+<!--                        updateCartUI();-->
+<!--                        cartContainer.classList.remove('active');-->
+<!--                        window.location.reload();-->
+
+<!--                    } catch(e){-->
+<!--                        console.error("Lỗi chi tiết khi mượn sách:", e);-->
+<!--                        alert("Mượn sách thất bại. Vui lòng kiểm tra số lượng sách bạn đã mượn.");-->
+<!--                    } finally {-->
+<!--                        // Khối này đảm bảo nút bấm luôn được reset-->
+<!--                        borrowAllBtn.disabled = false;-->
+<!--                        borrowAllBtn.textContent = 'Hoàn tất mượn sách';-->
+<!--                    }-->
+<!--                });-->
+<!--            }-->
+<!--            loadCartFromSession();-->
+<!--            updateCartUI();-->
+<!--        });-->
+<!--        /*]]>*/-->
+<!--    </script>-->
+<!--</th:block>-->
+</body>
+</html>

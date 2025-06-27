@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thư viện Số - Nhắc nhở sách quá hạn</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+    .email-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+    }
+    .header {
+      background-color: #8B4513; /* Primary brown */
+      color: #ffffff;
+      padding: 25px 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .content {
+      padding: 30px;
+      color: #333333;
+      line-height: 1.6;
+    }
+    .content p {
+      margin-bottom: 15px;
+    }
+    .content .highlight {
+      font-weight: bold;
+      color: #D2B48C; /* Secondary beige */
+    }
+    .book-list {
+      list-style: none;
+      padding: 0;
+      margin: 20px 0;
+      border: 1px solid #eeeeee;
+      border-radius: 5px;
+    }
+    .book-list li {
+      background-color: #fcfcfc;
+      padding: 12px 15px;
+      border-bottom: 1px solid #eeeeee;
+    }
+    .book-list li:last-child {
+      border-bottom: none;
+    }
+    .book-list span {
+      display: block;
+      font-size: 1.05em;
+      margin-bottom: 3px;
+    }
+    .book-list small {
+      color: #666666;
+      font-size: 0.9em;
+    }
+    .footer {
+      background-color: #f0f0f0;
+      color: #777777;
+      text-align: center;
+      padding: 20px;
+      font-size: 12px;
+      border-top: 1px solid #e0e0e0;
+    }
+    .button-link {
+      display: inline-block;
+      background-color: #8B4513;
+      color: #ffffff !important;
+      padding: 12px 25px;
+      border-radius: 5px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 20px;
+    }
+    .button-link:hover {
+      background-color: #A0522D;
+    }
+  </style>
+</head>
+<body>
+<div class="email-container">
+  <div class="header">
+    Thư viện Số UEF
+  </div>
+  <div class="content">
+    <p>Kính gửi độc giả <span th:text="${readerName}"></span>,</p>
+    <p>Chúng tôi nhận thấy rằng phiếu mượn sách có mã <span class="highlight" th:text="${loanId}"></span> của bạn đã quá hạn trả từ ngày <span class="highlight" th:text="${dueDate}"></span>.</p>
+    <p>Hiện tại, phiếu mượn này đã quá hạn <span class="highlight" th:text="${overdueDays}"></span> ngày và bao gồm các cuốn sách sau:</p>
+    <ul class="book-list">
+      <li th:each="book : ${overdueItems}">
+        <span th:text="${book.title}">Tên sách</span>
+        <small>ISBN: <span th:text="${book.isbn}"></span></small>
+      </li>
+    </ul>
+    <p>Vui lòng sắp xếp thời gian để trả sách về thư viện sớm nhất có thể để tránh phát sinh thêm phí phạt và đảm bảo quyền lợi mượn sách của bạn.</p>
+    <p>Bạn có thể đăng nhập vào hệ thống để kiểm tra chi tiết các phiếu mượn và tình trạng sách:</p>
+    <p style="text-align: center;">
+      <a href="URL_TO_YOUR_LIBRARY_LOGIN_PAGE" class="button-link">Đăng nhập vào Thư viện Số</a>
+    </p>
+    <p>Nếu bạn đã trả sách này, vui lòng bỏ qua email này. Nếu có bất kỳ thắc mắc nào, đừng ngần ngại liên hệ với chúng tôi.</p>
+    <p>Trân trọng,<br>Đội ngũ Thư viện Số UEF</p>
+  </div>
+  <div class="footer">
+    © 2025 Thư viện Số UEF. Mọi quyền được bảo lưu.
+  </div>
+</div>
+</body>
+</html>
