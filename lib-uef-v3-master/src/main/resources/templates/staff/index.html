@@ -1524,15 +1524,7 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="editReaderType" class="form-label">Phân loại <span class="text-danger">*</span></label>
-                            <select class="form-select" id="editReaderType" name="role" required>
-                                <option value="Sinh viên">Sinh viên</option>
-                                <option value="Giáo viên">Giáo viên</option>
-                                <option value="Nhân viên">Nhân viên</option>
-                                <option value="Khác">Khác</option>
-                            </select>
-                        </div>
+
                         <div class="col-md-6 mb-3">
                             <label for="editReaderExpireDate" class="form-label">Ngày hết hạn thẻ</label>
                             <input type="date" class="form-control" id="editReaderExpireDate"
@@ -2414,7 +2406,19 @@
                 }
             });
         }
+        if (addReaderModal) {
+            // Tự động điền ngày hết hạn (+1 năm) khi modal đăng ký được mở
+            addReaderModal.addEventListener('show.bs.modal', function () {
+                const today = new Date();
+                today.setFullYear(today.getFullYear() + 1); // Cộng thêm 1 năm
 
+                // Chuyển đổi sang định dạng YYYY-MM-DD để gán cho input
+                const expiryDateString = today.toISOString().split('T')[0];
+
+                // Gán giá trị vào ô input ngày hết hạn
+                document.getElementById('addReaderExpiryDate').value = expiryDateString;
+            });
+        }
         if (addReaderModal) {
             addReaderModal.addEventListener('hidden.bs.modal', function () {
                 addReaderForm.reset();
@@ -2436,8 +2440,7 @@
                     editReaderForm.querySelector('#editReaderEmail').value = reader.email || '';
                     editReaderForm.querySelector('#editReaderPhone').value = reader.phone || '';
                     editReaderForm.querySelector('#editReaderAddress').value = reader.address || '';
-                    editReaderForm.querySelector('#editReaderStatus').value = String(reader.status);
-                    editReaderForm.querySelector('#editReaderType').value = reader.role || 'Khác';
+                    editReaderForm.querySelector('#editReaderStatus').value = String(reader.status)
                     editReaderForm.querySelector('#editReaderExpireDate').value = reader.membershipExpiryDate ? reader.membershipExpiryDate.substring(0, 10) : '';
                 } catch (error) {
                     alert('Lỗi tải dữ liệu độc giả.');

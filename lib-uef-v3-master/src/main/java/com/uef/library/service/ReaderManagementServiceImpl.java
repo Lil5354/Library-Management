@@ -81,7 +81,11 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
         userDetail.setAddress(readerDto.getAddress());
         userDetail.setDob(readerDto.getDob());
         userDetail.setGender(readerDto.getGender());
-        userDetail.setMembershipExpiryDate(readerDto.getMembershipExpiryDate());
+
+        // === THAY ĐỔI LOGIC TẠI ĐÂY ===
+        // Luôn tự động đặt ngày hết hạn là 1 năm kể từ ngày đăng ký
+        userDetail.setMembershipExpiryDate(LocalDate.now().plusYears(1));
+        // === KẾT THÚC THAY ĐỔI ===
 
         user.setUserDetail(userDetail);
         userDetail.setUser(user);
