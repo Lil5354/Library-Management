@@ -64,6 +64,7 @@ public class BookLoanServiceImpl implements BookLoanService {
         return convertToBookLoanDto(savedBookLoan);
     }
 
+    // Phương thức này vẫn giữ nguyên cho trường hợp trả 1 sách mà không biết loanId
     @Override
     @Transactional
     public ReturnResponseDTO returnBook(String userId, String bookIsbn) throws Exception {
@@ -76,32 +77,12 @@ public class BookLoanServiceImpl implements BookLoanService {
                     .orElseThrow(() -> new Exception("Không tìm thấy sách nào đang được mượn với ISBN '" + bookIsbn + "'."));
         }
 
-        loanItem.setReturnDate(LocalDateTime.now());
-        loanItem.setStatus("RETURNED");
-        LoanItem updatedLoanItem = loanItemRepository.save(loanItem);
-
-        Book book = updatedLoanItem.getBook();
-        book.setAvailableCopies(book.getAvailableCopies() + 1);
-        bookRepository.save(book);
-
-        PenaltyFeeDTO newPenaltyFee = null;
-        BookLoan bookLoan = updatedLoanItem.getBookLoan();
-        LocalDate today = LocalDate.now();
-        if (today.isAfter(bookLoan.getDueDate())) {
-            long overdueDays = ChronoUnit.DAYS.between(bookLoan.getDueDate(), today);
-            if (overdueDays > 0) {
-                double fineAmount = overdueDays * FINE_PER_DAY;
-                if (!penaltyFeeService.hasUnpaidPenalty(updatedLoanItem.getId())) {
-                    newPenaltyFee = penaltyFeeService.createPenaltyFeeForOverdueBorrowing(
-                            updatedLoanItem.getId(), (int) overdueDays, fineAmount);
-                }
-            }
-        }
-
-        checkAndCompleteLoan(bookLoan);
-        return new ReturnResponseDTO(convertToSimpleLoanItemDto(updatedLoanItem), newPenaltyFee);
+        // Gọi logic trả sách chung
+        return processReturn(loanItem);
     }
 
+
+    // <<< SỬA ĐỔI LỚN: VIẾT LẠI HOÀN TOÀN LOGIC TRẢ NHIỀU SÁCH >>>
     @Override
     @Transactional
     public ReturnMultipleResponseDTO returnMultipleBooks(ReturnMultipleRequestDTO request) {
@@ -109,9 +90,24 @@ public class BookLoanServiceImpl implements BookLoanService {
         List<PenaltyFeeDTO> generatedPenalties = new ArrayList<>();
         List<String> processingErrors = new ArrayList<>();
 
+        // Lấy phiếu mượn một lần duy nhất, đảm bảo tất cả sách trả đều thuộc phiếu này
+        BookLoan bookLoan = bookLoanRepository.findById(request.getLoanId())
+                .orElse(null);
+
+        if (bookLoan == null) {
+            processingErrors.add("Không tìm thấy phiếu mượn với ID: " + request.getLoanId());
+            return new ReturnMultipleResponseDTO(successfulReturns, generatedPenalties, processingErrors);
+        }
+
         for (String isbn : request.getIsbns()) {
             try {
-                ReturnResponseDTO singleReturnResponse = this.returnBook(request.getUserId(), isbn);
+                // Tìm mục sách cần trả DỰA TRÊN loanId và isbn
+                LoanItem itemToReturn = loanItemRepository.findActiveLoanItemByLoanIdAndBookIsbn(bookLoan.getId(), isbn)
+                        .orElseThrow(() -> new Exception("Không tìm thấy sách đang mượn với ISBN '" + isbn + "' trong phiếu mượn này."));
+
+                // Xử lý trả sách và phí phạt
+                ReturnResponseDTO singleReturnResponse = processReturn(itemToReturn);
+
                 if (singleReturnResponse.getReturnedItem() != null) {
                     successfulReturns.add(singleReturnResponse.getReturnedItem());
                 }
@@ -122,8 +118,13 @@ public class BookLoanServiceImpl implements BookLoanService {
                 processingErrors.add("Sách ISBN '" + isbn + "': " + e.getMessage());
             }
         }
+
+        // Kiểm tra và hoàn tất phiếu mượn nếu tất cả sách đã được trả
+        checkAndCompleteLoan(bookLoan);
+
         return new ReturnMultipleResponseDTO(successfulReturns, generatedPenalties, processingErrors);
     }
+
 
     @Override
     @Transactional
@@ -141,7 +142,7 @@ public class BookLoanServiceImpl implements BookLoanService {
             throw new Exception("Phiếu mượn đã quá hạn, không thể gia hạn. Vui lòng trả sách và nộp phạt (nếu có).");
         }
         for (LoanItem item : bookLoan.getLoanItems()) {
-            if (penaltyFeeService.hasUnpaidPenalty(item.getId())) {
+            if ("BORROWED".equals(item.getStatus()) && penaltyFeeService.hasUnpaidPenalty(item.getId())) {
                 throw new Exception("Không thể gia hạn. Sách '"+ item.getBook().getTitle() +"' trong phiếu mượn có phí phạt chưa thanh toán.");
             }
         }
@@ -183,6 +184,37 @@ public class BookLoanServiceImpl implements BookLoanService {
     // ==========================================================
     // <<< LOGIC DÙNG CHUNG VÀ CÁC PHƯƠNG THỨC HỖ TRỢ >>>
     // ==========================================================
+
+    // <<< TÁCH LOGIC XỬ LÝ TRẢ SÁCH RA PHƯƠNG THỨC RIÊNG >>>
+    private ReturnResponseDTO processReturn(LoanItem loanItem) throws Exception {
+        loanItem.setReturnDate(LocalDateTime.now());
+        loanItem.setStatus("RETURNED");
+        LoanItem updatedLoanItem = loanItemRepository.save(loanItem);
+
+        Book book = updatedLoanItem.getBook();
+        book.setAvailableCopies(book.getAvailableCopies() + 1);
+        bookRepository.save(book);
+
+        PenaltyFeeDTO newPenaltyFee = null;
+        BookLoan bookLoan = updatedLoanItem.getBookLoan();
+        LocalDate returnDate = updatedLoanItem.getReturnDate().toLocalDate();
+
+        if (returnDate.isAfter(bookLoan.getDueDate())) {
+            long overdueDays = ChronoUnit.DAYS.between(bookLoan.getDueDate(), returnDate);
+            if (overdueDays > 0) {
+                double fineAmount = overdueDays * FINE_PER_DAY;
+                if (!penaltyFeeService.hasUnpaidPenalty(updatedLoanItem.getId())) {
+                    newPenaltyFee = penaltyFeeService.createPenaltyFeeForOverdueBorrowing(
+                            updatedLoanItem.getId(), (int) overdueDays, fineAmount);
+                }
+            }
+        }
+
+        // Việc kiểm tra và hoàn tất phiếu mượn sẽ được gọi bên ngoài sau khi vòng lặp kết thúc
+        // checkAndCompleteLoan(bookLoan);
+
+        return new ReturnResponseDTO(convertToSimpleLoanItemDto(updatedLoanItem), newPenaltyFee);
+    }
 
     private BookLoan createLoanLogic(User user, List<Book> booksToBorrow) throws Exception {
         validateUser(user);
@@ -226,6 +258,7 @@ public class BookLoanServiceImpl implements BookLoanService {
     }
 
     private void checkAndCompleteLoan(BookLoan bookLoan) {
+        // Tải lại trạng thái mới nhất từ DB để chắc chắn
         List<LoanItem> items = loanItemRepository.findByBookLoanId(bookLoan.getId());
         boolean allReturned = items.stream().allMatch(item -> "RETURNED".equals(item.getStatus()));
         if (allReturned) {

@@ -15,23 +15,29 @@ import java.util.Optional;
 @Repository
 public interface LoanItemRepository extends JpaRepository<LoanItem, Long> {
 
-    // <<< MERGE: GIỮ LẠI TỪ ĐỒ ÁN 2 (Hữu ích) >>>
-    @Query("SELECT count(li) FROM LoanItem li WHERE li.bookLoan.user = :user AND li.status = 'BORROWED'")
+    // <<< THAY ĐỔI: Thêm phương thức mới để tìm sách trong một phiếu mượn cụ thể >>>
+    @Query("SELECT li FROM LoanItem li " +
+            "WHERE li.bookLoan.id = :loanId " +
+            "AND li.book.isbn = :isbn " +
+            "AND li.status IN ('BORROWED', 'OVERDUE')")
+    Optional<LoanItem> findActiveLoanItemByLoanIdAndBookIsbn(@Param("loanId") Long loanId, @Param("isbn") String isbn);
+
+    // --- CÁC PHƯƠNG THỨC CŨ (giữ lại nếu cần) ---
+    List<LoanItem> findByBookLoanId(Long loanId);
+
+    // Câu truy vấn này không còn an toàn cho chức năng trả nhiều sách, nhưng có thể cần cho nơi khác
+    @Query("SELECT li FROM LoanItem li " +
+            "WHERE li.bookLoan.user.userId = :userId " +
+            "AND li.book.isbn = :bookIsbn " +
+            "AND li.status IN ('BORROWED', 'OVERDUE')")
+    Optional<LoanItem> findActiveLoanItemByUserIdAndBookIsbn(@Param("userId") String userId, @Param("bookIsbn") String bookIsbn);
+
+    Optional<LoanItem> findFirstByBookIsbnAndStatus(String bookIsbn, String status);
+
+    @Query("SELECT count(li) FROM LoanItem li WHERE li.bookLoan.user = :user AND li.status IN ('BORROWED', 'OVERDUE')")
     long countActiveLoansByUser(@Param("user") User user);
 
-    // <<< MERGE: GIỮ LẠI TỪ ĐỒ ÁN 2 (Hữu ích) >>>
     List<LoanItem> findByBookLoan_UserAndStatus(User user, String status);
 
-    // <<< MERGE: GIỮ LẠI TỪ ĐỒ ÁN 2 (Hữu ích) >>>
     Page<LoanItem> findByBookLoan_UserOrderByBookLoan_BorrowDateDesc(User user, Pageable pageable);
-
-    // <<< MERGE: GIỮ LẠI TỪ ĐỒ ÁN 1 (Cho nghiệp vụ trả sách của thủ thư) >>>
-    @Query("SELECT li FROM LoanItem li WHERE li.bookLoan.user.userId = :userId AND li.book.isbn = :isbn AND li.status = 'BORROWED'")
-    Optional<LoanItem> findActiveLoanItemByUserIdAndBookIsbn(@Param("userId") String userId, @Param("isbn") String isbn);
-
-    // <<< MERGE: GIỮ LẠI TỪ ĐỒ ÁN 1 (Cho nghiệp vụ trả sách của thủ thư) >>>
-    Optional<LoanItem> findFirstByBookIsbnAndStatus(String isbn, String status);
-
-    // <<< MERGE: GIỮ LẠI TỪ ĐỒ ÁN 1 (Cho nghiệp vụ trả sách của thủ thư) >>>
-    List<LoanItem> findByBookLoanId(Long bookLoanId);
 }

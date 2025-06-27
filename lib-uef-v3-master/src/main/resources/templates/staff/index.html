@@ -881,9 +881,9 @@
                             <div class="card-body">
                                 <form id="return-form">
                                     <div class="mb-3">
-                                        <label for="returnReaderId" class="form-label">Mã độc giả (Tùy chọn)</label>
-                                        <input type="text" class="form-control" id="returnReaderId" name="userId"
-                                               placeholder="Quét hoặc nhập mã độc giả...">
+                                        <label for="borrowerId" class="form-label">Mã độc giả</label>
+                                        <input type="text" class="form-control" id="borrowerId" name="userId"
+                                               placeholder="Quét mã vạch hoặc nhập mã..." required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="bookIsbnReturn" class="form-label">Mã sách (ISBN)</label>
@@ -1456,22 +1456,17 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label for="addReaderDob" class="form-label">Ngày sinh</label>
                             <input type="date" class="form-control" id="addReaderDob" name="dob">
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-6 mb-3">
                             <label for="addReaderGender" class="form-label">Giới tính</label>
                             <select class="form-select" id="addReaderGender" name="gender">
                                 <option value="Nam">Nam</option>
                                 <option value="Nữ">Nữ</option>
                                 <option value="Khác">Khác</option>
                             </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label for="addReaderExpiryDate" class="form-label">Ngày hết hạn thẻ</label>
-                            <input type="date" class="form-control" id="addReaderExpiryDate"
-                                   name="membershipExpiryDate">
                         </div>
                     </div>
                     <div class="mb-3">
@@ -2406,19 +2401,7 @@
                 }
             });
         }
-        if (addReaderModal) {
-            // Tự động điền ngày hết hạn (+1 năm) khi modal đăng ký được mở
-            addReaderModal.addEventListener('show.bs.modal', function () {
-                const today = new Date();
-                today.setFullYear(today.getFullYear() + 1); // Cộng thêm 1 năm
 
-                // Chuyển đổi sang định dạng YYYY-MM-DD để gán cho input
-                const expiryDateString = today.toISOString().split('T')[0];
-
-                // Gán giá trị vào ô input ngày hết hạn
-                document.getElementById('addReaderExpiryDate').value = expiryDateString;
-            });
-        }
         if (addReaderModal) {
             addReaderModal.addEventListener('hidden.bs.modal', function () {
                 addReaderForm.reset();
@@ -2680,28 +2663,28 @@
                 btn.disabled = true;
                 btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Đang xử lý...`;
 
-                const userId = returnForm.querySelector('#returnReaderId').value;
+                // <<< THAY ĐỔI: Lấy loanId thay vì userId >>>
+                const loanId = returnForm.querySelector('#returnLoanId').value;
                 const isbnsText = returnForm.querySelector('#bookIsbnReturn').value;
 
-                // Tách các ISBN theo dấu phẩy hoặc xuống dòng, sau đó loại bỏ khoảng trắng và các dòng trống
-                const bookIsbns = isbnsText.split(/[\n,]+/)
+                const isbns = isbnsText.split(/[\n,]+/)
                     .map(isbn => isbn.trim())
                     .filter(isbn => isbn);
 
-                if (bookIsbns.length === 0) {
+                if (isbns.length === 0) {
                     showGenericAlert('borrow-return-alert', 'Vui lòng nhập ít nhất một mã ISBN.', false);
                     btn.disabled = false;
                     btn.innerHTML = originalBtnText;
                     return;
                 }
 
+                // <<< THAY ĐỔI: Tạo payload đúng như backend yêu cầu (loanId và isbns) >>>
                 const payload = {
-                    userId: userId || null, // Gửi null nếu không nhập mã độc giả
-                    isbns: bookIsbns
+                    loanId: loanId,
+                    isbns: isbns // Tên thuộc tính là "isbns" theo file ReturnMultipleRequestDTO.java
                 };
 
                 try {
-                    // Gọi đến API mới để xử lý trả nhiều sách
                     const response = await fetch('/api/book-loans/return-multiple', {
                         method: 'POST',
                         headers: {'Content-Type': 'application/json'},
@@ -2716,7 +2699,7 @@
                     const penaltyCount = result.penaltyFees ? result.penaltyFees.length : 0;
                     const errorCount = result.errors ? result.errors.length : 0;
 
-                    let alertMessage = `Hoàn tất! Đã xử lý ${bookIsbns.length} sách. `;
+                    let alertMessage = `Hoàn tất! Đã xử lý ${isbns.length} sách. `;
                     alertMessage += `Thành công: ${successCount}. `;
                     alertMessage += `Phát sinh phạt: ${penaltyCount}. `;
                     alertMessage += `Thất bại: ${errorCount}.`;
@@ -2727,9 +2710,8 @@
 
                     showGenericAlert('borrow-return-alert', alertMessage, errorCount === 0);
                     returnForm.reset();
-                    loadBookLoans(); // Tải lại danh sách phiếu mượn
+                    loadBookLoans();
 
-                    // Tải lại danh sách phí phạt nếu tab đó đang active
                     if (document.getElementById('v-pills-phiphat-tab')?.classList.contains('active')) {
                         loadPenaltyFees();
                     }

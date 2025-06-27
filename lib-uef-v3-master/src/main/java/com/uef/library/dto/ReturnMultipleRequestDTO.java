@@ -1,20 +1,14 @@
 package com.uef.library.dto;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
-/**
- * DTO for the request to return multiple books at once.
- */
-@Data
+@Getter
+@Setter
 public class ReturnMultipleRequestDTO {
-    /**
-     * The ID of the reader returning the books. Can be null.
-     */
-    private String userId;
-
-    /**
-     * A list of ISBNs for the books being returned.
-     */
+    // <<< THAY ĐỔI: Chuyển từ userId sang loanId >>>
+    private Long loanId;
     private List<String> isbns;
 }

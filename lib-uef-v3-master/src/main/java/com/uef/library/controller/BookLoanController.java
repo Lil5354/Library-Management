@@ -49,9 +49,14 @@ public class BookLoanController {
         }
     }
 
+    // <<< THAY ĐỔI: Giữ nguyên endpoint nhưng logic bên trong service đã thay đổi >>>
     @PostMapping("/return-multiple")
     public ResponseEntity<?> returnMultipleBooks(@RequestBody ReturnMultipleRequestDTO returnRequest) {
         try {
+            // Kiểm tra loanId thay vì userId
+            if (returnRequest.getLoanId() == null) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Mã phiếu mượn (loanId) không được để trống."));
+            }
             if (returnRequest.getIsbns() == null || returnRequest.getIsbns().isEmpty()) {
                 return ResponseEntity.badRequest().body(Map.of("message", "Danh sách ISBN không được để trống."));
             }
