@@ -1,0 +1,440 @@
+:root {
+    /* Wood & Beige Theme (Consistent with other pages) */
+    --primary: #8B4513;         /* SaddleBrown (Main Wood) */
+    --primary-light: #A0522D;    /* Sienna (Lighter Wood) */
+    --primary-dark: #5C3317;     /* Darker Wood */
+    --secondary: #D2B48C;        /* Tan (Accent Beige/Light Wood) */
+    --light: #FAF0E6;           /* Linen (Main Background Beige) */
+    --dark: #4A3B31;            /* Dark Brown (Main Text) */
+
+    /* Additional custom colors */
+    --card-bg: #FFFBF0;         /* Very Light Warm Off-White (for cards/inputs) */
+    --input-bg-custom: #FFFBF0; /* Explicit for inputs */
+    --text-on-primary: #FAF0E6; /* Light beige text for primary background */
+    --text-on-secondary: #4A3B31;/* Dark brown text for secondary background */
+    --text-light-custom: #795548; /* Lighter brown for secondary text */
+
+    --footer-bg-custom: #3D2B1F; /* Very Dark Brown (Footer BG) */
+    --footer-text-custom: #D3C5BC;/* Light Beige/Brown (Footer Text) */
+    --footer-link-hover-custom: #FAF0E6; /* Linen for hover */
+
+    --nav-bar-bg: rgba(255, 251, 240, 0.95); /* --card-bg with opacity */
+    --box-shadow-base-color-rgb: 139, 69, 19; /* For box shadows */
+    --border-subtle: #E0D6CC; /* A light brown border */
+    --accordion-button-active-bg: rgba(139, 69, 19, 0.05); /* Primary wood with light alpha */
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--light);
+    color: var(--dark);
+    position: relative;
+    /* padding-top will be set by JS */
+}
+/* Page Header */
+.page-header {
+    /* Dòng background với url() đã được xóa */
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-on-primary);
+    position: relative; /* Giữ nguyên position: relative */
+    margin-bottom: 60px;
+    overflow: hidden; /* Thêm để video không bị tràn ra ngoài */
+}
+/* --- CSS CHO VIDEO NỀN VÀ LỚP PHỦ --- */
+
+/* Cấu hình cho video nền */
+#header-video-bg {
+    position: absolute;
+    top: 183%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -2; /* Đẩy video ra lớp sau cùng */
+    object-fit: cover;
+}
+
+/* Tạo lại lớp phủ màu tối để chữ dễ đọc */
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(rgba(40, 28, 20, 0.65), rgba(40, 28, 20, 0.65));
+    z-index: -1; /* Nằm trên video, dưới chữ */
+}
+.page-header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    margin-bottom: 15px; /* Reduced margin */
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s forwards 0.3s;
+}
+
+.breadcrumb {
+    background-color: transparent;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s forwards 0.6s;
+    padding: 0; /* Reset padding for breadcrumb */
+}
+
+.breadcrumb-item, .breadcrumb-item a {
+    color: rgba(250, 240, 230, 0.85); /* Linen with alpha */
+    text-decoration: none;
+}
+
+.breadcrumb-item.active {
+    color: var(--text-on-primary); /* Linen */
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(250, 240, 230, 0.7); /* Linen with alpha */
+}
+
+/* Section Title */
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--primary); /* Main Wood */
+    margin-bottom: 40px;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title:after {
+    content: "";
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 3px;
+    background-color: var(--secondary); /* Tan */
+}
+
+/* Contact Section */
+.contact-info-box {
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 20px rgba(var(--box-shadow-base-color-rgb), 0.07);
+    transition: all 0.3s ease;
+    height: 100%;
+    border-left: 4px solid var(--primary); /* Main Wood */
+}
+.contact-info-box p {
+    color: var(--dark); /* Ensure p text is dark */
+    line-height: 1.7;
+}
+
+
+.contact-info-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(var(--box-shadow-base-color-rgb), 0.12);
+}
+
+.contact-icon {
+    width: 60px;
+    height: 60px;
+    line-height: 60px;
+    text-align: center;
+    background-color: rgba(var(--box-shadow-base-color-rgb), 0.1); /* Primary wood with alpha */
+    color: var(--primary); /* Main Wood */
+    border-radius: 50%;
+    font-size: 22px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.contact-info-box:hover .contact-icon {
+    background-color: var(--primary); /* Main Wood */
+    color: var(--text-on-primary); /* Linen */
+}
+
+.contact-info-box h5 {
+    font-weight: 600;
+    color: var(--primary-dark); /* Darker Wood */
+    margin-bottom: 15px;
+}
+.contact-info-box .badge.bg-warning { /* Custom badge style */
+    background-color: var(--secondary) !important;
+    color: var(--text-on-secondary) !important;
+    border: 1px solid var(--primary-light);
+    font-weight: 500;
+}
+
+
+.contact-form {
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    padding: 40px;
+    box-shadow: 0 5px 20px rgba(var(--box-shadow-base-color-rgb), 0.07);
+}
+.contact-form h3 {
+    color: var(--primary);
+}
+
+.form-control {
+    height: 50px;
+    border-radius: 10px;
+    border: 1px solid var(--border-subtle);
+    background-color: var(--input-bg-custom);
+    color: var(--dark);
+    padding-left: 15px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+.form-control::placeholder {
+    color: var(--text-light-custom);
+}
+
+.form-control:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--box-shadow-base-color-rgb), 0.25);
+    background-color: var(--input-bg-custom);
+}
+
+textarea.form-control {
+    height: 150px;
+    padding-top: 15px;
+}
+.form-check-label a {
+    color: var(--primary) !important;
+    text-decoration: underline;
+}
+.form-check-label a:hover {
+    color: var(--primary-dark) !important;
+}
+
+
+.contact-btn {
+    background-color: var(--primary); /* Main Wood */
+    border-color: var(--primary);
+    color: var(--text-on-primary); /* Linen */
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.contact-btn:hover {
+    background-color: var(--primary-dark); /* Darker Wood */
+    border-color: var(--primary-dark);
+    color: var(--text-on-primary);
+}
+
+/* Map */
+.map-container {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(var(--box-shadow-base-color-rgb), 0.07);
+    margin-top: 50px;
+}
+
+.map-frame {
+    width: 100%;
+    height: 450px;
+    border: none;
+}
+
+/* FAQ Section */
+.faq-section {
+    background-color: rgba(var(--box-shadow-base-color-rgb), 0.03); /* Primary wood with alpha */
+    padding: 80px 0;
+    margin: 60px 0;
+}
+
+.accordion-item {
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(var(--box-shadow-base-color-rgb), 0.03);
+    background-color: var(--card-bg); /* Set base background for item */
+}
+
+.accordion-button {
+    padding: 20px 25px;
+    font-weight: 600;
+    color: var(--primary-dark); /* Darker Wood */
+    background-color: var(--card-bg);
+    border-left: 4px solid var(--primary); /* Main Wood */
+}
+
+.accordion-button:not(.collapsed) {
+    color: var(--primary); /* Main Wood */
+    background-color: var(--accordion-button-active-bg); /* Primary wood with light alpha */
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(var(--box-shadow-base-color-rgb), 0.1); /* Primary wood with alpha for focus border */
+}
+
+.accordion-body {
+    padding: 20px 25px;
+    background-color: var(--card-bg); /* Ensure body matches item bg */
+    color: var(--dark);
+}
+
+/* Footer */
+footer {
+    background-color: var(--footer-bg-custom);
+    color: var(--footer-text-custom);
+    padding: 60px 0 20px;
+    /* margin-top: 60px; */ /* Removed as FAQ section provides bottom margin/padding */
+}
+
+.footer-title {
+    color: var(--light); /* Linen */
+    font-weight: 600;
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    color: var(--footer-text-custom);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--footer-link-hover-custom);
+    padding-left: 5px;
+}
+.footer-links i.me-2 {
+    color: var(--footer-text-custom);
+    transition: all 0.3s ease;
+}
+.footer-links a:hover i.me-2 {
+    color: var(--footer-link-hover-custom);
+}
+
+.social-links {
+    margin-top: 20px;
+}
+
+.social-links a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: rgba(250, 240, 230, 0.1); /* Linen with alpha */
+    color: var(--footer-link-hover-custom);
+    border-radius: 50%;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background-color: var(--primary);
+    color: var(--text-on-primary);
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(250, 240, 230, 0.15); /* Linen with alpha */
+    padding-top: 20px;
+    margin-top: 40px;
+    font-size: 0.9rem;
+}
+.footer-bottom p a {
+    color: var(--footer-text-custom) !important;
+    opacity: 0.8;
+}
+.footer-bottom p a:hover {
+    color: var(--footer-link-hover-custom) !important;
+    opacity: 1;
+}
+
+/* Back to Top Button Style */
+.back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+    width: 40px;
+    height: 40px;
+    line-height: 40px; /* For vertical centering of icon */
+    text-align: center;
+    border-radius: 50%;
+    background-color: var(--primary); /* Main Wood */
+    color: var(--text-on-primary); /* Linen */
+    z-index: 999;
+    transition: all 0.3s ease;
+    opacity: 0.8;
+}
+.back-to-top:hover {
+    opacity: 1;
+    background-color: var(--primary-dark); /* Darker wood */
+    transform: translateY(-3px);
+}
+
+
+/* Animations */
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .page-header {
+        height: auto; /* Adjust for content */
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+
+    .page-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
+    }
+
+    .contact-form {
+        padding: 25px;
+    }
+    .footer-bottom .col-md-6 {
+        text-align: center !important;
+        margin-bottom: 10px;
+    }
+    .footer-bottom .col-md-6.text-md-end {
+        text-align: center !important;
+    }
+}
+.marquee-notification-bar{
+    color: #D32F2F;
+    padding: 5px 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border-subtle);
+    box-shadow: 0 2px 5px rgba(var(--box-shadow-base-color-rgb), 0.05);
+}

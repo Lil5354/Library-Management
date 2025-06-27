@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Library Admin - Dashboard</title>
+    <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link href="/css/sb-admin-2.min.css" rel="stylesheet">
+</head>
+<style>
+    /* PHẦN STYLE CỦA BẠN GIỮ NGUYÊN Ở ĐÂY */
+    @keyframes wave { 0% { transform: rotate(0deg); } 15% { transform: rotate(14deg); } 30% { transform: rotate(-8deg); } 40% { transform: rotate(14deg); } 50% { transform: rotate(-4deg); } 60% { transform: rotate(10deg); } 70% { transform: rotate(0deg); } 100% { transform: rotate(0deg); } }
+    .wave-hand { display: inline-block; animation: wave 2s infinite; transform-origin: 70% 70%; }
+    .chatbox-card { width: 100%; max-width: 1757px; background-color: #fff; border: 1px solid #ccc; border-radius: 5px; box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); margin-top: 20px; }
+    .chatbox-header { background-color: #000000; color: #fff; padding: 10px; font-size: 18px; border-top-left-radius: 5px; border-top-right-radius: 5px; }
+    .chatbox-window { height: 220px; overflow-y: scroll; }
+    .chatbox-message-list { list-style: none; margin: 0; padding: 0; }
+    #toast-container { position: fixed; top: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-end; }
+    .toast-custom { background-color: #dc3545; color: white; padding: 12px 20px; border-radius: 8px; margin-top: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); opacity: 0; transform: translateY(-20px); transition: all 0.5s ease; display: flex; align-items: center; min-width: 300px; font-size: 15px; position: relative; }
+    .toast-custom.show { opacity: 1; transform: translateY(0); }
+    .toast-success-custom { background-color: #28a745 !important; }
+    :root { --staff-color: #0d6efd; --reader-color: #28a745; --staff-light: rgba(13, 110, 253, 0.12); --reader-light: rgba(40, 167, 69, 0.12); --animation-speed: 0.25s; }
+    .bg-gradient-dark { background: linear-gradient(135deg, #343a40, #212529); }
+    .icon-circle { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all var(--animation-speed) ease; margin-bottom: 0.5rem; }
+    .option-btn { border-radius: 12px; transition: all var(--animation-speed) ease; border: 1px solid transparent; padding: 1rem; text-align: center; background-color: #f8f9fa; flex: 1; margin: 0 0.5rem; min-width: 120px; }
+    .option-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.1); border-color: #e9ecef; }
+    .option-btn:disabled { opacity: 0.65; cursor: not-allowed; transform: none; box-shadow: none; }
+    .option-btn:disabled:hover .icon-circle { transform: none; }
+    .option-btn .fw-medium { font-weight: 500; color: #343a40; }
+    .icon-circle.edit { background-color: rgba(0, 123, 255, 0.1); color: #007bff; }
+    .icon-circle.role { background-color: rgba(255, 193, 7, 0.1); color: #ffc107; }
+    .icon-circle.delete { background-color: rgba(220, 53, 69, 0.1); color: #dc3545; }
+    .role-card { border-radius: 12px; overflow: hidden; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 2px solid #f8f9fa; margin-bottom: 16px; position: relative; cursor: pointer; }
+    .role-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+    .role-label { cursor: pointer; margin: 0; width: 100%; display: block; }
+    .role-content { padding: 16px; background-color: #fff; transition: all 0.3s ease; }
+    .role-icon-wrapper { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: all 0.3s ease; }
+    .role-icon-wrapper.staff { margin-right: 10px; background-color: rgba(40, 167, 69, 0.12); color: #28a745; }
+    .role-icon-wrapper.reader { margin-right: 10px; background-color: rgba(13, 110, 253, 0.12); color: #0d6efd; }
+    .role-title { font-weight: 600; font-size: 16px; color: #212529; transition: all 0.3s ease; }
+    .role-description { color: #6c757d; font-size: 14px; }
+    .role-check { position: absolute; top: 15px; right: 15px; color: transparent; font-size: 22px; transition: all 0.3s ease; }
+    .role-card.selected { border-color: #4e73df; background-color: rgba(78, 115, 223, 0.03); }
+    .role-card.selected .role-check { color: #4e73df; }
+    .role-card[data-role="STAFF"].selected { border-color: #28a745; background-color: rgba(40, 167, 69, 0.05); }
+    .role-card[data-role="STAFF"].selected .role-check { color: #28a745; }
+    .role-card[data-role="READER"].selected { border-color: #0d6efd; background-color: rgba(13, 110, 253, 0.05); }
+    .role-card[data-role="READER"].selected .role-check { color: #0d6efd; }
+    .modal-footer { padding: 1rem; border-top: 1px solid rgba(0,0,0,0.05); background-color: #f8f9fa; }
+    .btn-cancel { background-color: #fff; color: #6c757d; border: 1px solid #ced4da; padding: 0.5rem 1.25rem; font-weight: 500; box-shadow: 0 1px 2px rgba(0,0,0,0.05); transition: all 0.2s ease; }
+    .btn-cancel:hover { background-color: #f8f9fa; border-color: #6c757d; }
+    .btn-green-gradient { background: linear-gradient(45deg, #4CAF50, #2E7D32); color: white; border: none; padding: 10px 20px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.3s ease, transform 0.2s ease; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+    .btn-green-gradient:hover { background: linear-gradient(45deg, #43A047, #1B5E20); transform: translateY(-2px); }
+    .modal-body.action-options .option-btn { margin-bottom: 0; }
+</style>
+
+<body id="page-top">
+<div id="wrapper">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar" th:fragment="sidebar">
+        <a class="sidebar-brand d-flex align-items-center justify-content-center" th:href="@{/admin/dashboard}">
+            <div class="sidebar-brand-icon rotate-n-15"><i class="fas fa-laugh-wink"></i></div>
+            <div class="sidebar-brand-text mx-3">Library Admin</div>
+        </a>
+        <hr class="sidebar-divider my-0">
+        <li class="nav-item active">
+            <a class="nav-link" th:href="@{/admin/dashboard}"><i class="fas fa-fw fa-tachometer-alt"></i><span>Dashboard</span></a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/staff/home}"> <i class="fas fa-fw fa-users-cog"></i>
+                <span>Giao diện Nhân viên</span>
+            </a>
+        </li>
+        <hr class="sidebar-divider">
+        <div class="sidebar-heading">Quản trị</div>
+
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/comprehensive-book-management}"> <i class="fas fa-fw fa-book-open"></i> <span>Quản lý Sách Toàn Diện</span>
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSystemSettings" aria-expanded="true" aria-controls="collapseSystemSettings">
+                <i class="fas fa-fw fa-cogs"></i><span>Cài đặt & Hệ thống</span>
+            </a>
+            <div id="collapseSystemSettings" class="collapse" aria-labelledby="headingSystemSettings" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Hệ thống:</h6>
+                    <a class="collapse-item" th:href="@{/admin/system-management}">Quản lý hệ thống</a>
+                    <h6 class="collapse-header">Quản lý thông báo:</h6>
+                    <a class="collapse-item" th:href="@{/admin/notifications/marquee}">Gửi thông báo chung</a>
+                    <a class="collapse-item" th:href="@{/admin/notifications/user/send}">Gửi thông báo người dùng</a>
+                    <a class="collapse-item" th:href="@{/admin/notifications/email/send}">Gửi thông báo Email</a>
+                    <a class="collapse-item" th:href="@{/admin/notifications/auto-call}">Auto call phone thông báo</a>
+                    <h6 class="collapse-header Công cụ Admin:">Công cụ Admin:</h6>
+                    <a class="collapse-item" href="#">Hoạt động người dùng</a>
+                    <a class="collapse-item" href="#">Nhật ký hệ thống </a>
+                    <a class="collapse-item" href="#">Báo cáo tổng hợp</a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:href="@{/admin/train-ai}">
+                <i class="fas fa-fw fa-bolt"></i>
+                <span>Train AI Bé Heo</span>
+            </a>
+        </li>
+        <hr class="sidebar-divider d-none d-md-block">
+        <li class="nav-item">
+            <a class="nav-link" href="#" data-toggle="modal" data-target="#logoutModal">
+                <i class="fas fa-fw fa-sign-out-alt"></i><span>Đăng xuất</span>
+            </a>
+        </li>
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+    </ul>
+    <div layout:fragment="content">
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3"><i class="fa fa-bars"></i></button>
+                    <span class="navbar-text font-weight-bold text-dark mr-3 d-none d-lg-inline">
+                            <h4><span class="wave-hand">👋</span> Xin chào <span th:text="${fullName}">Tên người dùng</span>!</h4>
+                        </span>
+                </nav>
+                <div class="container-fluid">
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+                    </div>
+                    <div class="row">
+                        <div class="col-xl-3 col-md-6 mb-4"><div class="card border-left-primary shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tổng số Admin</div><div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${adminCount}">0</div></div><div class="col-auto"><i class="fas fa-user-shield fa-2x text-gray-300"></i></div></div></div></div></div>
+                        <div class="col-xl-3 col-md-6 mb-4"><div class="card border-left-success shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-success text-uppercase mb-1">Tổng Nhân viên</div><div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${staffCount}">0</div></div><div class="col-auto"><i class="fas fa-user-cog fa-2x text-gray-300"></i></div></div></div></div></div>
+                        <div class="col-xl-3 col-md-6 mb-4"><div class="card border-left-info shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tổng Độc giả</div><div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${readerCount}">0</div></div><div class="col-auto"><i class="fas fa-user-tie fa-2x text-gray-300"></i></div></div></div></div></div>
+                        <div class="col-xl-3 col-md-6 mb-4"><div class="card border-left-danger shadow h-100 py-2"><div class="card-body"><div class="row no-gutters align-items-center"><div class="col mr-2"><div class="text-xs font-weight-bold text-danger text-uppercase mb-1">Tài khoản bị khóa</div><div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${lockCount}">0</div></div><div class="col-auto"><i class="fas fa-user-lock fa-2x text-gray-300"></i></div></div></div></div></div>
+                    </div>
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Tìm kiếm và Lọc Người Dùng</h6></div>
+                        <div class="card-body">
+                            <div id="filterFormContainer" class="row g-3 align-items-end">
+                                <div class="col-md-4 mb-2"><label for="searchInput" class="form-label">Từ khóa:</label><input type="text" class="form-control" id="searchInput" name="keyword" th:value="${keyword}" placeholder="Username, Họ tên, Email, SĐT..."></div>
+                                <div class="col-md-3 mb-2"><label for="roleFilter" class="form-label">Vai trò:</label><select class="form-control" id="roleFilter" name="role"><option value="" th:selected="${role == null or role.isEmpty()}">Tất cả vai trò</option><option value="ADMIN" th:selected="${role == 'ADMIN'}">ADMIN</option><option value="STAFF" th:selected="${role == 'STAFF'}">STAFF</option><option value="READER" th:selected="${role == 'READER'}">READER</option></select></div>
+                                <div class="col-md-3 mb-2"><label for="statusFilter" class="form-label">Trạng thái:</label><select class="form-control" id="statusFilter" name="status"><option value="" th:selected="${status == null or status.isEmpty()}">Tất cả trạng thái</option><option value="true" th:selected="${status == 'true'}">Đang hoạt động</option><option value="false" th:selected="${status == 'false'}">Bị khóa</option></select></div>
+                                <div class="col-md-2 mb-2 d-flex align-items-end"><button type="button" class="btn btn-primary me-2 w-100" id="filterFormButton" style="margin-right: 5px;">Lọc</button><a th:href="@{/admin/dashboard}" class="btn btn-secondary w-100" id="resetFilterButton">Reset</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 mb-4">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Danh Sách Tài Khoản</h6></div>
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                        <thead><tr><th>ID</th><th>Tên đăng nhập</th><th>Họ tên</th><th>Ảnh</th><th>SĐT</th><th>Email</th><th>Địa chỉ</th><th>Ngày sinh</th><th>Giới tính</th><th>Vai trò</th><th>Trạng thái</th><th>Ngày tạo</th><th>Thao Tác</th></tr></thead>
+                                        <tbody id="userTableBody">
+                                        <tr th:each="user : ${userPage.content}">
+                                            <td th:text="${user.userId}">U0001</td><td th:text="${user.username}" class="username-column">username</td>
+                                            <td th:text="${user.userDetail?.fullName != null and !user.userDetail.fullName.isEmpty()} ? ${user.userDetail.fullName} : 'Chưa cập nhật'">Họ tên</td>
+                                            <td><img th:if="${user.userDetail?.avatar != null and !user.userDetail.avatar.isEmpty()}" th:src="@{${user.userDetail.avatar}}" width="40" height="40" class="rounded-circle" alt="Avatar"><span th:if="${user.userDetail == null or user.userDetail.avatar == null or user.userDetail.avatar.isEmpty()}">Không có ảnh</span></td>
+                                            <td th:text="${user.userDetail?.phone != null and !user.userDetail.phone.isEmpty()} ? ${user.userDetail.phone} : 'Chưa cập nhật'">SĐT</td>
+                                            <td th:text="${user.userDetail?.email != null and !user.userDetail.email.isEmpty()} ? ${user.userDetail.email} : 'Chưa cập nhật'">Email</td>
+                                            <td th:text="${user.userDetail?.address != null and !user.userDetail.address.isEmpty()} ? ${user.userDetail.address} : 'Chưa cập nhật'">Địa chỉ</td>
+                                            <td th:text="${user.userDetail?.dob != null} ? ${#temporals.format(user.userDetail.dob, 'dd/MM/yyyy')} : 'Chưa cập nhật'">01/01/2000</td>
+                                            <td th:text="${user.userDetail?.gender != null and !user.userDetail.gender.isEmpty()} ? ${user.userDetail.gender} : 'Chưa xác định'">Nam</td>
+                                            <td><span th:text="${user.role}" th:classappend="${user.role == 'ADMIN' ? 'text-primary font-weight-bold' : user.role == 'READER' ? 'text-info' : user.role == 'STAFF' ? 'text-success' : ''}"></span></td>
+                                            <td><span th:text="${user.status} ? 'Đang hoạt động' : 'Bị khóa'" th:classappend="${user.status} ? 'text-success' : 'text-danger font-weight-bold'"></span></td>
+                                            <td th:text="${user.createdAt != null} ? ${#temporals.format(user.createdAt, 'dd/MM/yyyy HH:mm')} : 'N/A'">14/05/2025</td>
+                                            <td class="text-center"><button class="btn btn-sm btn-outline-secondary action-cog-btn" onclick="openActionChoiceModal(this)" th:attr="data-user-id=${user.userId}, data-user-role=${user.role}, data-username=${user.username}"><i class="fas fa-cog"></i></button></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <nav th:if="${userPage.totalPages > 0}" id="paginationContainerThymeleaf"><ul class="pagination justify-content-center"><li class="page-item" th:classappend="${userPage.first} ? 'disabled'"><a class="page-link page-link-thymeleaf" href="#" th:attr="data-page=${userPage.number - 1}">Trước</a></li><li class="page-item" th:each="i : ${#numbers.sequence(0, userPage.totalPages - 1)}" th:classappend="${i == userPage.number} ? 'active'"><a class="page-link page-link-thymeleaf" href="#" th:text="${i + 1}" th:attr="data-page=${i}">1</a></li><li class="page-item" th:classappend="${userPage.last} ? 'disabled'"><a class="page-link page-link-thymeleaf" href="#" th:attr="data-page=${userPage.number + 1}">Tiếp</a></li></ul></nav>
+                                    <nav id="paginationContainerAjax" style="display: none;"><ul class="pagination justify-content-center" id="paginationControls"></ul></nav>
+                                    <div class="chatbox-card"><div class="chatbox-header"><i class="fab fa-telegram-plane" style="margin-right: 6px;"></i><strong>Chatbot Telegram:</strong><a href="https://t.me/uef_lib_notify_bot" target="_blank" style="color: #fff; text-decoration: underline; font-weight: bold;">t.me/uef_lib_notify_bot</a></div><div class="chatbox-window"><ul class="chatbox-message-list" id="messageList"></ul></div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="sticky-footer bg-white"><div class="container my-auto"><div class="copyright text-center my-auto"><span>Copyright &copy; Your Website 2024</span></div></div></footer>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container"></div>
+<a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
+
+<div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title" id="logoutModalLabel">Sẵn sàng rời đi?</h5><button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button></div>
+            <div class="modal-body">Chọn "Đăng xuất" bên dưới nếu bạn đã sẵn sàng kết thúc phiên hiện tại.</div>
+            <div class="modal-footer"><button class="btn btn-secondary" type="button" data-dismiss="modal">Hủy</button><a class="btn btn-primary" th:href="@{/auth/logout}">Đăng xuất</a></div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="userActionChoiceModal" tabindex="-1" role="dialog" aria-labelledby="userActionChoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content border-0 rounded-lg shadow-lg">
+            <div class="modal-header bg-gradient-dark text-white border-0 rounded-top py-3">
+                <h5 class="modal-title w-100 text-center" id="userActionChoiceModalLabel"><i class="fas fa-user-cog me-2"></i>Tùy chọn cho: <strong id="actionChoiceUsername">N/A</strong></h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 1; text-shadow: none;"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body d-flex justify-content-around p-4 action-options">
+                <button type="button" class="btn option-btn d-flex flex-column align-items-center" title="Sửa thông tin" id="editUserBtn"><div class="icon-circle edit"><i class="fas fa-edit fa-lg"></i></div><span class="fw-medium">Sửa</span></button>
+                <button type="button" class="btn option-btn d-flex flex-column align-items-center" title="Phân quyền" id="assignRoleBtn"><div class="icon-circle role"><i class="fas fa-user-shield fa-lg"></i></div><span class="fw-medium">Phân quyền</span></button>
+                <button type="button" class="btn option-btn d-flex flex-column align-items-center" title="Xóa người dùng" id="deleteUserBtn"><div class="icon-circle delete"><i class="fas fa-trash-alt fa-lg"></i></div><span class="fw-medium">Xóa</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="userRoleModal" tabindex="-1" role="dialog" aria-labelledby="userRoleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow-lg overflow-hidden">
+            <div class="modal-header bg-gradient-dark text-white border-0 py-3">
+                <h5 class="modal-title" id="userRoleModalLabel"><i class="fas fa-user-tag me-2"></i>Phân quyền cho: <strong id="userRoleModalUsername">N/A</strong></h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 1; text-shadow: none;"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="text-dark fw-medium mb-3">Chọn vai trò mới:</p>
+                <div class="role-options mb-4">
+                    <div class="role-card" data-role="STAFF"><input type="radio" name="userRoleOption" id="staffRole" value="STAFF" class="d-none role-input"><label for="staffRole" class="role-label"><div class="role-content d-flex align-items-center"><div class="role-icon-wrapper staff me-3"><i class="fas fa-user-tie"></i></div><div class="role-details flex-grow-1"><h6 class="role-title mb-1">STAFF</h6><p class="role-description mb-0">Quản lý nội dung và người dùng</p></div><div class="role-check"><i class="fas fa-check-circle"></i></div></div></label></div>
+                    <div class="role-card" data-role="READER"><input type="radio" name="userRoleOption" id="readerRole" value="READER" class="d-none role-input"><label for="readerRole" class="role-label"><div class="role-content d-flex align-items-center"><div class="role-icon-wrapper reader me-3"><i class="fas fa-book-reader"></i></div><div class="role-details flex-grow-1"><h6 class="role-title mb-1">READER</h6><p class="role-description mb-0">Chỉ có quyền xem nội dung</p></div><div class="role-check"><i class="fas fa-check-circle"></i></div></div></label></div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 py-4 px-4">
+                <button type="button" class="btn btn-cancel" data-dismiss="modal"><span class="btn-text">Hủy</span></button>
+                <button type="button" class="btn btn-green-gradient save-role-btn"><span class="btn-icon"><i class="fas fa-check"></i></span><span class="btn-text">Lưu thay đổi</span></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-gradient-primary text-white">
+                <h5 class="modal-title" id="editUserModalLabel">Chỉnh sửa thông tin: <strong id="editUserModalUsername">N/A</strong></h5>
+                <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close" style="opacity: 1; text-shadow: none;"><span aria-hidden="true">&times;</span></button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm">
+                    <input type="hidden" id="editUserId" name="userId">
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><label for="editFullName" class="form-label">Họ và Tên:</label><input type="text" class="form-control" id="editFullName" name="fullName"></div>
+                        <div class="col-md-6 mb-3"><label for="editUsername" class="form-label">Tên đăng nhập:</label><input type="text" class="form-control" id="editUsername" name="username" readonly></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><label for="editEmail" class="form-label">Email:</label><input type="email" class="form-control" id="editEmail" name="email"></div>
+                        <div class="col-md-6 mb-3"><label for="editPhone" class="form-label">Số điện thoại:</label><input type="text" class="form-control" id="editPhone" name="phone"></div>
+                    </div>
+                    <div class="mb-3"><label for="editAddress" class="form-label">Địa chỉ:</label><input type="text" class="form-control" id="editAddress" name="address"></div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><label for="editDob" class="form-label">Ngày sinh:</label><input type="date" class="form-control" id="editDob" name="dob"></div>
+                        <div class="col-md-6 mb-3"><label for="editGender" class="form-label">Giới tính:</label><select class="form-control" id="editGender" name="gender"><option value="">Chọn giới tính</option><option value="Nam">Nam</option><option value="Nữ">Nữ</option><option value="Khác">Khác</option><option value="Chưa xác định">Chưa xác định</option></select></div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3"><label for="editAvatar" class="form-label">Link Ảnh đại diện:</label><input type="text" class="form-control" id="editAvatar" name="avatar"></div>
+                        <div class="col-md-6 mb-3"><label for="editStatus" class="form-label">Trạng thái:</label><select class="form-control" id="editStatus" name="status"><option value="true">Đang hoạt động</option><option value="false">Bị khóa</option></select></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="saveUserChangesBtn">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+<script src="/vendor/jquery-easing/jquery.easing.min.js"></script>
+<script src="/js/sb-admin-2.min.js"></script>
+<script src="/vendor/chart.js/Chart.min.js"></script>
+
+<script>
+    let currentActionUserId = null;
+    let currentActionUserRole = null;
+    let currentActionUsername = null;
+    let currentPageForAjax = 0;
+
+    // Hàm lấy CSRF token (ví dụ)
+    // function getCsrfHeaders() {
+    //     const token = $("meta[name='_csrf']").attr("content");
+    //     const headerName = $("meta[name='_csrf_header']").attr("content");
+    //     let headers = { 'Content-Type': 'application/json' };
+    //     if (token && headerName) {
+    //         headers[headerName] = token;
+    //     }
+    //     return headers;
+    // }
+
+
+    async function fetchLogs() {
+        try {
+            const response = await fetch('/admin/api/bot-logs/all');
+            if (!response.ok) { return; }
+            const logs = await response.json();
+            const messageList = document.getElementById('messageList');
+            if (messageList) {
+                messageList.innerHTML = '';
+                logs.reverse().forEach(log => {
+                    const time = log.createdAt ? dayjs(log.createdAt).format('YYYY-MM-DD HH:mm:ss') : 'N/A';
+                    const li = document.createElement('li');
+                    li.textContent = `[${time}] ${log.message}`;
+                    messageList.appendChild(li);
+                });
+            }
+        } catch (error) { console.error('Lỗi khi tải logs:', error); }
+    }
+
+    if (document.getElementById('messageList')) {
+        fetchLogs();
+        setInterval(fetchLogs, 7000);
+    }
+
+    function openActionChoiceModal(buttonEl) {
+        currentActionUserId = $(buttonEl).data("user-id");
+        currentActionUserRole = $(buttonEl).data("user-role");
+        currentActionUsername = $(buttonEl).data("username");
+
+        if (currentActionUserRole === 'ADMIN') {
+            showToast(`Không thể thao tác với tài khoản ADMIN.`);
+            return;
+        }
+        const actionModalEl = $('#userActionChoiceModal');
+        actionModalEl.data('user-id', currentActionUserId);
+        actionModalEl.data('user-role', currentActionUserRole);
+        actionModalEl.data('username', currentActionUsername);
+        $('#actionChoiceUsername').text(currentActionUsername || 'N/A');
+        $('#editUserBtn, #assignRoleBtn, #deleteUserBtn').prop('disabled', false);
+        actionModalEl.modal('show');
+    }
+
+    function triggerOpenRoleAssignmentModal() {
+        const actionModalEl = $('#userActionChoiceModal');
+        const userId = actionModalEl.data('user-id');
+        const currentRole = String(actionModalEl.data('user-role') || '').toUpperCase(); // Đảm bảo là string và uppercase
+        const username = actionModalEl.data('username');
+
+        if (!userId) { showToast('Lỗi: Không xác định người dùng.'); return; }
+
+        const roleModalEl = $('#userRoleModal');
+        roleModalEl.data('user-id', userId);
+        $('#userRoleModalUsername').text(username || 'N/A');
+
+        roleModalEl.find('.role-card').removeClass('selected');
+        roleModalEl.find('.role-input').prop('checked', false);
+
+        const currentRoleRadio = roleModalEl.find(`input.role-input[value="${currentRole}"]`);
+        if (currentRoleRadio.length) {
+            currentRoleRadio.prop('checked', true);
+            currentRoleRadio.closest('.role-card').addClass('selected');
+        } else {
+            const staffRadio = $('#staffRole');
+            if (staffRadio.length) {
+                staffRadio.prop('checked', true);
+                staffRadio.closest('.role-card').addClass('selected');
+            }
+        }
+        actionModalEl.modal('hide');
+        roleModalEl.modal('show');
+    }
+
+    async function openEditUserModal() {
+        const actionModalEl = $('#userActionChoiceModal');
+        const userId = actionModalEl.data('user-id');
+        const username = actionModalEl.data('username');
+
+        if (!userId) { showToast("Lỗi: Không xác định người dùng để sửa."); return; }
+        try {
+            const response = await fetch(`/admin/api/users/${userId}/details`);
+            if (!response.ok) {
+                const errorText = await response.text();
+                showToast(`❌ Lỗi khi tải thông tin: ${errorText || response.status}`);
+                return;
+            }
+            const userData = await response.json();
+            $('#editUserId').val(userData.userId);
+            $('#editUsername').val(userData.username);
+            $('#editUserModalUsername').text(userData.username || 'N/A');
+            if (userData.userDetail) {
+                $('#editFullName').val(userData.userDetail.fullName || '');
+                $('#editEmail').val(userData.userDetail.email || '');
+                $('#editPhone').val(userData.userDetail.phone || '');
+                $('#editAddress').val(userData.userDetail.address || '');
+                $('#editDob').val(userData.userDetail.dob ? dayjs(userData.userDetail.dob).format('YYYY-MM-DD') : '');
+                $('#editGender').val(userData.userDetail.gender || 'Chưa xác định');
+                $('#editAvatar').val(userData.userDetail.avatar || '');
+            } else {
+                $('#editFullName, #editEmail, #editPhone, #editAddress, #editDob, #editAvatar').val('');
+                $('#editGender').val('Chưa xác định');
+            }
+            $('#editStatus').val(String(userData.status));
+            actionModalEl.modal('hide');
+            $('#editUserModal').modal('show');
+        } catch (error) { console.error("Error fetching for edit:", error); showToast("❌ Lỗi kết nối khi tải thông tin."); }
+    }
+
+    function showToast(message) {
+        const container = $("#toast-container");
+        const toast = $('<div class="toast-custom"></div>');
+        if (message.startsWith("✅")) toast.addClass("toast-success-custom");
+        toast.html(message);
+        container.append(toast);
+        setTimeout(() => toast.addClass("show"), 10);
+        setTimeout(() => {
+            toast.removeClass("show");
+            setTimeout(() => toast.remove(), 500);
+        }, 5000);
+    }
+
+    const keywordInput = $('#searchInput');
+    const roleFilterSelect = $('#roleFilter');
+    const statusFilterSelect = $('#statusFilter');
+    const userTableBody = $('#userTableBody');
+    const paginationContainerThymeleaf = $('#paginationContainerThymeleaf');
+    const paginationContainerAjax = $('#paginationContainerAjax');
+    const paginationControls = $('#paginationControls');
+
+    async function fetchAndDisplayUsers(page = 0, calledFromFilterOrPaging = false) {
+        currentPageForAjax = page;
+        const keyword = keywordInput.val().trim();
+        const role = roleFilterSelect.val();
+        const status = statusFilterSelect.val();
+        const size = 10;
+
+        const params = new URLSearchParams({ page: currentPageForAjax, size: size });
+        if (keyword) params.append('keyword', keyword);
+        if (role) params.append('role', role);
+        if (status) params.append('status', status);
+
+        try {
+            const response = await fetch(`/admin/api/users/filter?${params.toString()}`);
+            if (!response.ok) { showToast(`❌ Lỗi tải DS người dùng: ${response.statusText || response.status}`); return; }
+            const pageData = await response.json();
+            updateUserTable(pageData.content);
+            updatePagination(pageData);
+
+            if (calledFromFilterOrPaging) {
+                paginationContainerThymeleaf.hide();
+                paginationContainerAjax.show();
+            }
+            const newUrl = `/admin/dashboard?${params.toString()}`;
+            history.pushState({ path: newUrl, pageData: pageData }, '', newUrl);
+        } catch (error) { console.error("Lỗi fetch users:", error); showToast("❌ Lỗi kết nối tải DS người dùng."); }
+    }
+
+    function updateUserTable(users) {
+        userTableBody.empty();
+        if (!users || users.length === 0) {
+            userTableBody.append('<tr><td colspan="13" class="text-center">Không tìm thấy người dùng nào khớp.</td></tr>');
+            return;
+        }
+        users.forEach(user => {
+            const userDetail = user.userDetail || {};
+            const avatarHtml = (userDetail.avatar && userDetail.avatar.trim() !== "") ? `<img src="${userDetail.avatar}" width="40" height="40" class="rounded-circle" alt="Avatar">` : 'Không có ảnh';
+            const roleClass = user.role === 'ADMIN' ? 'text-primary font-weight-bold' : user.role === 'READER' ? 'text-info' : user.role === 'STAFF' ? 'text-success' : '';
+            const statusClass = user.status ? 'text-success' : 'text-danger font-weight-bold';
+            const statusText = user.status ? 'Đang hoạt động' : 'Bị khóa';
+            const rowHtml = `
+                <tr>
+                    <td>${user.userId}</td><td class="username-column">${user.username}</td>
+                    <td>${(userDetail.fullName && userDetail.fullName.trim() !== "") ? userDetail.fullName : 'Chưa cập nhật'}</td>
+                    <td>${avatarHtml}</td>
+                    <td>${(userDetail.phone && userDetail.phone.trim() !== "") ? userDetail.phone : 'Chưa cập nhật'}</td>
+                    <td>${(userDetail.email && userDetail.email.trim() !== "") ? userDetail.email : 'Chưa cập nhật'}</td>
+                    <td>${(userDetail.address && userDetail.address.trim() !== "") ? userDetail.address : 'Chưa cập nhật'}</td>
+                    <td>${userDetail.dob ? dayjs(userDetail.dob).format('DD/MM/YYYY') : 'Chưa cập nhật'}</td>
+                    <td>${(userDetail.gender && userDetail.gender.trim() !== "") ? userDetail.gender : 'Chưa xác định'}</td>
+                    <td><span class="${roleClass}">${user.role}</span></td><td><span class="${statusClass}">${statusText}</span></td>
+                    <td>${user.createdAt ? dayjs(user.createdAt).format('DD/MM/YYYY HH:mm') : 'N/A'}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-secondary action-cog-btn"
+                                onclick="openActionChoiceModal(this)"
+                                data-user-id="${user.userId}" data-user-role="${user.role}" data-username="${user.username}">
+                            <i class="fas fa-cog"></i></button></td></tr>`;
+            userTableBody.append(rowHtml);
+        });
+    }
+
+    function updatePagination(pageData) {
+        paginationControls.empty();
+        if (pageData.totalPages <= 1) { paginationContainerAjax.hide(); return; }
+        paginationContainerAjax.show();
+
+        let prevClass = pageData.first ? 'disabled' : '';
+        paginationControls.append(`<li class="page-item ${prevClass}"><a class="page-link" href="#" data-page="${pageData.number - 1}">Trước</a></li>`);
+        for (let i = 0; i < pageData.totalPages; i++) {
+            let activeClass = (i === pageData.number) ? 'active' : '';
+            paginationControls.append(`<li class="page-item ${activeClass}"><a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`);
+        }
+        let nextClass = pageData.last ? 'disabled' : '';
+        paginationControls.append(`<li class="page-item ${nextClass}"><a class="page-link" href="#" data-page="${pageData.number + 1}">Tiếp</a></li>`);
+
+        paginationControls.find('a.page-link').on('click', function(e) {
+            e.preventDefault();
+            if (!$(this).parent().hasClass('disabled') && !$(this).parent().hasClass('active')) {
+                fetchAndDisplayUsers(parseInt($(this).data('page')), true);
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $('#editUserBtn').on('click', function() { openEditUserModal(); });
+        $('#assignRoleBtn').on('click', function() { triggerOpenRoleAssignmentModal(); });
+        $('#deleteUserBtn').on('click', async function() {
+            const userId = $('#userActionChoiceModal').data('user-id');
+            const username = $('#userActionChoiceModal').data('username');
+            if (userId) {
+                if(confirm(`Bạn có chắc chắn muốn xóa người dùng '${username}' (ID: ${userId})? Hành động này không thể hoàn tác.`)) {
+                    try {
+                        // const headers = getCsrfHeaders();
+                        const response = await fetch(`/admin/api/users/${userId}/delete`, {
+                            method: 'DELETE'
+                            // headers: headers // Bỏ comment nếu dùng CSRF
+                        });
+                        const resultText = await response.text();
+                        if (response.ok) {
+                            showToast(`✅ ${resultText}`);
+                            $('#userActionChoiceModal').modal('hide');
+                            fetchAndDisplayUsers(currentPageForAjax, true);
+                        } else { showToast(`❌ Lỗi khi xóa người dùng: ${resultText}`); }
+                    } catch (err) { console.error("Error deleting user:", err); showToast('❌ Lỗi kết nối.'); }
+                }
+            } else { showToast("Không xác định được người dùng để xóa."); }
+        });
+
+        $('#userRoleModal .role-card').on('click', function() {
+            const radio = $(this).find('input.role-input');
+            if(radio.length) radio.prop('checked', true);
+            $('#userRoleModal .role-card').removeClass('selected');
+            $(this).addClass('selected');
+        });
+
+        $('#userRoleModal .save-role-btn').on('click', async function() {
+            const modalEl = $('#userRoleModal');
+            const selectedRoleInput = modalEl.find('.role-input:checked');
+            const userId = modalEl.data('user-id');
+            if (!selectedRoleInput.length || !userId) { showToast("Vui lòng chọn vai trò và người dùng."); return; }
+            const selectedRoleValue = selectedRoleInput.val();
+            try {
+                // const headers = getCsrfHeaders();
+                const response = await fetch(`/admin/api/users/${userId}/update-role`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // ...headers // Nếu dùng CSRF
+                    },
+                    body: JSON.stringify({ role: selectedRoleValue })
+                });
+                const resultText = await response.text();
+                if (response.ok) {
+                    showToast(`✅ Đã cập nhật vai trò thành: ${selectedRoleValue}`);
+                    modalEl.modal('hide');
+                    fetchAndDisplayUsers(currentPageForAjax, true);
+                } else { showToast(`❌ Lỗi khi cập nhật vai trò: ${resultText}`);}
+            } catch (err) { console.error("Error saving role:", err); showToast('❌ Lỗi kết nối.'); }
+        });
+
+        $('#saveUserChangesBtn').on('click', async function() {
+            const userId = $('#editUserId').val();
+            if (!userId) { showToast("Lỗi: Không xác định ID người dùng."); return; }
+            const dobValue = $('#editDob').val();
+            const formData = {
+                fullName: $('#editFullName').val(), email: $('#editEmail').val(), phone: $('#editPhone').val(),
+                address: $('#editAddress').val(), dob: dobValue ? dobValue : null, gender: $('#editGender').val(),
+                avatar: $('#editAvatar').val(), status: ($('#editStatus').val() === 'true')
+            };
+            try {
+                // const headers = getCsrfHeaders();
+                const response = await fetch(`/admin/api/users/${userId}/update-details`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        // ...headers // Nếu dùng CSRF
+                    },
+                    body: JSON.stringify(formData)
+                });
+                const resultText = await response.text();
+                if (response.ok) {
+                    showToast(`✅ ${resultText}`);
+                    $('#editUserModal').modal('hide');
+                    fetchAndDisplayUsers(currentPageForAjax, true);
+                } else { showToast(`❌ Lỗi khi cập nhật thông tin: ${resultText}`); }
+            } catch (error) { console.error("Error saving user changes:", error); showToast("❌ Lỗi kết nối."); }
+        });
+
+        $('#logoutButtonDirect').on('click', function(e) { e.preventDefault(); $('#logoutModal').modal('show'); });
+
+        $('#filterFormButton').on('click', function() {
+            fetchAndDisplayUsers(0, true);
+        });
+        $('#resetFilterButton').on('click', function(e){
+            e.preventDefault();
+            keywordInput.val('');
+            roleFilterSelect.val('');
+            statusFilterSelect.val('');
+            // Sau khi reset, fetch lại trang đầu với filter rỗng
+            fetchAndDisplayUsers(0, true);
+            // Nếu bạn muốn pagination của Thymeleaf hiện lại, và URL reset hoàn toàn:
+            // window.location.href = $(this).attr('href');
+        });
+
+        $('#paginationContainerThymeleaf a.page-link').on('click', function(e) {
+            e.preventDefault();
+            if (!$(this).parent().hasClass('disabled') && !$(this).parent().hasClass('active')) {
+                fetchAndDisplayUsers(parseInt($(this).data('page')), true);
+            }
+        });
+
+        $(window).on('popstate', function(event) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const page = parseInt(urlParams.get('page')) || 0;
+            // Khi user nhấn back/forward, luôn gọi fetchAndDisplayUsers
+            // để đảm bảo cả bảng và pagination được cập nhật đồng bộ từ URL
+            keywordInput.val(urlParams.get('keyword') || '');
+            roleFilterSelect.val(urlParams.get('role') || '');
+            statusFilterSelect.val(urlParams.get('status') || '');
+            fetchAndDisplayUsers(page, true);
+        });
+
+        // Kiểm tra nếu URL có tham số filter khi tải trang để gọi AJAX ngay
+        const initialUrlParams = new URLSearchParams(window.location.search);
+        if (initialUrlParams.has('keyword') || initialUrlParams.has('role') || initialUrlParams.has('status') || initialUrlParams.has('page')) {
+            currentPageForAjax = parseInt(initialUrlParams.get('page')) || 0;
+            keywordInput.val(initialUrlParams.get('keyword') || '');
+            roleFilterSelect.val(initialUrlParams.get('role') || '');
+            statusFilterSelect.val(initialUrlParams.get('status') || '');
+            fetchAndDisplayUsers(currentPageForAjax, true);
+        }
+
+    });
+</script>
+</body>
+</html>

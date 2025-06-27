@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="header-content">
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="/"><i class="fas fa-book-open me-2"></i>Thư viện<span>Số</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item">
+            <a class="nav-link active" href="/">Trang chủ</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/categories">Danh mục sách</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/about">Giới thiệu</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/contact">Liên hệ</a>
+          </li>
+        </ul>
+        <div class="d-flex align-items-center">
+          <div th:if="${!isAuthenticated}" class="ms-auto">
+            <a th:href="@{/auth/login}" class="btn nav-btn btn-login me-2">Đăng nhập</a>
+            <a th:href="@{/auth/register}" class="btn nav-btn btn-register">Đăng ký</a>
+          </div>
+
+          <div th:if="${isAuthenticated}" class="d-flex align-items-center ms-auto">
+                    <span class="me-2 navbar-text" style="color: var(--dark); white-space: nowrap;">
+                      Chào <span id="userDropdownFullName" th:text="${loggedInUserFullName != null ? loggedInUserFullName : 'bạn'}">bạn</span>!<span class="wave-hand-navbar">👋</span>
+                    </span>
+
+            <div class="dropdown me-3">
+              <a href="#" class="nav-icon-link position-relative" id="notificationDropdownToggle" data-bs-toggle="dropdown" aria-expanded="false"
+                 th:title="${unreadNotificationCount > 0 ? 'Bạn có ' + unreadNotificationCount + ' thông báo chưa đọc' : 'Không có thông báo mới'}">
+                <i class="fas fa-bell user-notification-icon"></i>
+                <span th:if="${unreadNotificationCount > 0}" id="notificationBadge"
+                      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            [[${unreadNotificationCount}]]
+        </span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end shadow notification-dropdown" aria-labelledby="notificationDropdownToggle">
+                <li class="notification-header">
+                  <h6 class="mb-0">Thông báo</h6>
+                  <a href="javascript:void(0);" id="markAllReadBtn">Đánh dấu tất cả đã đọc</a>
+                </li>
+                <li><hr class="dropdown-divider my-0"></li>
+                <li class="notification-body">
+                  <ul class="list-unstyled mb-0" id="notificationList"></ul>
+
+                  <div id="notificationEmptyState">
+                    <i class="far fa-envelope-open"></i>
+                    <p class="mb-0">Bạn chưa có thông báo nào.</p>
+                  </div>
+                </li>
+
+                <li class="notification-footer">
+                  <button class="btn-load-more" id="loadMoreBtn">
+                    Tải thêm
+                  </button>
+                </li>
+              </ul>
+            </div>
+
+            <div class="dropdown">
+              <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                <img th:if="${loggedInUserAvatarUrl}" th:src="${loggedInUserAvatarUrl}" alt="Avatar" width="32" height="32" class="rounded-circle">
+                <i th:unless="${loggedInUserAvatarUrl}" class="fas fa-user-circle fa-lg user-avatar-icon"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUserNavbar">
+                <li class="px-3 py-2 text-center">
+                  <img th:if="${loggedInUserAvatarUrl != null AND !loggedInUserAvatarUrl.isEmpty()}"
+                       th:src="${loggedInUserAvatarUrl}"
+                       alt="User Avatar" width="70" height="70"
+                       class="rounded-circle mb-2 border user-avatar-dropdown">
+                  <div th:unless="${loggedInUserAvatarUrl != null AND !loggedInUserAvatarUrl.isEmpty()}"
+                       class="default-avatar-dropdown mb-2">
+                    <i class="fas fa-user-circle"></i>
+                  </div>
+                  <h5 class="mb-0 dropdown-username"
+                      th:text="${loggedInUsername != null ? loggedInUsername : 'Username'}">
+                    Username
+                  </h5>
+                  <p class="text-muted mb-0 dropdown-email"
+                     th:text="${loggedInUserEmail != null ? loggedInUserEmail : 'Không có email'}">
+                    email@example.com
+                  </p>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="#" id="editProfileBtn"><i class="fas fa-user-edit me-2"></i>Thông tin tài khoản</a></li>
+                <li><a class="dropdown-item" href="#" id="borrowedBooksBtn"><i class="fas fa-book-reader me-2"></i>Sách đang mượn</a></li>
+                <li><a class="dropdown-item" href="#" id="borrowHistoryBtn"><i class="fas fa-history me-2"></i>Lịch sử mượn sách</a></li>
+                <li><a class="dropdown-item" th:href="@{/reader/reserved-books}"><i class="fas fa-calendar-check me-2"></i>Sách đã đặt trước</a></li>
+                <li><a class="dropdown-item" href="#" id="changePasswordBtn"><i class="fas fa-key me-2"></i>Đổi mật khẩu</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <form th:action="@{/auth/logout}" method="post" class="d-block">
+                    <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</button>
+                  </form>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div th:if="${activeMarqueeMessage != null}" class="marquee-notification-bar">
+    <div class="marquee-text-wrapper">
+      <span class="marquee-text-item"><i class="fas fa-bullhorn me-2"></i> <th:block th:text="${activeMarqueeMessage}" /></span>
+      <span class="marquee-text-item" aria-hidden="true"><i class="fas fa-bullhorn me-2"></i> <th:block th:text="${activeMarqueeMessage}" /></span> </div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{home/fragments/layout.html}">
+<head>
+    <title>Liên hệ</title>
+
+    <th:block layout:fragment="page_css">
+        <link th:href="@{/css/contact.css}" rel="stylesheet">
+    </th:block>
+</head>
+<body>
+<main layout:fragment="content">
+
+<section class="page-header">
+    <video playsinline autoplay muted loop id="header-video-bg">
+        <source th:src="@{/videos/6.mp4}" type="video/mp4">
+        Trình duyệt của bạn không hỗ trợ thẻ video.
+    </video>
+
+    <div class="container">
+        <h1>Liên hệ với chúng tôi</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a href="/">Trang chủ</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Liên hệ</li>
+            </ol>
+        </nav>
+    </div>
+</section>
+<section class="contact-info py-5"> <div class="container">
+    <h2 class="section-title text-center">Thông tin liên hệ</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="contact-info-box">
+                <div class="contact-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <h5>Địa chỉ</h5>
+                <p>Đại học UEF<br>276 Điện Biên Phủ<br>Phường 17, Quận Bình Thạnh<br>TP. Hồ Chí Minh</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="contact-info-box">
+                <div class="contact-icon">
+                    <i class="fas fa-phone-alt"></i>
+                </div>
+                <h5>Điện thoại</h5>
+                <p>Tổng đài: (028) 3838 6686<br>
+                    Hỗ trợ kỹ thuật: (028) 3838 6868<br>
+                    Fax: (028) 3838 6688</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="contact-info-box">
+                <div class="contact-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <h5>Email</h5>
+                <p>Chung: thuvienso@uef.edu.vn<br>
+                    Hỗ trợ kỹ thuật: hotro.thuvien@uef.edu.vn<br>
+                    Góp ý: gopy.thuvien@uef.edu.vn</p>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+
+<section class="contact-form-section pb-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <div class="contact-form">
+                    <h3 class="mb-4">Gửi tin nhắn cho chúng tôi</h3>
+                    <form id="contactForm" action="/contact/send" method="post">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" name="fullName" placeholder="Họ và tên *" required>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="email" class="form-control" name="email" placeholder="Email *" required>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input type="tel" class="form-control" name="phone" placeholder="Số điện thoại">
+                            </div>
+                            <div class="col-md-6">
+                                <select class="form-control" name="subject" required>
+                                    <option value="" selected disabled>Chọn chủ đề *</option>
+                                    <option value="account">Vấn đề tài khoản</option>
+                                    <option value="borrow">Mượn/trả sách</option>
+                                    <option value="technical">Hỗ trợ kỹ thuật</option>
+                                    <option value="feedback">Góp ý/Phản hồi</option>
+                                    <option value="other">Khác</option>
+                                </select>
+                            </div>
+                        </div>
+                        <textarea class="form-control" name="message" rows="5" placeholder="Nội dung tin nhắn *" required></textarea>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="privacy" name="privacyPolicy" required>
+                            <label class="form-check-label" for="privacy">
+                                Tôi đồng ý với <a href="#" >chính sách bảo mật</a> và cho phép lưu trữ thông tin.
+                            </label>
+                        </div>
+                        <button type="submit" class="btn contact-btn">Gửi tin nhắn</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="working-hours contact-info-box mb-4"> <div class="contact-icon">
+                    <i class="fas fa-clock"></i>
+                </div>
+                    <h5>Giờ làm việc</h5>
+                    <div class="d-flex justify-content-between">
+                        <span>Thứ Hai - Thứ Sáu:</span>
+                        <span>07:30 - 17:30</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Thứ Bảy:</span>
+                        <span>08:00 - 16:00</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>Chủ Nhật:</span>
+                        <span>Đóng cửa</span>
+                    </div>
+                    <div class="mt-3">
+                        <span class="badge bg-warning text-dark">Lưu ý:</span> Thời gian phục vụ có thể thay đổi trong các dịp lễ, Tết hoặc kỳ thi.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="map-section py-5"> <div class="container">
+    <h2 class="section-title text-center">Bản đồ vị trí</h2>
+    <div class="map-container">
+        <iframe class="map-frame" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.101956772799!2d106.70482931532873!3d10.803495292302074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528b5a6c6a23f%3A0x4602c37f103227f8!2zVHLGsOG7nW5nIMSQ4bqhaSBo4buNYyBLaW5oIHThur8gL چارLiệuجVuIEPFUEhDSCAoVUVGKSAtIENodXllw6puIGfGsG0gY8OxdCAyNyY!5e0!3m2!1svi!2s!4v1685742895749!5m2!1svi!2s" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+</div>
+</section>
+
+<section class="faq-section"> <div class="container">
+    <h2 class="section-title text-center">Câu hỏi thường gặp</h2>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            Làm thế nào để đăng ký tài khoản thư viện?
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Bạn có thể đăng ký tài khoản bằng cách nhấp vào nút "Đăng ký" ở góc phải trên cùng của trang web. Điền đầy đủ thông tin yêu cầu trong biểu mẫu và làm theo hướng dẫn để hoàn tất quá trình đăng ký. Sinh viên và nhân viên UEF nên sử dụng email trường học để được tự động kích hoạt các quyền đặc biệt.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            Tôi có thể mượn tối đa bao nhiêu sách và trong thời gian bao lâu?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Sinh viên được phép mượn tối đa 5 cuốn sách cùng một lúc trong thời hạn 14 ngày. Giảng viên và nhân viên có thể mượn tối đa 10 cuốn trong thời hạn 30 ngày. Bạn có thể gia hạn thời gian mượn sách thêm một lần nếu sách chưa bị đặt trước bởi người dùng khác.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                            Làm thế nào để gia hạn thời gian mượn sách?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Bạn có thể gia hạn sách từ tài khoản cá nhân bằng cách đăng nhập, chuyển đến mục "Sách đang mượn" và nhấp vào nút "Gia hạn" bên cạnh sách cần gia hạn. Việc gia hạn chỉ có thể thực hiện trước ngày hết hạn và nếu sách chưa được đặt trước bởi người dùng khác.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                            Có phạt phí khi trả sách trễ hạn không?
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Có, thư viện áp dụng phí phạt trả sách trễ hạn là 5.000đ/ngày/cuốn sách. Nếu bạn trễ hạn quá 30 ngày, tài khoản có thể bị tạm khóa cho đến khi hoàn trả sách và đóng phí phạt. Trong trường hợp làm mất hoặc hư hỏng sách, bạn sẽ cần bồi thường theo quy định của thư viện.
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFive">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                            Làm thế nào để đề xuất mua sách mới cho thư viện?
+                        </button>
+                    </h2>
+                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                        <div class="accordion-body">
+                            Bạn có thể gửi đề xuất mua sách mới thông qua mục "Đề xuất sách" trong tài khoản cá nhân hoặc gửi email trực tiếp đến địa chỉ dexuat.thuvien@uef.edu.vn với đầy đủ thông tin về tựa sách, tác giả, nhà xuất bản và lý do đề xuất. Thư viện sẽ xem xét và phản hồi trong vòng 7 ngày làm việc.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</section>
+</main>>
+</body>
+
+</script>
+</html>

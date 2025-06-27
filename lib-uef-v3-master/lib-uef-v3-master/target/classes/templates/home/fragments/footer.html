@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<div th:fragment="footer-content">
+  <footer>
+    <div class="container">
+      <div class="row mb-5">
+        <div class="col-md-4">
+          <h4 class="footer-title">Thư viện Số</h4>
+          <p>Hệ thống quản lý thư viện trực tuyến hiện đại, giúp kết nối người đọc với kho tàng tri thức qua nền tảng số.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <h4 class="footer-title">Liên kết</h4>
+          <ul class="footer-links">
+            <li><a href="#">Trang chủ</a></li>
+            <li><a href="#">Danh mục sách</a></li>
+            <li><a href="#">Tìm kiếm nâng cao</a></li>
+            <li><a href="#">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h4 class="footer-title">Hỗ trợ</h4>
+          <ul class="footer-links">
+            <li><a href="#">Hướng dẫn sử dụng</a></li>
+            <li><a href="#">Điều khoản dịch vụ</a></li>
+            <li><a href="#">Chính sách bảo mật</a></li>
+            <li><a href="#">Liên hệ hỗ trợ</a></li>
+          </ul>
+        </div>
+        <div class="col-md-3">
+          <h4 class="footer-title">Liên hệ</h4>
+          <p><i class="fas fa-map-marker-alt me-2"></i> Đại học UEF, Quận 1, TP.HCM</p>
+          <p><i class="fas fa-phone me-2"></i> (028) 3838 6686</p>
+          <p><i class="fas fa-envelope me-2"></i> thuvienso@uef.edu.vn</p>
+        </div>
+      </div>
+      <div class="footer-bottom text-center">
+        <p>&copy; 2025 - Hệ thống Thư viện Trực tuyến | Đồ án Java Web - Đại học UEF</p>
+      </div>
+    </div>
+  </footer>
+    <div class="borrow-cart-container" id="borrowCartContainer">
+      <div id="borrowCartIcon" class="borrow-cart-icon" title="Giỏ hàng">
+        <i class="fas fa-shopping-basket"></i>
+        <span class="badge rounded-pill bg-danger" id="cartCountBadge">0</span>
+      </div>
+      <div class="borrow-cart-panel" id="borrowCartPanel">
+      <div class="cart-header">
+        <h6>Giỏ hàng của bạn</h6>
+        <button id="closeCartBtn" class="btn-close btn-sm"></button>
+      </div>
+      <div class="cart-body" id="cartItemList">
+        <p class="text-center text-muted empty-cart-message">Giỏ của bạn đang trống.</p>
+      </div>
+      <div class="cart-footer">
+        <button class="btn btn-danger btn-sm" id="clearCartBtn">Xóa tất cả</button>
+        <button class="btn btn-borrow-all w-100 mt-2" id="borrowAllBtn">Hoàn tất mượn sách</button>
+      </div>
+    </div>
+    </div>
+    <div class="chat-widget-container">
+      <div class="chat-welcome-message">
+        <span class="swaying-text">Chat với nhân viên</span>
+      </div>
+      <div id="chat-toggle-button">
+        <div class="main-chat-icon">
+          <video playsinline autoplay muted loop class="chat-logo-be-heo-video">
+            <source th:src="@{/videos/2.mp4}" type="video/mp4">
+          </video>
+        </div>
+        <div class="close-chat-icon">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+      <div id="chat-box">
+        <div class="chat-header">
+          <div class="staff-info">
+            <video playsinline autoplay muted loop class="staff-avatar">
+              <source th:src="@{/videos/2.mp4}" type="video/mp4">
+            </video>
+            <div>
+              <div class="staff-name">Bé Heo trợ lí </div>
+              <div class="staff-status">
+                <span class="online-indicator"></span>
+                Đang hoạt động
+              </div>
+            </div>
+          </div>
+          <button id="close-chatbox-btn" class="close-btn">&times;</button>
+        </div>
+        <div class="chat-body" id="chat-body">
+          <div class="message-wrapper" id="thinking-indicator">
+            <video playsinline autoplay muted loop class="staff-avatar">
+              <source th:src="@{/videos/2.mp4}" type="video/mp4">
+            </video>
+            <div class="message-content">
+              <span class="thinking-text">Đang suy nghĩ...</span>
+            </div>
+          </div>
+
+          <div id="faq-container" class="faq-container"></div>
+        </div>
+
+        <div class="chat-footer">
+          <input type="text" id="chat-input" placeholder="Nhập tin nhắn của bạn...">
+          <button id="chat-send-btn"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="editProfileModal" tabindex="-1">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Chỉnh sửa Thông tin Cá nhân</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="editProfileForm">
+              <div class="row mb-3">
+                <div class="col-md-6"><label class="form-label">Tên đăng nhập</label><input type="text" class="form-control" id="profileUsername" disabled></div>
+                <div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control" id="profileEmail" disabled></div>
+              </div>
+              <div class="mb-3"><label for="profileFullName" class="form-label">Họ và Tên</label><input type="text" class="form-control" id="profileFullName" name="fullName"></div>
+              <div class="mb-3"><label for="profilePhone" class="form-label">Số điện thoại</label><input type="tel" class="form-control" id="profilePhone" name="phone"></div>
+              <div class="mb-3"><label for="profileAddress" class="form-label">Địa chỉ</label><input type="text" class="form-control" id="profileAddress" name="address"></div>
+              <div class="row">
+                <div class="col-md-6 mb-3"><label for="profileDob" class="form-label">Ngày sinh</label><input type="date" class="form-control" id="profileDob" name="dob"></div>
+                <div class="col-md-6 mb-3"><label for="profileGender" class="form-label">Giới tính</label><select class="form-select" id="profileGender" name="gender"><option value="Chưa xác định">Chưa xác định</option><option value="Nam">Nam</option><option value="Nữ">Nữ</option><option value="Khác">Khác</option></select></div>
+              </div>
+              <div class="text-center mb-4">
+                <img id="avatarPreview" src="/img/default-avatar.jpg" class="rounded-circle" width="120" height="120" style="object-fit: cover; border: 3px solid #ddd;">
+                <input type="file" id="avatarFile" class="d-none" accept="image/png, image/jpeg">
+                <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="document.getElementById('avatarFile').click();">
+                  <i class="fas fa-camera"></i> Chọn ảnh mới
+                </button>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="button" class="btn btn-primary" id="saveProfileChangesBtn">Lưu thay đổi</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="firstLoginModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Chào mừng! Vui lòng cập nhật thông tin cá nhân</h5>
+        </div>
+        <form id="firstUpdateForm">
+          <div class="modal-body">
+            <p>Để có trải nghiệm tốt nhất, bạn hãy dành chút thời gian để hoàn thiện hồ sơ của mình nhé.</p>
+            <div class="mb-3">
+              <label for="ff_fullName" class="form-label">Họ và Tên*</label>
+              <input type="text" class="form-control" id="ff_fullName" name="fullName" required>
+            </div>
+            <div class="mb-3">
+              <label for="ff_email" class="form-label">Email*</label>
+              <input type="email" class="form-control" id="ff_email" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label for="ff_phone" class="form-label">Số điện thoại*</label>
+              <input type="tel" class="form-control" id="ff_phone" name="phone" required>
+            </div>
+            <div class="mb-3">
+              <label for="ff_address" class="form-label">Địa chỉ</label>
+              <input type="text" class="form-control" id="ff_address" name="address">
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="ff_dob" class="form-label">Ngày sinh</label>
+                <input type="date" class="form-control" id="ff_dob" name="dob">
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="ff_gender" class="form-label">Giới tính</label>
+                <select class="form-select" id="ff_gender" name="gender">
+                  <option value="Chưa xác định" selected>Chưa xác định</option>
+                  <option value="Nam">Nam</option>
+                  <option value="Nữ">Nữ</option>
+                  <option value="Khác">Khác</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" id="saveFirstUpdateBtn">Lưu và Bắt đầu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+    <div class="modal fade" id="bookDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="bookDetailTitle">Chi tiết sách</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4 text-center">
+              <img id="bookDetailCover" src="" class="img-fluid rounded shadow-sm" style="max-height: 400px;">
+            </div>
+            <div class="col-md-8">
+              <p class="text-muted">Tác giả: <strong class="info-value" id="bookDetailAuthor"></strong></p>
+              <hr>
+              <p id="bookDetailDescription" style="white-space: pre-wrap;"></p>
+              <hr>
+              <div class="row">
+                <div class="col-6 mb-2"><span class="info-label">Danh mục:</span> <span class="info-value" id="bookDetailCategory"></span></div>
+                <div class="col-6 mb-2"><span class="info-label">Năm XB:</span> <span class="info-value" id="bookDetailYear"></span></div>
+                <div class="col-6 mb-2"><span class="info-label">Nhà XB:</span> <span class="info-value" id="bookDetailPublisher"></span></div>
+                <div class="col-6 mb-2"><span class="info-label">ISBN:</span> <span class="info-value" id="bookDetailIsbn"></span></div>
+                <div class="col-6 mb-2"><span class="info-label">Số lượng còn lại:</span> <span class="info-value fw-bold text-success" id="bookDetailAvailable"></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer" id="bookDetailModalFooter">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="modal fade" id="borrowedBooksModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content" style="background-color: var(--card-bg);">
+        <div class="modal-header" style="border-bottom-color: var(--border-subtle);">
+          <h5 class="modal-title" style="color: var(--primary); font-family: 'Playfair Display', serif;">
+            <i class="fas fa-book-reader me-2"></i>Sách đang mượn
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body modal-body-scrollable" id="borrowedBooksList">
+        </div>
+        <div class="modal-footer" style="border-top-color: var(--border-subtle);">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="modal fade" id="borrowHistoryModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" style="background-color: var(--card-bg);">
+        <div class="modal-header" style="border-bottom-color: var(--border-subtle);">
+          <h5 class="modal-title" style="color: var(--primary);"><i class="fas fa-history me-2"></i>Lịch sử Mượn/Trả sách</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="borrowHistoryList">
+        </div>
+        <div class="modal-footer justify-content-center" id="borrowHistoryPagination">
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="modal fade" id="changePasswordModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header"><h5 class="modal-title">Đổi mật khẩu</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+        <div class="modal-body">
+          <div id="requestPanel">
+            <p>Chúng tôi sẽ gửi một mã xác thực đến email đã đăng ký của bạn để tiếp tục.</p>
+            <button id="sendOtpBtn" class="btn btn-primary w-100">Gửi mã đến Email</button>
+          </div>
+          <div id="validatePanel" class="d-none">
+            <p>Vui lòng nhập mã 6 chữ số đã được gửi đến email của bạn.</p>
+
+            <div class="input-group mb-2">
+              <input type="text" id="otpInput" class="form-control text-center" maxlength="6" placeholder="_ _ _ _ _ _" style="letter-spacing: 0.5rem; font-weight: bold;">
+              <button id="validateOtpBtn" class="btn btn-primary">Xác nhận</button>
+            </div>
+
+            <div id="otpError" class="text-danger small mb-2"></div>
+
+            <div id="resendOtpContainer" class="text-center">
+              <span id="countdownTimer" class="text-muted small"></span>
+              <a href="#" id="resendOtpBtn" class="d-none small">Gửi lại mã</a>
+            </div>
+          </div>
+          <div id="resetPanel" class="d-none">
+            <div class="mb-3"><label class="form-label">Mật khẩu mới</label><input type="password" id="newPasswordInput" class="form-control"></div>
+            <div class="mb-3"><label class="form-label">Xác nhận mật khẩu mới</label><input type="password" id="confirmPasswordInput" class="form-control"></div>
+            <div id="resetError" class="text-danger mt-2"></div>
+            <button id="resetPasswordBtn" class="btn btn-primary w-100 mt-2">Đổi mật khẩu</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>>
+</body>
+</html>

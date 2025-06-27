@@ -1,0 +1,1182 @@
+
+:root {
+    /* Wood & Beige Theme */
+    --primary: #8B4513;
+    --primary-light: #A0522D;
+    --primary-dark: #5C3317;
+    --secondary: #D2B48C;
+    --light: #FAF0E6;
+    --dark: #4A3B31;
+    --card-bg: #FFFBF0;
+    --text-on-primary: #FAF0E6;
+    --text-on-secondary: #4A3B31;
+    --text-light-custom: #795548;
+    --feature-icon-bg-base: rgba(139, 69, 19, 0.1);
+    --roles-section-bg-base: rgba(210, 180, 140, 0.07);
+    --footer-bg-custom: #3D2B1F;
+    --footer-text-custom: #D3C5BC;
+    --footer-link-hover-custom: #FAF0E6;
+    --nav-bar-bg: rgba(255, 251, 240, 0.95);
+    --box-shadow-base-color-rgb: 139, 69, 19;
+    --border-subtle: #E0D6CC;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--light);
+    color: var(--dark);
+    position: relative;
+    padding-top: 76px; /* Cho fixed navbar */
+}
+
+/* Navigation */
+.navbar {
+    background-color: var(--nav-bar-bg);
+    box-shadow: 0 2px 10px rgba(var(--box-shadow-base-color-rgb), 0.07);
+    padding: 12px 0;
+    transition: all 0.3s ease;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: var(--primary) !important;
+}
+
+.navbar-brand span {
+    color: var(--secondary);
+}
+
+.nav-link {
+    font-weight: 500;
+    color: var(--dark) !important;
+    margin: 0 10px;
+    position: relative;
+    transition: all 0.3s ease;
+}
+.nav-link.active {
+    color: var(--primary) !important;
+}
+
+.nav-link:before {
+    content: "";
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: var(--primary);
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover:before, .nav-link.active:before {
+    width: 100%;
+}
+
+.nav-btn {
+    border-radius: 30px;
+    padding: 8px 18px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-login {
+    background-color: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary) !important;
+}
+
+.btn-login:hover {
+    background-color: var(--primary);
+    color: var(--text-on-primary) !important;
+}
+
+.btn-register {
+    background-color: var(--primary);
+    border: 2px solid var(--primary);
+    color: var(--text-on-primary) !important;
+}
+
+.btn-register:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: var(--text-on-primary) !important;
+}
+
+/* Hero Section */
+/* === CSS CHO HERO SECTION VỚI VIDEO NỀN === */
+
+/* 1. Class .hero chính */
+.hero {
+    height: 600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: var(--text-on-primary);
+    position: relative; /* Bắt buộc để chứa video */
+    overflow: hidden;   /* Bắt buộc để video không tràn ra ngoài */
+    margin-bottom: 60px;
+}
+
+/* 2. Style cho video nền */
+.hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+}
+
+/* 3. Lớp phủ tối để làm nổi bật chữ */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(40, 28, 20, 0.65); /* Lớp phủ màu nâu đậm */
+    z-index: 0; /* Nằm trên video */
+}
+
+/* 4. Đảm bảo nội dung chữ và nút nằm trên cùng */
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-content {
+    max-width: 800px;
+    padding: 0 20px;
+}
+
+.hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s forwards 0.3s;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s forwards 0.6s;
+    color: rgba(250, 240, 230, 0.9);
+}
+
+.hero-btn {
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 1s forwards 0.9s;
+}
+
+.hero .btn-secondary.hero-btn {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+    color: var(--text-on-secondary) !important;
+}
+
+.hero .btn-secondary.hero-btn:hover {
+    background-color: var(--primary-light);
+    border-color: var(--primary-light);
+    color: var(--text-on-primary) !important;
+}
+
+.hero .btn-outline-light.hero-btn {
+    border-color: var(--light);
+    color: var(--light);
+}
+.hero .btn-outline-light.hero-btn:hover {
+    background-color: var(--light);
+    color: var(--dark);
+}
+
+/* Features Section */
+.section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 40px;
+    position: relative;
+    display: inline-block;
+}
+
+.section-title:after {
+    content: "";
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 70px;
+    height: 3px;
+    background-color: var(--secondary);
+}
+
+.feature-card {
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    padding: 30px 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 20px rgba(var(--box-shadow-base-color-rgb), 0.07);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+.feature-card p { color: var(--dark); }
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(var(--box-shadow-base-color-rgb), 0.12);
+}
+
+.feature-icon {
+    width: 80px;
+    height: 80px;
+    line-height: 80px;
+    background-color: var(--feature-icon-bg-base);
+    color: var(--primary);
+    border-radius: 50%;
+    font-size: 30px;
+    margin: 0 auto 20px;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+    background-color: var(--primary);
+    color: var(--text-on-primary);
+}
+
+.feature-card h5 {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: var(--primary-dark);
+}
+
+/* Roles Section */
+.roles-section {
+    background-color: var(--roles-section-bg-base);
+    padding: 80px 0;
+    margin: 60px 0;
+}
+
+.role-card {
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    padding: 30px 25px;
+    box-shadow: 0 5px 20px rgba(var(--box-shadow-base-color-rgb), 0.07);
+    transition: all 0.3s ease;
+    height: 100%;
+    border-top: 4px solid var(--primary);
+}
+.role-card ul li { color: var(--dark); }
+
+.role-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(var(--box-shadow-base-color-rgb), 0.12);
+}
+
+.role-card h5 {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.role-card ul {
+    padding-left: 20px;
+}
+
+.role-card li {
+    margin-bottom: 10px;
+    position: relative;
+}
+
+/* Benefits Section */
+.benefit-item {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 25px 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 5px 15px rgba(var(--box-shadow-base-color-rgb), 0.07);
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--secondary);
+    color: var(--dark);
+}
+
+.benefit-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(var(--box-shadow-base-color-rgb), 0.12);
+}
+
+.benefit-icon {
+    color: var(--secondary);
+    margin-right: 10px;
+}
+
+/* Call to Action */
+.cta-section {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    padding: 80px 0;
+    margin: 60px 0 0;
+    color: var(--text-on-primary);
+}
+
+.cta-content h3 {
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.cta-content p {
+    color: rgba(250, 240, 230, 0.9);
+}
+
+.cta-btn {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+    color: var(--text-on-secondary) !important;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.cta-btn:hover {
+    background-color: var(--card-bg);
+    border-color: var(--card-bg);
+    color: var(--primary) !important;
+}
+
+/* Footer */
+footer {
+    background-color: var(--footer-bg-custom);
+    color: var(--footer-text-custom);
+    padding: 60px 0 20px;
+    margin-top: 0;
+}
+.cta-section + footer {
+    margin-top: 60px;
+}
+
+.footer-title {
+    color: var(--light);
+    font-weight: 600;
+    margin-bottom: 25px;
+    font-size: 1.3rem;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    color: var(--footer-text-custom);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--footer-link-hover-custom);
+    padding-left: 5px;
+}
+.footer-links i.me-2 {
+    color: var(--footer-text-custom);
+}
+.footer-links a:hover i.me-2 {
+    color: var(--footer-link-hover-custom);
+}
+
+.social-links {
+    margin-top: 20px;
+}
+
+.social-links a {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    background-color: rgba(250, 240, 230, 0.1);
+    color: var(--footer-link-hover-custom);
+    border-radius: 50%;
+    margin-right: 10px;
+    transition: all 0.3s ease;
+}
+
+.social-links a:hover {
+    background-color: var(--primary);
+    color: var(--text-on-primary);
+    transform: translateY(-3px);
+}
+
+.footer-bottom {
+    border-top: 1px solid rgba(250, 240, 230, 0.15);
+    padding-top: 20px;
+    margin-top: 40px;
+    font-size: 0.9rem;
+}
+.footer-bottom p a {
+    color: var(--footer-text-custom) !important;
+    opacity: 0.8;
+}
+.footer-bottom p a:hover {
+    color: var(--footer-link-hover-custom) !important;
+    opacity: 1;
+}
+
+/* Animations */
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero {
+        height: 500px;
+    }
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    .section-title {
+        font-size: 2rem;
+    }
+    .footer-bottom .col-md-6 {
+        text-align: center !important;
+        margin-bottom: 10px;
+    }
+    .footer-bottom .col-md-6.text-md-end {
+        text-align: center !important;
+    }
+}
+
+/* === CSS CHO NAVBAR VÀ USER DROPDOWN === */
+.wave-hand-navbar {
+    display: inline-block;
+    animation: waveNavbar 2.5s infinite;
+    transform-origin: 70% 70%;
+    font-size: 1.1em;
+    margin-left: 5px;
+    cursor: default;
+}
+@keyframes waveNavbar {
+    0% { transform: rotate(0.0deg); }
+    10% { transform: rotate(14.0deg); }
+    20% { transform: rotate(-8.0deg); }
+    30% { transform: rotate(14.0deg); }
+    40% { transform: rotate(-4.0deg); }
+    50% { transform: rotate(10.0deg); }
+    60% { transform: rotate(0.0deg); }
+    100% { transform: rotate(0.0deg); }
+}
+.navbar .user-avatar-icon { /* Dùng cho icon user avatar trên navbar */
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 1.75rem;
+    transition: color 0.2s ease-in-out;
+    vertical-align: middle;
+}
+.navbar .user-avatar-icon:hover {
+    color: var(--primary-dark);
+}
+
+.navbar .user-notification-icon { /* Dùng cho icon chuông thông báo */
+    color: var(--primary);
+    cursor: pointer;
+    font-size: 1.6rem; /* Có thể điều chỉnh nhỏ hơn avatar một chút */
+    transition: color 0.2s ease-in-out;
+    vertical-align: middle;
+    text-decoration: none; /* Cho thẻ <a> bọc ngoài */
+}
+.navbar .user-notification-icon:hover {
+    color: var(--primary-dark);
+}
+.navbar .nav-icon-link { /* Class cho thẻ <a> bọc icon chuông */
+    text-decoration: none;
+    padding: 0.25rem 0.5rem; /* Căn chỉnh nếu cần */
+}
+.navbar .nav-icon-link .badge { /* Style for notification badge */
+    font-size: 0.6em;
+    padding: 0.3em 0.5em;
+}
+
+
+.navbar .dropdown-toggle::after {
+    display: none;
+}
+.navbar .dropdown-menu {
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-subtle);
+    background-color: var(--card-bg);
+    box-shadow: 0 0.5rem 1.5rem rgba(var(--box-shadow-base-color-rgb), 0.15);
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    min-width: 260px;
+    margin-top: 0.75rem !important;
+}
+.navbar .dropdown-menu .dropdown-item {
+    color: var(--dark);
+    padding: 0.6rem 1.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.navbar .dropdown-menu .dropdown-item:hover,
+.navbar .dropdown-menu .dropdown-item:focus {
+    background-color: var(--light);
+    color: var(--primary);
+}
+.navbar .dropdown-menu .dropdown-item i.me-2 {
+    color: var(--text-light-custom);
+    width: 20px;
+    text-align: center;
+    margin-right: 0.75rem !important;
+    transition: color 0.2s ease;
+}
+.navbar .dropdown-menu .dropdown-item:hover i.me-2,
+.navbar .dropdown-menu .dropdown-item:focus i.me-2 {
+    color: var(--primary);
+}
+.navbar .dropdown-menu form .dropdown-item {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background-color: transparent;
+}
+.navbar .dropdown-menu .px-3.py-2.text-center {
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 0.5rem;
+    padding-bottom: 1rem !important;
+}
+.navbar .dropdown-menu img.user-avatar-dropdown {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-color: var(--border-subtle) !important;
+}
+.navbar .dropdown-menu .default-avatar-dropdown {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    color: var(--secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+.navbar .dropdown-menu .default-avatar-dropdown i {
+    font-size: 2.5rem;
+}
+.navbar .dropdown-menu .dropdown-username {
+    color: var(--primary-dark);
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+.navbar .dropdown-menu .dropdown-email {
+    color: var(--text-light-custom);
+    font-size: 0.85rem;
+    word-break: break-all;
+}
+.navbar .dropdown-menu .dropdown-divider {
+    border-top-color: var(--border-subtle);
+    margin: 0.5rem 0;
+}
+/* --- Thanh thông báo chạy chữ --- */
+.marquee-notification-bar {
+    color: #D32F2F; /* Màu đỏ đậm cho chữ thông báo */
+    padding: 2px 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--border-subtle);
+    box-shadow: 0 2px 5px rgba(var(--box-shadow-base-color-rgb), 0.05);
+}
+
+.marquee-text-wrapper {
+    display: inline-block; /* Quan trọng cho animation */
+    /* Nội dung sẽ được nhân đôi trong HTML để tạo hiệu ứng lặp liền mạch */
+    /* Tổng chiều rộng của wrapper sẽ là chiều rộng của hai text item cộng lại */
+    animation: marqueeAnimation 40s linear infinite; /* Điều chỉnh thời gian cho phù hợp với độ dài nội dung */
+}
+
+.marquee-text-item {
+    display: inline-block; /* Giữ các item trên cùng một dòng */
+    padding-right: 50px; /* Khoảng cách giữa các lần lặp lại của thông báo */
+}
+.marquee-text-item i {
+    color: var(--primary-dark); /* Icon màu gỗ đậm */
+}
+
+@keyframes marqueeAnimation {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        /* Dịch chuyển một khoảng bằng chiều rộng của một .marquee-text-item
+           Nếu nội dung được nhân đôi trong wrapper, thì wrapper sẽ dịch chuyển -50% để tạo vòng lặp.
+           Nếu .marquee-text-item chứa toàn bộ nội dung (bao gồm cả bản sao),
+           thì animation sẽ là translateX(-100% của .marquee-text-item)
+           Giả sử .marquee-text-wrapper chứa 2 .marquee-text-item giống hệt nhau: */
+        transform: translateX(-50%);
+    }
+}
+/* === CSS CHO DROPDOWN THÔNG BÁO (PHIÊN BẢN CẬP NHẬT) === */
+.notification-dropdown {
+    width: 380px; /* Tăng nhẹ độ rộng */
+    padding: 0;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-subtle);
+    background-color: var(--card-bg);
+}
+.notification-header, .notification-footer {
+    padding: 0.75rem 1rem;
+    background-color: rgba(var(--box-shadow-base-color-rgb), 0.03);
+}
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.notification-header a {
+    font-size: 0.8rem;
+    color: var(--primary);
+    text-decoration: none;
+    cursor: pointer;
+}
+.notification-body {
+    max-height: 400px;
+    overflow-y: auto;
+    position: relative; /* Cần cho trạng thái loading */
+}
+
+/* Style cho danh sách thông báo */
+#notificationList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* === THAY ĐỔI 1: Style cho thông báo khi không có item nào === */
+#notificationEmptyState {
+    display: none; /* Mặc định ẩn */
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--text-light-custom);
+}
+#notificationEmptyState i {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+
+.notification-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+    position: relative;
+}
+.notification-item:hover {
+    background-color: var(--light);
+}
+.notification-item.unread {
+    background-color: rgba(var(--box-shadow-base-color-rgb), 0.05);
+}
+.notification-item .icon {
+    font-size: 1.2rem;
+    color: var(--secondary);
+    margin-right: 1rem;
+    flex-shrink: 0;
+    padding-top: 2px;
+}
+.notification-item .content {
+    flex-grow: 1;
+}
+.notification-item .title {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.95rem;
+    margin-bottom: 0.25rem;
+}
+.notification-item .message {
+    font-size: 0.85rem;
+    color: var(--text-light-custom);
+    line-height: 1.4;
+    white-space: normal;
+}
+.notification-item .timestamp {
+    font-size: 0.75rem;
+    color: #999;
+    margin-top: 0.35rem;
+}
+.notification-item .delete-btn {
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    font-size: 0.8rem;
+    color: #dc3545;
+    background: none;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    cursor: pointer;
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}
+.notification-item:hover .delete-btn {
+    opacity: 0.6;
+    visibility: visible;
+}
+.notification-item .delete-btn:hover {
+    opacity: 1;
+}
+
+/* === THAY ĐỔI 2: Style cho nút Load More === */
+.notification-footer {
+    text-align: center;
+}
+.notification-footer .btn-load-more {
+    width: 100%;
+    border: none;
+    background: transparent;
+    color: var(--primary);
+    font-weight: 600;
+    padding: 0.5rem;
+    border-radius: 0.35rem;
+    transition: background-color 0.2s ease;
+}
+.notification-footer .btn-load-more:hover {
+    background-color: rgba(var(--box-shadow-base-color-rgb), 0.05);
+}
+.notification-footer .btn-load-more:disabled {
+    color: var(--text-light-custom);
+    cursor: not-allowed;
+}
+/* === BẮT ĐẦU CSS CHO NÚT CHAT & KHUNG CHAT MỚI === */
+.chat-widget-container {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 1050;
+    display: flex;
+    align-items: flex-end; /* Căn các item theo chiều dưới */
+    transition: all 0.3s ease-in-out;
+}
+@keyframes sway {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(2deg) translateX(1px); }
+}
+.swaying-text {
+    display: inline-block; /* Cần có để áp dụng transform */
+    animation: sway 0.5s ease-in-out infinite alternate; /* Hiệu ứng qua lại mượt hơn */
+}
+/* Thông điệp chào mừng */
+.chat-welcome-message {
+
+    background-color: white;
+    color: var(--dark);
+    padding: 5px 7px;
+    border-radius: 10px;
+    margin-right: 15px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    position: relative;
+    opacity: 1;
+    transform: scale(1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    white-space: nowrap;
+}
+/* Tạo hình tam giác cho bong bóng chat */
+.chat-welcome-message::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -8px;
+    margin-top: -8px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: transparent transparent transparent white;
+}
+
+#chat-toggle-button {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, var(--primary), var(--primary-light));
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0; /* Ngăn nút bị co lại */
+}
+
+/* Animation nhún lên xuống nhẹ nhàng */
+@keyframes bobbing {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px); /* Nhún lên 5px */
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+#chat-toggle-button {
+    animation: bobbing 0.7s ease-in-out infinite; /* Áp dụng animation nhún, lặp lại mỗi 2 giây */
+}
+
+/* Style cho video bên trong nút chat */
+.chat-logo-be-heo-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Đây là thuộc tính quan trọng nhất để video lấp đầy hình tròn mà không bị méo */
+    border-radius: 50%; /* Đảm bảo video cũng được bo tròn */
+    z-index: 1;
+}
+
+/* Đảm bảo icon đóng (dấu X) nằm trên video */
+.close-chat-icon {
+    z-index: 2;
+}
+
+.close-chat-icon {
+    font-size: 24px;
+    color: white;
+    position: absolute;
+    opacity: 0;
+    transform: scale(0);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+#chat-box {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 350px;
+    height: 500px;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    transform-origin: bottom right;
+    pointer-events: none;
+}
+
+/* Lớp 'active' để điều khiển hiển thị */
+.chat-widget-container.active #chat-box {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
+}
+.chat-widget-container.active .main-chat-icon {
+    opacity: 0;
+    transform: scale(0);
+}
+.chat-widget-container.active .close-chat-icon {
+    opacity: 1;
+    transform: scale(1) rotate(180deg);
+}
+/* Ẩn text và dừng animation khi chat mở */
+.chat-widget-container.active .chat-welcome-message {
+    opacity: 0;
+    transform: scale(0.8);
+    pointer-events: none;
+}
+.chat-widget-container.active #chat-toggle-button {
+    animation: none;
+}
+
+/* Style cho khung chat (header, body, footer) giữ nguyên như cũ */
+.chat-header { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: var(--text-on-primary); padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+.staff-info { display: flex; align-items: center; }
+.staff-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--light); margin-right: 10px; object-fit: cover; }
+.staff-name { font-weight: 600; }
+.staff-status { font-size: 0.8rem; opacity: 0.8; display: flex; align-items: center; }
+.online-indicator { width: 8px; height: 8px; background-color: #28a745; border-radius: 50%; margin-right: 5px; display: inline-block; border: 1px solid white; }
+.close-btn { background: none; border: none; color: var(--text-on-primary); font-size: 24px; opacity: 0.7; cursor: pointer; }
+.chat-body { flex-grow: 1; padding: 15px; overflow-y: auto; background-color: var(--light); }
+.message { display: flex; margin-bottom: 15px; max-width: 80%; }
+.message-content { padding: 10px 15px; border-radius: 18px; line-height: 1.4; font-size: 0.9rem; }
+.message.staff { align-self: flex-start; }
+.message.staff .message-content { background-color: #E9ECEF; color: var(--dark); border-bottom-left-radius: 4px; }
+.message.user { margin-left: auto; flex-direction: row-reverse; }
+.message.user .message-content { background-color: var(--primary); color: var(--text-on-primary); border-bottom-right-radius: 4px; }
+.chat-footer { padding: 10px 15px; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; }
+#chat-input { flex-grow: 1; border: none; outline: none; background: transparent; padding: 10px; font-size: 0.9rem; }
+#chat-send-btn { background: none; border: none; color: var(--primary); font-size: 1.2rem; cursor: pointer; padding: 10px; border-radius: 50%; transition: background-color 0.2s; }
+/* ... */
+/* === CSS CHO POPUP SÁCH ĐANG MƯỢN === */
+.borrowed-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.borrowed-item:last-child {
+    border-bottom: none;
+}
+.borrowed-item-cover {
+    width: 60px;
+    height: 85px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-right: 15px;
+    flex-shrink: 0;
+}
+.borrowed-item-info {
+    flex-grow: 1;
+}
+.borrowed-item-info h6 {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: var(--primary-dark);
+}
+.borrowed-item-info p {
+    font-size: 0.85rem;
+    color: var(--text-light-custom);
+    margin-bottom: 2px;
+}
+.borrowed-item-info .due-date {
+    color: var(--danger); /* Màu đỏ cho ngày hết hạn */
+    font-weight: 500;
+}
+.modal-body-scrollable {
+    max-height: 60vh;
+    overflow-y: auto;
+}
+.status-badge { padding: .25em .6em; font-size: .75em; font-weight: 700; border-radius: .25rem; }
+.status-borrowed { background-color: #ffc107; color: #343a40; }
+.status-returned { background-color: #28a745; color: white; }
+.status-overdue { background-color: #dc3545; color: white; }
+.fee-text { color: #dc3545; font-weight: bold; }
+.re-borrow-btn { padding: 2px 6px; font-size: 0.8rem; }
+/* CSS cho nút Đọc thử */
+.btn-read-sample {
+    background-color: var(--primary); /* Màu nâu */
+    color: var(--text-on-primary);
+    border: none;
+}
+.btn-read-sample:hover {
+    background-color: var(--primary-dark);
+    color: var(--text-on-primary);
+}
+.btn-read-sample-disabled {
+    background-color: #a9a9a9; /* Màu xám */
+    color: #e9ecef;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+/* === CSS CHO POPUP ĐỔI MẬT KHẨU === */
+#changePasswordModal .modal-content {
+    background-color: var(--card-bg);
+}
+#changePasswordModal .modal-header {
+    border-bottom: 1px solid var(--border-subtle);
+}
+#changePasswordModal .modal-title {
+    color: var(--primary);
+    font-family: 'Playfair Display', serif;
+}
+#changePasswordModal .btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--text-on-primary);
+}
+#changePasswordModal .btn-primary:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+#changePasswordModal .btn-primary:disabled {
+    background-color: #a9a9a9;
+    border-color: #a9a9a9;
+}
+
+/* === BORROW CART STYLES (UPGRADED WITH ANIMATIONS) === */
+
+.borrow-cart-container {
+    position: fixed;
+    bottom: 100px; /* Vị trí phía trên chat widget */
+    right: 25px;
+    z-index: 1051;
+}
+
+.borrow-cart-icon {
+    width: 60px;
+    height: 60px;
+    background-color: var(--secondary);
+    color: var(--dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+.borrow-cart-icon:hover {
+    transform: scale(1.1);
+}
+
+#cartCountBadge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: none; /* Sẽ được JS bật lên */
+    align-items: center;
+    justify-content: center;
+}
+
+.borrow-cart-panel {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    width: 320px;
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+    overflow: hidden;
+
+    /* --- THAY ĐỔI CHÍNH NẰM Ở ĐÂY --- */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+    /* ---------------------------------- */
+}
+
+/* KHI GIỎ HÀNG ACTIVE */
+.borrow-cart-container.active .borrow-cart-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.cart-header {
+    padding: 10px 15px;
+    background: #f8f9fa;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    border-bottom: 1px solid var(--border-subtle);
+}
+.cart-header h6 {
+    margin: 0;
+    font-weight: 600;
+}
+
+.cart-body {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+}
+.cart-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+.cart-item:hover {
+    background-color: var(--light);
+}
+
+.cart-item-img {
+    width: 40px;
+    height: 55px;
+    object-fit: cover;
+    margin-right: 10px;
+    border-radius: 3px;
+}
+
+.cart-item-info {
+    flex-grow: 1;
+    font-size: 0.9rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.cart-item-title {
+    font-weight: 600;
+}
+.remove-item-btn {
+    font-size: 1rem;
+    line-height: 1;
+    padding: 5px 8px;
+}
+.cart-footer {
+    padding: 15px;
+    border-top: 1px solid var(--border-subtle);
+    background-color: #f8f9fa;
+}
+.btn-borrow-all {
+    background-color: var(--primary); /* Màu nâu chủ đạo */
+    border-color: var(--primary);
+    color: var(--text-on-primary); /* Chữ màu be sáng */
+    font-weight: 600;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+/* Hiệu ứng khi di chuột vào */
+.btn-borrow-all:hover {
+    background-color: var(--primary-dark); /* Nâu đậm hơn khi hover */
+    border-color: var(--primary-dark);
+    color: var(--text-on-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Style khi nút bị vô hiệu hóa (giỏ hàng rỗng hoặc đang xử lý) */
+.btn-borrow-all:disabled {
+    background-color: #a9a9a9; /* Màu xám */
+    border-color: #a9a9a9;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
