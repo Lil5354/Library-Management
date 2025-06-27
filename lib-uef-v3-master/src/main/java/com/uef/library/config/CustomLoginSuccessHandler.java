@@ -1,7 +1,6 @@
 package com.uef.library.config;
 
 import com.uef.library.model.User;
-import com.uef.library.model.UserDetail;
 import com.uef.library.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,17 +31,20 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         String redirectURL = request.getContextPath();
         String username = authentication.getName();
 
-        User user = userService.findByUsername(username).orElse(null);
+        // === LOGIC MỚI: KIỂM TRA LẦN ĐẦU ĐĂNG NHẬP ===
+        // Chỉ kiểm tra với vai trò READER
+        if (authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_READER"))) {
+            User user = userService.findByUsername(username).orElse(null);
 
-        if (user != null && "READER".equals(user.getRole())) {
-            UserDetail userDetail = user.getUserDetail();
-            // Điều kiện mới: Kiểm tra email rỗng hoặc có giá trị mặc định
-            if (userDetail != null && (!StringUtils.hasText(userDetail.getEmail()) || "Chưa cập nhật".equalsIgnoreCase(userDetail.getEmail()))) {
+            // Nếu user tồn tại và fullName chưa được cập nhật
+            if (user != null && user.getUserDetail() != null &&
+                    (user.getUserDetail().getFullName() == null || "Chưa cập nhật".equalsIgnoreCase(user.getUserDetail().getFullName()))) {
+
+                // Đặt cờ hiệu vào session để báo cho frontend biết cần hiển thị popup
                 request.getSession().setAttribute("showFirstLoginPopup", true);
-            } else {
-                request.getSession().removeAttribute("showFirstLoginPopup");
             }
         }
+        // ===========================================
 
         for (GrantedAuthority authority : authorities) {
             String role = authority.getAuthority();
@@ -54,7 +56,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
                     redirectURL += "/staff/home";
                     break;
                 case "ROLE_READER":
-                    redirectURL += "/";
+                    redirectURL += "/"; // Reader sẽ được chuyển về trang chủ
                     break;
                 default:
                     redirectURL += "/access-denied";

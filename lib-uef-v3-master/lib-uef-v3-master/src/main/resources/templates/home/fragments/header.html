@@ -96,7 +96,7 @@
                 <li><a class="dropdown-item" href="#" id="borrowedBooksBtn"><i class="fas fa-book-reader me-2"></i>Sách đang mượn</a></li>
                 <li><a class="dropdown-item" href="#" id="borrowHistoryBtn"><i class="fas fa-history me-2"></i>Lịch sử mượn sách</a></li>
                 <li><a class="dropdown-item" th:href="@{/reader/reserved-books}"><i class="fas fa-calendar-check me-2"></i>Sách đã đặt trước</a></li>
-                <li><a class="dropdown-item" href="#" id="changePasswordBtn"><i class="fas fa-key me-2"></i>Đổi mật khẩu</a></li>
+                <li><a class="dropdown-item" th:href="@{/reader/change-password}"><i class="fas fa-key me-2"></i>Đổi mật khẩu</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
                   <form th:action="@{/auth/logout}" method="post" class="d-block">

@@ -12,15 +12,12 @@ public class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Ánh xạ URL /uploads/** tới thư mục vật lý `uploads/` trong project
-        exposeDirectory("uploads", registry);
-    }
-
-    private void exposeDirectory(String dirName, ResourceHandlerRegistry registry) {
-        Path uploadDir = Paths.get(dirName);
+        // Lấy đường dẫn thư mục gốc của project
+        Path uploadDir = Paths.get("uploads");
         String uploadPath = uploadDir.toFile().getAbsolutePath();
 
-        registry.addResourceHandler("/" + dirName + "/**")
+        // Ánh xạ URL /uploads/** tới thư mục vật lý uploads/ trong project
+        registry.addResourceHandler("/uploads/**")
                 .addResourceLocations("file:/" + uploadPath + "/");
     }
 }

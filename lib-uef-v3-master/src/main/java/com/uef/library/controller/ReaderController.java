@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import com.uef.library.service.BorrowServiceImpl;
 import java.util.List;
@@ -44,58 +43,34 @@ public class ReaderController {
         return ResponseEntity.ok(currentUser);
     }
 
-    // === PHƯƠNG THỨC ĐÃ ĐƯỢC SỬA LỖI VÀ TỐI ƯU ===
-    // Dùng chung cho cả "Cập nhật lần đầu" và "Chỉnh sửa thông tin"
+    // API ĐỂ XỬ LÝ CẬP NHẬT PROFILE
     @PostMapping("/update")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Map<String, String>> handleProfileUpdate(Authentication authentication,
-                                                                   @RequestBody UserDetail userDetailFromForm,
-                                                                   HttpSession session) {
+    public ResponseEntity<Map<String, String>> handleFirstUpdate(Authentication authentication,
+                                                                 @RequestBody UserDetail userDetailFromForm,
+                                                                 HttpSession session) {
         String username = authentication.getName();
         User currentUser = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng: " + username));
 
         UserDetail detailsToUpdate = currentUser.getUserDetail();
-
-        // Chỉ cập nhật email nếu email mới được gửi lên và khác với email cũ
-        if (StringUtils.hasText(userDetailFromForm.getEmail()) && !userDetailFromForm.getEmail().equals(detailsToUpdate.getEmail())) {
-            // Kiểm tra email mới có bị trùng không
-            if (userService.emailExists(userDetailFromForm.getEmail(), username)) {
-                return ResponseEntity.badRequest().body(Map.of("message", "Email này đã được sử dụng bởi một tài khoản khác."));
-            }
-            detailsToUpdate.setEmail(userDetailFromForm.getEmail());
-        }
-
-        // Chỉ cập nhật các trường khác nếu chúng được gửi lên (không phải null)
-        if (userDetailFromForm.getFullName() != null) {
-            detailsToUpdate.setFullName(userDetailFromForm.getFullName());
-        }
-        if (userDetailFromForm.getPhone() != null) {
-            detailsToUpdate.setPhone(userDetailFromForm.getPhone());
-        }
-        if (userDetailFromForm.getAddress() != null) {
-            detailsToUpdate.setAddress(userDetailFromForm.getAddress());
-        }
-        if (userDetailFromForm.getDob() != null) {
-            detailsToUpdate.setDob(userDetailFromForm.getDob());
-        }
-        if (userDetailFromForm.getGender() != null) {
-            detailsToUpdate.setGender(userDetailFromForm.getGender());
-        }
+        detailsToUpdate.setFullName(userDetailFromForm.getFullName());
+        detailsToUpdate.setPhone(userDetailFromForm.getPhone());
+        detailsToUpdate.setEmail(userDetailFromForm.getEmail());
+        detailsToUpdate.setAddress(userDetailFromForm.getAddress());
+        detailsToUpdate.setDob(userDetailFromForm.getDob());
+        detailsToUpdate.setGender(userDetailFromForm.getGender());
 
         userService.saveUser(currentUser);
 
-        // Nếu đây là lần cập nhật đầu tiên, xóa cờ trong session
-        if (session.getAttribute("showFirstLoginPopup") != null) {
-            session.removeAttribute("showFirstLoginPopup");
-        }
+        // Xóa cờ hiệu trong session để popup không hiện lại nữa
+        session.removeAttribute("showFirstLoginPopup");
 
         return ResponseEntity.ok(Map.of(
-                "message", "Cập nhật thông tin thành công!",
+                "message", "Cập nhật thông tin thành công! Chào mừng đến với Thư viện Số.",
                 "newFullName", detailsToUpdate.getFullName()
         ));
     }
-
     // === API MỚI: XỬ LÝ UPLOAD AVATAR ===
     @PostMapping("/profile/avatar/upload")
     @PreAuthorize("isAuthenticated()")

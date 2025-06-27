@@ -47,11 +47,12 @@
     </div>
   </footer>
     <div class="borrow-cart-container" id="borrowCartContainer">
-      <div id="borrowCartIcon" class="borrow-cart-icon" title="Giỏ hàng">
-        <i class="fas fa-shopping-basket"></i>
-        <span class="badge rounded-pill bg-danger" id="cartCountBadge">0</span>
-      </div>
-      <div class="borrow-cart-panel" id="borrowCartPanel">
+    <div id="borrowCartIcon" class="borrow-cart-icon">
+      <i class="fas fa-shopping-basket"></i>
+      <span class="badge bg-danger" id="cartCountBadge">0</span>
+    </div>
+
+    <div class="borrow-cart-panel" id="borrowCartPanel">
       <div class="cart-header">
         <h6>Giỏ hàng của bạn</h6>
         <button id="closeCartBtn" class="btn-close btn-sm"></button>
@@ -64,7 +65,7 @@
         <button class="btn btn-borrow-all w-100 mt-2" id="borrowAllBtn">Hoàn tất mượn sách</button>
       </div>
     </div>
-    </div>
+  </div>
     <div class="chat-widget-container">
       <div class="chat-welcome-message">
         <span class="swaying-text">Chat với nhân viên</span>
@@ -258,40 +259,6 @@
         <div class="modal-body" id="borrowHistoryList">
         </div>
         <div class="modal-footer justify-content-center" id="borrowHistoryPagination">
-        </div>
-      </div>
-    </div>
-  </div>
-    <div class="modal fade" id="changePasswordModal" tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header"><h5 class="modal-title">Đổi mật khẩu</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-        <div class="modal-body">
-          <div id="requestPanel">
-            <p>Chúng tôi sẽ gửi một mã xác thực đến email đã đăng ký của bạn để tiếp tục.</p>
-            <button id="sendOtpBtn" class="btn btn-primary w-100">Gửi mã đến Email</button>
-          </div>
-          <div id="validatePanel" class="d-none">
-            <p>Vui lòng nhập mã 6 chữ số đã được gửi đến email của bạn.</p>
-
-            <div class="input-group mb-2">
-              <input type="text" id="otpInput" class="form-control text-center" maxlength="6" placeholder="_ _ _ _ _ _" style="letter-spacing: 0.5rem; font-weight: bold;">
-              <button id="validateOtpBtn" class="btn btn-primary">Xác nhận</button>
-            </div>
-
-            <div id="otpError" class="text-danger small mb-2"></div>
-
-            <div id="resendOtpContainer" class="text-center">
-              <span id="countdownTimer" class="text-muted small"></span>
-              <a href="#" id="resendOtpBtn" class="d-none small">Gửi lại mã</a>
-            </div>
-          </div>
-          <div id="resetPanel" class="d-none">
-            <div class="mb-3"><label class="form-label">Mật khẩu mới</label><input type="password" id="newPasswordInput" class="form-control"></div>
-            <div class="mb-3"><label class="form-label">Xác nhận mật khẩu mới</label><input type="password" id="confirmPasswordInput" class="form-control"></div>
-            <div id="resetError" class="text-danger mt-2"></div>
-            <button id="resetPasswordBtn" class="btn btn-primary w-100 mt-2">Đổi mật khẩu</button>
-          </div>
         </div>
       </div>
     </div>
