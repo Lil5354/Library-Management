@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface UserDetailRepository extends JpaRepository<UserDetail, Long> {
     Optional<UserDetail> findByUser(User user);
+    boolean existsByPhoneAndUser_UserIdNot(String phone, String userId);
+
 }

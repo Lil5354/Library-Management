@@ -76,6 +76,123 @@ document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(anchor => {
 
 document.addEventListener('DOMContentLoaded', function() {
 
+    // === LOGIC CHO ĐÁNH GIÁ SÁCH (PHIÊN BẢN HOÀN CHỈNH) ===
+    const reviewModalEl = document.getElementById('reviewModal');
+
+    if (reviewModalEl) {
+        const reviewModal = new bootstrap.Modal(reviewModalEl);
+        const historyList = document.getElementById('borrowHistoryList');
+        const reviewBookTitle = document.getElementById('reviewBookTitle');
+        const reviewBookIdInput = document.getElementById('reviewBookId');
+        const starRatingContainer = reviewModalEl.querySelector('.star-rating');
+        const stars = starRatingContainer.querySelectorAll('i'); // Lấy tất cả các icon sao
+        const reviewComment = document.getElementById('reviewComment');
+        const submitReviewBtn = document.getElementById('submitReviewBtn');
+        const reviewError = document.getElementById('reviewError');
+
+        let currentRating = 0;
+
+        // Hàm cập nhật trạng thái hiển thị của các sao
+        function updateStarDisplay(rating) {
+            stars.forEach(star => {
+                // Thêm/xóa class 'selected' để tô màu vàng vĩnh viễn
+                star.classList.toggle('selected', parseInt(star.dataset.value) <= rating);
+            });
+        }
+
+        // Gán sự kiện cho các ngôi sao
+        stars.forEach(star => {
+            // Khi di chuột vào một ngôi sao
+            star.addEventListener('mouseover', () => {
+                stars.forEach(s => {
+                    // Thêm/xóa class 'hover' để tô màu vàng tạm thời
+                    s.classList.toggle('hover', parseInt(s.dataset.value) <= parseInt(star.dataset.value));
+                });
+            });
+
+            // Khi di chuột ra khỏi khu vực sao
+            starRatingContainer.addEventListener('mouseout', () => {
+                stars.forEach(s => s.classList.remove('hover'));
+            });
+
+            // Khi nhấn vào một ngôi sao
+            star.addEventListener('click', () => {
+                currentRating = parseInt(star.dataset.value);
+                updateStarDisplay(currentRating); // Cập nhật trạng thái "đã chọn"
+            });
+        });
+
+        // Mở popup khi nhấn nút "Đánh giá"
+        if (historyList) {
+            historyList.addEventListener('click', (e) => {
+                const reviewButton = e.target.closest('.btn-write-review');
+                if (reviewButton) {
+                    e.preventDefault();
+                    reviewBookTitle.textContent = reviewButton.dataset.bookTitle;
+                    reviewBookIdInput.value = reviewButton.dataset.bookId;
+
+                    // Reset form về trạng thái ban đầu
+                    currentRating = 0;
+                    updateStarDisplay(0); // Tắt hết sao
+                    reviewComment.value = '';
+                    reviewError.textContent = '';
+
+                    reviewModal.show();
+                }
+            });
+        }
+
+        // Sự kiện nút "Gửi đánh giá"
+        submitReviewBtn.addEventListener('click', async () => {
+            if (currentRating === 0) {
+                reviewError.textContent = "Vui lòng chọn số sao để đánh giá.";
+                return;
+            }
+            reviewError.textContent = '';
+            submitReviewBtn.disabled = true;
+            submitReviewBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang gửi...';
+
+            const reviewData = {
+                bookId: reviewBookIdInput.value,
+                rating: currentRating,
+                comment: reviewComment.value
+            };
+
+            try {
+                const response = await fetch('/api/reviews', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(reviewData)
+                });
+                const result = await response.json();
+
+                if(response.ok) {
+                    alert(result.message);
+                    reviewModal.hide();
+
+                    // === LOGIC CẬP NHẬT GIAO DIỆN TỨC THÌ ===
+                    const reviewedBookId = reviewBookIdInput.value;
+                    const buttonToUpdate = historyList.querySelector(`.btn-write-review[data-book-id="${reviewedBookId}"]`);
+                    if (buttonToUpdate) {
+                        const newElement = document.createElement('span');
+                        newElement.className = 'text-success small';
+                        newElement.innerHTML = '<i class="fas fa-check-circle me-1"></i>Đã đánh giá';
+                        buttonToUpdate.parentElement.replaceWith(newElement);
+                    }
+                    // ===========================================
+
+                } else {
+                    reviewError.textContent = result.message || 'Có lỗi xảy ra.';
+                }
+            } catch (error) {
+                reviewError.textContent = 'Lỗi kết nối. Vui lòng thử lại.';
+            } finally {
+                submitReviewBtn.disabled = false;
+                submitReviewBtn.innerHTML = 'Gửi đánh giá';
+            }
+        });
+    }
+
     // === LOGIC CHO ĐỔI MẬT KHẨU ===
     const changePasswordBtn = document.getElementById('changePasswordBtn');
     const changePasswordModalEl = document.getElementById('changePasswordModal');
@@ -233,16 +350,23 @@ document.addEventListener('DOMContentLoaded', function() {
     let borrowCart = [];
 
 // === CÁC HÀM XỬ LÝ GIỎ HÀNG ===
+    const cartKey = `borrowCart_${loggedInUsername}`;
 
 // --- SỬA LỖI 1: LƯU VÀ TẢI GIỎ HÀNG TỪ SESSIONSTORAGE ---
     function saveCartToSession() {
-        sessionStorage.setItem('borrowCart', JSON.stringify(borrowCart));
+        if(loggedInUsername) { // Chỉ lưu nếu đã đăng nhập
+            sessionStorage.setItem(cartKey, JSON.stringify(borrowCart));
+        }
     }
 
     function loadCartFromSession() {
-        const savedCart = sessionStorage.getItem('borrowCart');
-        if (savedCart) {
-            borrowCart = JSON.parse(savedCart);
+        if(loggedInUsername) { // Chỉ tải nếu đã đăng nhập
+            const savedCart = sessionStorage.getItem(cartKey);
+            if (savedCart) {
+                borrowCart = JSON.parse(savedCart);
+            }
+        } else {
+            borrowCart = []; // Nếu không đăng nhập, giỏ hàng luôn rỗng
         }
     }
 // -----------------------------------------------------
@@ -358,7 +482,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     },
                     body: JSON.stringify(bookIds)
                 });
-
                 // Phản hồi từ server có thể không phải là JSON nếu có lỗi
                 if (!response.ok) {
                     // Đọc lỗi dưới dạng text để tránh lỗi parse JSON
@@ -376,11 +499,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
             } catch(e){
                 console.error("Lỗi chi tiết khi mượn sách:", e);
-                alert("Mượn sách thất bại. Vui lòng kiểm tra số lượng sách bạn đã mượn.");
+                throw new Error(result.message || 'Mượn sách thất bại. Vui lòng kiểm tra số lượng sách bạn đã mượn hoặc sách mượn bị trùng');
             } finally {
                 // Khối này đảm bảo nút bấm luôn được reset
                 borrowAllBtn.disabled = false;
                 borrowAllBtn.textContent = 'Hoàn tất mượn sách';
+            }
+        });
+    }
+    // === GÁN SỰ KIỆN XÓA GIỎ HÀNG KHI ĐĂNG XUẤT ===
+    const logoutForm = document.getElementById('logoutForm'); // Giả sử bạn thêm id="logoutForm" vào thẻ form
+
+    if (logoutForm) {
+        logoutForm.addEventListener('submit', function() {
+            // Xóa giỏ hàng của user hiện tại khỏi sessionStorage TRƯỚC KHI gửi yêu cầu đăng xuất
+            if(loggedInUsername) {
+                sessionStorage.removeItem(cartKey);
+                console.log(`Cleared cart for user: ${loggedInUsername}`);
             }
         });
     }
@@ -423,6 +558,37 @@ document.addEventListener('DOMContentLoaded', function() {
                             statusBadge = '<span class="status-badge status-borrowed">Đang mượn</span>';
                         }
 
+                        // === BẮT ĐẦU LOGIC MỚI ĐỂ HIỂN THỊ CÁC NÚT HÀNH ĐỘNG ===
+
+                        // 1. Luôn tạo nút "Mượn lại"
+                        const reborrowButtonHtml = `
+                        <button class="btn btn-sm btn-outline-primary re-borrow-btn" 
+                                data-book-id="${item.bookId}" 
+                                data-book-title="${item.bookTitle}" 
+                                data-book-cover="${item.bookCoverImage}"
+                                title="Thêm sách này vào giỏ để mượn lại">
+                            <i class="fas fa-cart-plus"></i> Mượn lại
+                        </button>`;
+
+                        // 2. Tạo nút "Đánh giá" hoặc chữ "Đã đánh giá" tùy điều kiện
+                        let reviewButtonHtml = '';
+                        if (item.status === 'RETURNED') {
+                            if (item.hasReviewed) {
+                                // Nếu đã trả và đã đánh giá -> Hiển thị text
+                                reviewButtonHtml = `<span class="text-success small ms-2"><i class="fas fa-check-circle me-1"></i>Đã đánh giá</span>`;
+                            } else {
+                                // Nếu đã trả nhưng CHƯA đánh giá -> Hiển thị nút
+                                reviewButtonHtml = `
+                                <button class="btn btn-sm btn-outline-warning btn-write-review ms-2" 
+                                        data-book-id="${item.bookId}" 
+                                        data-book-title="${item.bookTitle}">
+                                    <i class="fas fa-star"></i> Đánh giá
+                                </button>`;
+                            }
+                        }
+
+                        // =========================================================
+
                         const itemHTML = `
                         <div class="borrowed-item">
                             <img src="${item.bookCoverImage || 'https://source.unsplash.com/500x650/?book'}" class="borrowed-item-cover">
@@ -432,11 +598,8 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <div>Trạng thái: ${statusBadge}</div>
                                 ${item.lateFee > 0 ? `<div class="fee-text">Phí phạt: ${item.lateFee.toLocaleString('vi-VN')}đ</div>` : ''}
                             </div>
-                            <button class="btn btn-sm btn-outline-primary re-borrow-btn" 
-                                data-book-id="${item.bookId}" data-book-title="${item.bookTitle}" data-book-cover="${item.bookCoverImage}"
-                                title="Mượn lại sách này">
-                                <i class="fas fa-cart-plus"></i> Mượn lại
-                            </button>
+                            <div class="borrow-item-action d-flex flex-column gap-2">
+                                ${reborrowButtonHtml} ${reviewButtonHtml}  </div>
                         </div>`;
                         historyList.insertAdjacentHTML('beforeend', itemHTML);
                     });
@@ -600,7 +763,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     // Gắn các nút vào footer
                     modalFooter.innerHTML = readSampleBtnHtml + closeBtnHtml;
+                    // === BẮT ĐẦU CODE MỚI: TẢI VÀ HIỂN THỊ ĐÁNH GIÁ ===
+                    const reviewsListEl = document.getElementById('bookReviewsList');
+                    reviewsListEl.innerHTML = '<div class="text-center"><div class="spinner-border spinner-border-sm"></div></div>';
 
+                    const reviewsResponse = await fetch(`/api/reviews/book/${bookId}`);
+                    const reviews = await reviewsResponse.json();
+
+                    reviewsListEl.innerHTML = ''; // Xóa spinner
+                    if (reviews.length === 0) {
+                        reviewsListEl.innerHTML = '<p class="text-muted small">Chưa có đánh giá nào cho cuốn sách này.</p>';
+                    } else {
+                        reviews.forEach(review => {
+                            let starsHTML = '';
+                            for(let i=0; i<5; i++){
+                                starsHTML += `<i class="fas fa-star ${i < review.rating ? 'text-warning' : 'text-light'}"></i>`;
+                            }
+                            const reviewHTML = `
+                    <div class="review-item mb-3">
+                        <strong>${review.reviewerName}</strong>
+                        <div class="d-flex justify-content-between">
+                            <div class="review-stars">${starsHTML}</div>
+                            <small class="text-muted">${review.reviewDate}</small>
+                        </div>
+                        <p class="mb-0 fst-italic">"${review.comment}"</p>
+                    </div>`;
+                            reviewsListEl.insertAdjacentHTML('beforeend', reviewHTML);
+                        });
+                    }
+                    // === KẾT THÚC CODE MỚI ===
                     bookDetailModal.show();
 
                 } catch (error) {
@@ -1062,12 +1253,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         alert(result.message);
                         const nameSpan = document.getElementById('userDropdownFullName');
                         if (nameSpan) nameSpan.textContent = result.newFullName;
+                        window.location.reload();
                     } else { alert('Lỗi: ' + (result.message || 'Không thể cập nhật.')); }
                 } catch (error) { alert('Lỗi kết nối, vui lòng thử lại.'); }
-                finally {
-                    editProfileModal.hide();
-                    window.location.reload();
-                }
             });
         }
     }

@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -170,7 +171,17 @@ public class ReaderController {
         String username = authentication.getName();
         User currentUser = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng: " + username));
+        // 1. Ràng buộc ngày sinh không được ở tương lai
+        if (userDetailFromForm.getDob() != null && userDetailFromForm.getDob().isAfter(LocalDate.now())) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Ngày sinh không hợp lệ. Vui lòng không chọn một ngày trong tương lai."));
+        }
 
+        // 2. Ràng buộc số điện thoại không được trùng
+        if (StringUtils.hasText(userDetailFromForm.getPhone())) {
+            if (userService.phoneExistsForOtherUser(userDetailFromForm.getPhone(), currentUser.getUserId())) {
+                return ResponseEntity.badRequest().body(Map.of("message", "Số điện thoại này đã được sử dụng bởi một tài khoản khác."));
+            }
+        }
         UserDetail detailsToUpdate = currentUser.getUserDetail();
 
         // Chỉ cập nhật email nếu email mới được gửi lên và khác với email cũ

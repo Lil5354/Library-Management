@@ -41,6 +41,17 @@ public class BorrowServiceImpl implements BorrowService {
                 throw new IllegalStateException("Sách '" + book.getTitle() + "' đã hết, không thể mượn.");
             }
         }
+        List<String> activeStatuses = List.of("BORROWED", "OVERDUE");
+        // === RÀNG BUỘC MỚI: KIỂM TRA MƯỢN TRÙNG SÁCH ===
+        for (Book book : booksToBorrow) {
+            // Kiểm tra xem user có đang mượn cuốn sách này mà chưa trả không
+            if (loanItemRepository.existsByBookAndBookLoan_UserAndStatusIn(book, user, activeStatuses)) {
+                throw new IllegalStateException("Bạn đã mượn cuốn sách '" + book.getTitle() + "' và chưa trả.");
+            }
+            if (book.getAvailableCopies() <= 0) {
+                throw new IllegalStateException("Sách '" + book.getTitle() + "' đã hết, không thể mượn.");
+            }
+        }
         BookLoan newLoan = new BookLoan();
         newLoan.setUser(user);
 
@@ -68,16 +79,25 @@ public class BorrowServiceImpl implements BorrowService {
     @Override
     @Transactional(readOnly = true)
     public List<LoanItemDto> getActiveLoansForUser(User user) {
-        List<LoanItem> loanItems = loanItemRepository.findByBookLoan_UserAndStatus(user, "BORROWED");
+        List<String> activeStatuses = List.of("BORROWED", "OVERDUE");
+        List<LoanItem> loanItems = loanItemRepository.findByBookLoan_UserAndStatusIn(user, activeStatuses);
         return loanItems.stream()
                 .map(LoanItemDto::new)
                 .collect(Collectors.toList());
     }
-
+    private final ReviewService reviewService;
     @Override
     @Transactional(readOnly = true)
     public Page<LoanItemDto> getLoanHistoryForUser(User user, Pageable pageable) {
         Page<LoanItem> loanItemPage = loanItemRepository.findByBookLoan_UserOrderByBookLoan_BorrowDateDesc(user, pageable);
-        return loanItemPage.map(LoanItemDto::new); // Dùng map của Page để chuyển đổi
+
+        // Dùng map của Page để chuyển đổi, đồng thời gán giá trị cho hasReviewed
+        return loanItemPage.map(loanItem -> {
+            LoanItemDto dto = new LoanItemDto(loanItem);
+            // Kiểm tra xem user đã review sách này chưa
+            boolean hasReviewed = reviewService.hasUserReviewedBook(user.getUserId(), loanItem.getBook().getId());
+            dto.setHasReviewed(hasReviewed); // Gán kết quả vào DTO
+            return dto;
+        });
     }
 }

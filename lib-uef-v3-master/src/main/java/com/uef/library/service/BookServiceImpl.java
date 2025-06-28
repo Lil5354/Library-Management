@@ -40,7 +40,15 @@ public class BookServiceImpl implements BookService {
         Specification<Book> spec = BookSpecification.filterBy(keyword, categoryId, availability, startYear, endYear, startsWith);
         return bookRepository.findAll(spec, pageable);
     }
-
+    @Override
+    public Page<Book> listAllBooksIn(String keyword, Long categoryId, String availability,
+                                   Integer startYear, Integer endYear, String startsWith,
+                                   Double minRating, // <<< THÊM VÀO ĐÂY
+                                   Pageable pageable) {
+        // Truyền tham số mới vào Specification
+        Specification<Book> spec = BookSpecification.filterByIn(keyword, categoryId, availability, startYear, endYear, startsWith, minRating);
+        return bookRepository.findAll(spec, pageable);
+    }
     @Override
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();

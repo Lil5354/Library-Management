@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -61,4 +62,13 @@ public class Book {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "average_rating")
+    @ColumnDefault("0.0")
+    private Double averageRating = 0.0;
+
+    @Column(name = "review_count")
+    @ColumnDefault("0")
+    private Integer reviewCount = 0;
+
 }

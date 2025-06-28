@@ -16,7 +16,7 @@ public class LoanItemDto {
     private LocalDateTime returnDate;
     private String status;
     private double lateFee;
-
+    private boolean hasReviewed;
     // Constructor để chuyển đổi từ Entity sang DTO
     public LoanItemDto(LoanItem loanItem) {
         Book book = loanItem.getBook();

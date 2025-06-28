@@ -27,6 +27,7 @@ public interface UserService {
      * @return Danh sách các User có vai trò tương ứng.
      */
     List<User> findByRole(String role);
+    boolean phoneExistsForOtherUser(String phone, String currentUserId);
 
     String registerUser(String username, String rawPassword);
     Optional<User> findByUsername(String username);

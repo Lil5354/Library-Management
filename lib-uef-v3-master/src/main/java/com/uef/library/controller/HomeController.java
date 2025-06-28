@@ -27,6 +27,7 @@ public class HomeController {
                                  @RequestParam(name = "keyword", required = false) String keyword,
                                  @RequestParam(name = "categoryId", required = false) Long categoryId,
                                  @RequestParam(name = "availability", required = false) String availability,
+                                 @RequestParam(name = "minRating", required = false) Double minRating,
                                  @RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "9") int size,
                                  @RequestParam(defaultValue = "createdAt,desc") String sort) {
@@ -40,13 +41,14 @@ public class HomeController {
 
         // Gọi service để lấy dữ liệu
 // Truyền null cho các tham số lọc nâng cao không dùng đến ở trang này
-        model.addAttribute("bookPage", bookService.listAllBooks(keyword, categoryId, availability, null, null, null, pageable));
+        model.addAttribute("bookPage", bookService.listAllBooksIn(keyword, categoryId, availability, null, null, null, minRating, pageable));
         model.addAttribute("categories", bookService.getAllCategories());
 
         // Gửi các tham số lọc lại cho view để giữ trạng thái
         model.addAttribute("keyword", keyword);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("availability", availability); // Thêm dòng này
+        model.addAttribute("minRating", minRating); // <<< THÊM VÀO ĐÂY
         model.addAttribute("sort", sort);
 
         return "home/categories";

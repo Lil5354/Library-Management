@@ -501,9 +501,7 @@
                         </div>
 
                         <div class="form-footer">
-                            <a th:href="@{/auth/forgot-password}" class="text-decoration-none"> <i class="fas fa-key"></i>
-                                Quên mật khẩu?
-                            </a>
+                            <a class="text-decoration-none" href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal"><i class="fas fa-key"></i>Quên mật khẩu?</a>
                             <a th:href="@{/auth/register}" class="text-decoration-none">
                                 <i class="fas fa-user-plus"></i>
                                 Đăng ký tài khoản mới
@@ -522,7 +520,6 @@
         </div>
     </div>
 </div>
-
 <footer>
     <div class="container">
         <div class="footer-mini">
@@ -530,7 +527,68 @@
         </div>
     </div>
 </footer>
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="forgotPasswordModalLabel">Đặt lại mật khẩu</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
 
+                <div id="forgot_requestPanel">
+                    <p>Vui lòng nhập tên đăng nhập của bạn để bắt đầu quá trình đặt lại mật khẩu.</p>
+                    <div class="mb-3">
+                        <label for="forgot_username" class="form-label">Tên đăng nhập</label>
+                        <input type="text" id="forgot_username" class="form-control" placeholder="Nhập tên đăng nhập của bạn...">
+                        <div id="forgot_requestError" class="text-danger small mt-1"></div>
+                    </div>
+                    <button id="forgot_checkUserBtn" class="btn btn-primary w-100">Kiểm tra</button>
+                </div>
+
+                <div id="forgot_confirmPanel" class="d-none">
+                    <p>Đây có phải là bạn không? Chúng tôi sẽ gửi mã đến email được liên kết.</p>
+                    <div class="alert alert-secondary">
+                        <strong>Họ và tên:</strong> <span id="confirm_fullName"></span><br>
+                        <strong>Email:</strong> <span id="confirm_maskedEmail"></span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <button id="forgot_notMeBtn" class="btn btn-secondary">Không phải tôi</button>
+                        <button id="forgot_sendOtpBtn" class="btn btn-primary">Xác nhận & Gửi mã</button>
+                    </div>
+                </div>
+
+                <div id="forgot_validatePanel" class="d-none">
+                    <p>Vui lòng nhập mã 6 chữ số đã được gửi đến email của bạn.</p>
+                    <div class="input-group mb-2">
+                        <input type="text" id="forgot_otpInput" class="form-control text-center" maxlength="6" placeholder="_ _ _ _ _ _" style="letter-spacing: 0.5rem; font-weight: bold;">
+                        <button id="forgot_validateOtpBtn" class="btn btn-primary">Xác nhận</button>
+                    </div>
+                    <div id="forgot_otpError" class="text-danger small mb-2"></div>
+                    <div id="forgot_resendOtpContainer" class="text-center">
+                        <span id="forgot_countdownTimer" class="text-muted small"></span>
+                        <a href="#" id="forgot_resendOtpBtn" class="d-none small">Gửi lại mã</a>
+                    </div>
+                </div>
+
+                <div id="forgot_resetPanel" class="d-none">
+                    <p>Mã xác thực hợp lệ. Vui lòng nhập mật khẩu mới.</p>
+                    <div class="mb-3">
+                        <label class="form-label">Mật khẩu mới (ít nhất 6 ký tự)</label>
+                        <input type="password" id="forgot_newPasswordInput" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Xác nhận mật khẩu mới</label>
+                        <input type="password" id="forgot_confirmPasswordInput" class="form-control">
+                    </div>
+                    <div id="forgot_resetError" class="text-danger small mt-2"></div>
+                    <button id="forgot_resetPasswordBtn" class="btn btn-primary w-100 mt-2">Đặt lại Mật khẩu</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     // Navigation effect on scroll
@@ -633,6 +691,212 @@
                 showCustomToast(logoutSuccess.textContent, 'success', 'Thành công');
             }
         }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const forgotModalEl = document.getElementById('forgotPasswordModal');
+        if (!forgotModalEl) return;
+
+        // Lấy các element
+        const panels = {
+            request: document.getElementById('forgot_requestPanel'),
+            confirm: document.getElementById('forgot_confirmPanel'),
+            validate: document.getElementById('forgot_validatePanel'),
+            reset: document.getElementById('forgot_resetPanel')
+        };
+        const buttons = {
+            checkUser: document.getElementById('forgot_checkUserBtn'),
+            notMe: document.getElementById('forgot_notMeBtn'),
+            sendOtp: document.getElementById('forgot_sendOtpBtn'),
+            validateOtp: document.getElementById('forgot_validateOtpBtn'),
+            resetPass: document.getElementById('forgot_resetPasswordBtn'),
+            resendOtp: document.getElementById('forgot_resendOtpBtn')
+        };
+        const inputs = {
+            username: document.getElementById('forgot_username'),
+            otp: document.getElementById('forgot_otpInput'),
+            newPass: document.getElementById('forgot_newPasswordInput'),
+            confirmPass: document.getElementById('forgot_confirmPasswordInput')
+        };
+        const errors = {
+            request: document.getElementById('forgot_requestError'),
+            otp: document.getElementById('forgot_otpError'),
+            reset: document.getElementById('forgot_resetError')
+        };
+        const countdownTimerEl = document.getElementById('forgot_countdownTimer');
+
+        let checkedUsername = '';
+        let validToken = '';
+        let countdownInterval;
+
+        // Hàm tiện ích
+        function showPanel(panelName) {
+            Object.values(panels).forEach(p => p.classList.add('d-none'));
+            if(panels[panelName]) panels[panelName].classList.remove('d-none');
+        }
+
+        function startCountdown() {
+            buttons.resendOtp.classList.add('d-none');
+            countdownTimerEl.classList.remove('d-none');
+            let timeLeft = 60;
+            countdownTimerEl.textContent = `Bạn có thể gửi lại mã sau ${timeLeft}s`;
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                timeLeft--;
+                countdownTimerEl.textContent = `Bạn có thể gửi lại mã sau ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownTimerEl.classList.add('d-none');
+                    buttons.resendOtp.classList.remove('d-none');
+                }
+            }, 1000);
+        }
+
+        // Sự kiện nút "Kiểm tra"
+        buttons.checkUser.addEventListener('click', async () => {
+            const username = inputs.username.value.trim();
+            errors.request.textContent = '';
+            if (!username) {
+                errors.request.textContent = 'Vui lòng nhập tên đăng nhập.';
+                return;
+            }
+
+            buttons.checkUser.disabled = true;
+            buttons.checkUser.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang kiểm tra...';
+
+            try {
+                const response = await fetch('/api/password/check-user', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ username: username })
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('confirm_fullName').textContent = result.fullName;
+                    document.getElementById('confirm_maskedEmail').textContent = result.maskedEmail;
+                    checkedUsername = username;
+                    showPanel('confirm');
+                } else {
+                    errors.request.textContent = result.message || 'Lỗi không xác định.';
+                }
+            } catch (e) {
+                errors.request.textContent = 'Lỗi kết nối, vui lòng thử lại.';
+            } finally {
+                buttons.checkUser.disabled = false;
+                buttons.checkUser.textContent = 'Kiểm tra';
+            }
+        });
+
+        // Sự kiện nút "Không phải tôi"
+        buttons.notMe.addEventListener('click', () => {
+            inputs.username.value = '';
+            showPanel('request');
+        });
+
+        // Hàm gửi mã OTP
+        async function handleSendOtp() {
+            buttons.sendOtp.disabled = true;
+            buttons.sendOtp.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang gửi...';
+
+            try {
+                const response = await fetch('/api/password/request-otp', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ username: checkedUsername })
+                });
+                const result = await response.json();
+                alert(result.message);
+                if (response.ok) {
+                    showPanel('validate');
+                    startCountdown();
+                }
+            } catch (e) {
+                alert('Lỗi kết nối. Vui lòng thử lại.');
+            } finally {
+                buttons.sendOtp.disabled = false;
+                buttons.sendOtp.textContent = 'Xác nhận & Gửi mã';
+            }
+        }
+
+        buttons.sendOtp.addEventListener('click', handleSendOtp);
+        buttons.resendOtp.addEventListener('click', e => { e.preventDefault(); handleSendOtp(); });
+
+        // Sự kiện cho nút "Xác nhận" mã OTP
+        buttons.validateOtp.addEventListener('click', async () => {
+            const token = inputs.otp.value.trim();
+            errors.otp.textContent = '';
+
+            if (!token || token.length !== 6) {
+                errors.otp.textContent = 'Vui lòng nhập đủ 6 chữ số.';
+                return;
+            }
+
+            buttons.validateOtp.disabled = true;
+            buttons.validateOtp.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+
+            try {
+                const response = await fetch('/api/password/validate-token', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ token: token })
+                });
+
+                if (response.ok) {
+                    validToken = token; // Lưu lại token hợp lệ để dùng cho bước cuối
+                    showPanel('reset');
+                } else {
+                    const result = await response.json();
+                    errors.otp.textContent = result.message || 'Mã không hợp lệ hoặc đã hết hạn.';
+                }
+            } catch (e) {
+                errors.otp.textContent = 'Lỗi kết nối. Vui lòng thử lại.';
+            } finally {
+                buttons.validateOtp.disabled = false;
+                buttons.validateOtp.textContent = 'Xác nhận';
+            }
+        });
+
+        // Sự kiện cho nút "Đặt lại Mật khẩu" cuối cùng
+        buttons.resetPass.addEventListener('click', async () => {
+            const newPassword = inputs.newPass.value;
+            const confirmPassword = inputs.confirmPass.value;
+            errors.reset.textContent = '';
+
+            if (newPassword.length < 6) {
+                errors.reset.textContent = 'Mật khẩu mới phải có ít nhất 6 ký tự.';
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                errors.reset.textContent = 'Mật khẩu xác nhận không khớp.';
+                return;
+            }
+
+            buttons.resetPass.disabled = true;
+            buttons.resetPass.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang xử lý...';
+
+            try {
+                const response = await fetch('/api/password/reset', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ token: validToken, newPassword: newPassword })
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    const forgotPasswordModal = bootstrap.Modal.getInstance(forgotModalEl);
+                    forgotPasswordModal.hide();
+                    alert(result.message);
+                    window.location.href = '/auth/login';
+                } else {
+                    errors.reset.textContent = result.message || 'Có lỗi xảy ra, vui lòng bắt đầu lại.';
+                }
+            } catch (e) {
+                errors.reset.textContent = 'Lỗi kết nối. Vui lòng thử lại.';
+            } finally {
+                buttons.resetPass.disabled = false;
+                buttons.resetPass.textContent = 'Đặt lại Mật khẩu';
+            }
+        });
     });
 </script>
 </body>

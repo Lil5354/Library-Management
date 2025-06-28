@@ -24,6 +24,8 @@
 <script th:inline="javascript">
   /* Khai báo các biến global mà index.js sẽ cần */
   var showFirstLoginPopup = /*[[${session.showFirstLoginPopup}]]*/ false;
+  var loggedInUsername = /*[[${loggedInUsername}]]*/ null;
+
 </script>
 <script th:src="@{/js/index.js}"></script>
 <th:block layout:fragment="page_scripts"></th:block>

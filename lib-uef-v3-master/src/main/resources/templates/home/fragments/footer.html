@@ -222,6 +222,12 @@
                 <div class="col-6 mb-2"><span class="info-label">ISBN:</span> <span class="info-value" id="bookDetailIsbn"></span></div>
                 <div class="col-6 mb-2"><span class="info-label">Số lượng còn lại:</span> <span class="info-value fw-bold text-success" id="bookDetailAvailable"></span></div>
               </div>
+              <hr>
+              <div class="reviews-section mt-4">
+                <h5><i class="fas fa-comments me-2"></i>Đánh giá từ độc giả</h5>
+                <div id="bookReviewsList">
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -292,6 +298,32 @@
             <div id="resetError" class="text-danger mt-2"></div>
             <button id="resetPasswordBtn" class="btn btn-primary w-100 mt-2">Đổi mật khẩu</button>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="modal fade" id="reviewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Đánh giá sách: <span id="reviewBookTitle" class="fw-bold"></span></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="reviewBookId">
+          <p class="text-center">Bạn cảm thấy sách này như thế nào?</p>
+          <div class="star-rating mb-3">
+            <i class="far fa-star" data-value="1" title="Rất tệ"></i>
+            <i class="far fa-star" data-value="2" title="Không hay"></i>
+            <i class="far fa-star" data-value="3" title="Bình thường"></i>
+            <i class="far fa-star" data-value="4" title="Rất tốt"></i>
+            <i class="far fa-star" data-value="5" title="Tuyệt vời"></i>
+          </div>
+          <textarea id="reviewComment" class="form-control" rows="4" placeholder="Viết cảm nghĩ của bạn ở đây... (không bắt buộc)"></textarea>
+          <div id="reviewError" class="text-danger small mt-2"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" id="submitReviewBtn">Gửi đánh giá</button>
         </div>
       </div>
     </div>

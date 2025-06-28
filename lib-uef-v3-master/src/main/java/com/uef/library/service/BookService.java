@@ -14,8 +14,13 @@ import java.util.Optional;
 public interface BookService {
 
     Page<Book> listAllBooks(String keyword, Long categoryId, String availability,
-                            Integer startYear, Integer endYear, String startsWith, Pageable pageable);
+                            Integer startYear, Integer endYear, String startsWith,
+                            Pageable pageable);
 
+    Page<Book> listAllBooksIn(String keyword, Long categoryId, String availability,
+                            Integer startYear, Integer endYear, String startsWith,
+                            Double minRating,
+                            Pageable pageable);
     List<Category> getAllCategories();
 
     Optional<Book> getBookById(Long id);

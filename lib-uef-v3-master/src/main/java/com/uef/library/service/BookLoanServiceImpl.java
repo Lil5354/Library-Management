@@ -168,6 +168,7 @@ public class BookLoanServiceImpl implements BookLoanService {
     @Override
     @Transactional(readOnly = true)
     public List<LoanItemDto> getActiveLoansForUser(User user) {
+        List<String> activeStatuses = List.of("BORROWED");
         List<LoanItem> loanItems = loanItemRepository.findByBookLoan_UserAndStatus(user, "BORROWED");
         return loanItems.stream()
                 .map(LoanItemDto::new)

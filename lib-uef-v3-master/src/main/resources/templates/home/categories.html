@@ -70,11 +70,29 @@
                         </ul>
                     </div>
                     <div class="filter-widget">
-                        <h4 class="filter-title">Xếp hạng</h4>
-                        <ul class="filter-list">
-                            <li><a href="#"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i></a></li>
-                            <li><a href="#"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="far fa-star text-warning"></i> &amp; trở lên</a></li>
-                            <li><a href="#"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="far fa-star text-warning"></i><i class="far fa-star text-warning"></i> &amp; trở lên</a></li>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="filter-title mb-0">Xếp hạng</h4>
+                            <a th:if="${minRating != null and minRating > 0}"
+                               th:href="@{/categories(keyword=${keyword}, categoryId=${categoryId}, availability=${availability}, sort=${sort})}"
+                               class="clear-rating-filter">Xóa lọc</a>
+                        </div>
+
+                        <ul class="filter-list rating-filter-list mt-2">
+                            <li th:each="ratingValue : ${#numbers.sequence(5, 1, -1)}"
+                                th:classappend="${minRating != null && minRating == ratingValue} ? 'active'">
+
+                                <a th:href="@{/categories(keyword=${keyword}, categoryId=${categoryId}, availability=${availability}, sort=${sort}, minRating=${ratingValue})}">
+
+                <span class="rating-stars">
+                    <th:block th:each="starNum : ${#numbers.sequence(1, 5)}">
+                        <i th:class="${starNum <= ratingValue} ? 'fas fa-star' : 'far fa-star'"></i>
+                    </th:block>
+                </span>
+
+                                    <span th:if="${ratingValue == 5}">5 sao</span>
+                                    <span th:if="${ratingValue < 5}">&amp; trở lên</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </div>
@@ -125,8 +143,13 @@
                                 </h5>
                                 <p class="book-author" th:text="'Tác giả: ' + ${book.author}"></p>
                                 <div class="book-meta">
-                                    <div class="book-rating">
-                                        <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+                                    <div class="book-rating" th:title="${book.averageRating > 0 ? book.averageRating + ' sao' : 'Chưa có đánh giá'}">
+                                        <th:block th:each="i : ${#numbers.sequence(1, 5)}">
+                                            <i th:if="${book.averageRating >= i}" class="fas fa-star"></i>
+                                            <i th:if="${book.averageRating > (i - 1) && book.averageRating < i}" class="fas fa-star-half-alt"></i>
+                                            <i th:if="${book.averageRating < (i - 0.5)}" class="far fa-star"></i>
+                                        </th:block>
+                                        <span class="review-count ms-2" th:if="${book.reviewCount > 0}" th:text="'(' + ${book.reviewCount} + ')'"></span>
                                     </div>
                                     <div class="book-actions">
                                         <button th:if="${isAuthenticated and book.availableCopies > 0}"

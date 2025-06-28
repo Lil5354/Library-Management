@@ -85,10 +85,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Hợp nhất TẤT CẢ các đường dẫn công khai vào một nơi duy nhất
                         .requestMatchers(
+                                // Giữ nguyên các đường dẫn cũ
                                 "/auth/**", "/", "/home/**", "/search", "/about", "/contact", "/categories",
                                 "/books/details/**", "/stringee-webhook",
                                 "/css/**", "/js/**", "/videos/**", "/templates/**", "/uploads/**",
-                                "/forgot-password", "/reset-password-form" // Thêm trang giao diện cho reset password
+
+                                // === THÊM CÁC ĐƯỜNG DẪN API CÔNG KHAI VÀO ĐÂY ===
+                                "/api/password/**",
+                                "/api/ai/**"
                         ).permitAll()
                         // Phân quyền chặt chẽ cho các vai trò
                         .requestMatchers("/admin/**").hasRole("ADMIN")

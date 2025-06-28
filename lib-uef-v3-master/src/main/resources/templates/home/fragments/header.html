@@ -99,7 +99,7 @@
                 <li><a class="dropdown-item" href="#" id="changePasswordBtn"><i class="fas fa-key me-2"></i>Đổi mật khẩu</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li>
-                  <form th:action="@{/auth/logout}" method="post" class="d-block">
+                  <form th:action="@{/auth/logout}" method="post" class="d-block" id="logoutForm">
                     <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</button>
                   </form>
                 </li>
