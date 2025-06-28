@@ -8,7 +8,9 @@ import com.uef.library.repository.LoanItemRepository;
 import com.uef.library.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,22 +31,23 @@ public class BookLoanServiceImpl implements BookLoanService {
     private final BookRepository bookRepository;
     private final PenaltyFeeService penaltyFeeService;
 
-    // --- CÁC HẰNG SỐ CẤU HÌNH NGHIỆP VỤ ---
     private static final int BORROW_LIMIT = 5;
     private static final int BORROW_DURATION_DAYS = 14;
     private static final double FINE_PER_DAY = 2000;
     private static final int RENEWAL_LIMIT = 1;
 
-    // ==========================================================
-    // <<< TRIỂN KHAI NGHIỆP VỤ CHO THỦ THƯ >>>
-    // ==========================================================
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookLoanDTO> getActiveBookLoans() {
-        return bookLoanRepository.findActiveBookLoans().stream()
-                .map(this::convertToBookLoanDto)
-                .collect(Collectors.toList());
+    public Page<BookLoanDTO> getActiveBookLoans(String search, Pageable pageable) {
+        Pageable sortedPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("dueDate").ascending());
+        Page<BookLoan> bookLoansPage;
+        if (search != null && !search.trim().isEmpty()) {
+            bookLoansPage = bookLoanRepository.findActiveLoansBySearchTerm(search, sortedPageable);
+        } else {
+            bookLoansPage = bookLoanRepository.findAllActiveLoans(sortedPageable);
+        }
+        return bookLoansPage.map(this::convertToBookLoanDto);
     }
 
     @Override
@@ -64,67 +67,88 @@ public class BookLoanServiceImpl implements BookLoanService {
         return convertToBookLoanDto(savedBookLoan);
     }
 
-    // Phương thức này vẫn giữ nguyên cho trường hợp trả 1 sách mà không biết loanId
     @Override
     @Transactional
     public ReturnResponseDTO returnBook(String userId, String bookIsbn) throws Exception {
         LoanItem loanItem;
         if (userId != null && !userId.isBlank()) {
+            // Trường hợp có độc giả: Tìm kiếm chính xác LoanItem của độc giả đó
             loanItem = loanItemRepository.findActiveLoanItemByUserIdAndBookIsbn(userId, bookIsbn)
                     .orElseThrow(() -> new Exception("Độc giả '" + userId + "' không có thông tin mượn sách với ISBN '" + bookIsbn + "' hoặc sách đã được trả."));
         } else {
-            loanItem = loanItemRepository.findFirstByBookIsbnAndStatus(bookIsbn, "BORROWED")
-                    .orElseThrow(() -> new Exception("Không tìm thấy sách nào đang được mượn với ISBN '" + bookIsbn + "'."));
-        }
+            // Trường hợp không có độc giả (chỉ có ISBN):
+            // Tìm TẤT CẢ LoanItem đang được mượn với ISBN này.
+            List<LoanItem> activeLoanItems = loanItemRepository.findAllActiveLoanItemsByBookIsbn(bookIsbn);
 
-        // Gọi logic trả sách chung
+            if (activeLoanItems.isEmpty()) {
+                throw new Exception("Không tìm thấy sách nào đang được mượn với ISBN '" + bookIsbn + "'.");
+            } else if (activeLoanItems.size() > 1) {
+                // Nếu có nhiều hơn một LoanItem khớp, yêu cầu người dùng cung cấp mã độc giả
+                String borrowedBy = activeLoanItems.stream()
+                        .map(item -> item.getBookLoan().getUser().getUserDetail().getFullName() + " (" + item.getBookLoan().getUser().getUserId() + ")")
+                        .collect(Collectors.joining(", "));
+                throw new Exception("Sách với ISBN '" + bookIsbn + "' đang được mượn bởi nhiều độc giả. Vui lòng nhập Mã độc giả để xác định chính xác. (Đang được mượn bởi: " + borrowedBy + ")");
+            } else {
+                // Chỉ có một LoanItem khớp, tiến hành trả
+                loanItem = activeLoanItems.get(0);
+            }
+        }
         return processReturn(loanItem);
     }
 
-
-    // <<< SỬA ĐỔI LỚN: VIẾT LẠI HOÀN TOÀN LOGIC TRẢ NHIỀU SÁCH >>>
     @Override
     @Transactional
-    public ReturnMultipleResponseDTO returnMultipleBooks(ReturnMultipleRequestDTO request) {
+    public ReturnMultipleResponseDTO returnMultipleBooks(String userId, List<String> isbns) {
         List<LoanItemDTO> successfulReturns = new ArrayList<>();
         List<PenaltyFeeDTO> generatedPenalties = new ArrayList<>();
         List<String> processingErrors = new ArrayList<>();
 
-        // Lấy phiếu mượn một lần duy nhất, đảm bảo tất cả sách trả đều thuộc phiếu này
-        BookLoan bookLoan = bookLoanRepository.findById(request.getLoanId())
-                .orElse(null);
-
-        if (bookLoan == null) {
-            processingErrors.add("Không tìm thấy phiếu mượn với ID: " + request.getLoanId());
-            return new ReturnMultipleResponseDTO(successfulReturns, generatedPenalties, processingErrors);
-        }
-
-        for (String isbn : request.getIsbns()) {
+        for (String isbn : isbns) {
             try {
-                // Tìm mục sách cần trả DỰA TRÊN loanId và isbn
-                LoanItem itemToReturn = loanItemRepository.findActiveLoanItemByLoanIdAndBookIsbn(bookLoan.getId(), isbn)
-                        .orElseThrow(() -> new Exception("Không tìm thấy sách đang mượn với ISBN '" + isbn + "' trong phiếu mượn này."));
+                LoanItem itemToReturn;
+                if (userId != null && !userId.isBlank()) {
+                    // Trường hợp có độc giả: Tìm kiếm chính xác LoanItem của độc giả đó
+                    itemToReturn = loanItemRepository.findActiveLoanItemByUserIdAndBookIsbn(userId, isbn)
+                            .orElseThrow(() -> new Exception("Độc giả '" + userId + "' không có sách đang mượn với ISBN '" + isbn + "' hoặc sách đã được trả."));
+                } else {
+                    // Trường hợp không có độc giả (chỉ có ISBN):
+                    // Tìm TẤT CẢ LoanItem đang được mượn với ISBN này.
+                    List<LoanItem> activeLoanItems = loanItemRepository.findAllActiveLoanItemsByBookIsbn(isbn);
 
-                // Xử lý trả sách và phí phạt
+                    if (activeLoanItems.isEmpty()) {
+                        throw new Exception("Không tìm thấy sách nào đang được mượn với ISBN '" + isbn + "'.");
+                    } else if (activeLoanItems.size() > 1) {
+                        // Nếu có nhiều hơn một LoanItem khớp, đây là trường hợp cần xử lý.
+                        // Trong ngữ cảnh "trả nhiều sách", tốt nhất là báo lỗi và yêu cầu nhập userId.
+                        // Hoặc, nếu có một quy tắc rõ ràng (ví dụ, luôn trả cuốn được mượn sớm nhất nếu không có userId),
+                        // thì có thể chọn `activeLoanItems.get(0)`.
+                        // Với mục đích sửa lỗi "unique result" và yêu cầu nhập thêm thông tin,
+                        // chúng ta sẽ báo lỗi.
+                        String borrowedBy = activeLoanItems.stream()
+                                .map(item -> item.getBookLoan().getUser().getUserDetail().getFullName() + " (" + item.getBookLoan().getUser().getUserId() + ")")
+                                .collect(Collectors.joining(", "));
+                        throw new Exception("Sách với ISBN '" + isbn + "' đang được mượn bởi nhiều độc giả. Vui lòng nhập Mã độc giả để xác định chính xác. (Đang được mượn bởi: " + borrowedBy + ")");
+                    } else {
+                        // Chỉ có một LoanItem khớp, tiến hành trả
+                        itemToReturn = activeLoanItems.get(0);
+                    }
+                }
+
                 ReturnResponseDTO singleReturnResponse = processReturn(itemToReturn);
-
                 if (singleReturnResponse.getReturnedItem() != null) {
                     successfulReturns.add(singleReturnResponse.getReturnedItem());
                 }
                 if (singleReturnResponse.getPenaltyFee() != null) {
                     generatedPenalties.add(singleReturnResponse.getPenaltyFee());
                 }
+                checkAndCompleteLoan(itemToReturn.getBookLoan());
+
             } catch (Exception e) {
                 processingErrors.add("Sách ISBN '" + isbn + "': " + e.getMessage());
             }
         }
-
-        // Kiểm tra và hoàn tất phiếu mượn nếu tất cả sách đã được trả
-        checkAndCompleteLoan(bookLoan);
-
         return new ReturnMultipleResponseDTO(successfulReturns, generatedPenalties, processingErrors);
     }
-
 
     @Override
     @Transactional
@@ -146,17 +170,11 @@ public class BookLoanServiceImpl implements BookLoanService {
                 throw new Exception("Không thể gia hạn. Sách '"+ item.getBook().getTitle() +"' trong phiếu mượn có phí phạt chưa thanh toán.");
             }
         }
-
         bookLoan.setDueDate(bookLoan.getDueDate().plusDays(BORROW_DURATION_DAYS));
         bookLoan.setRenewalCount(bookLoan.getRenewalCount() + 1);
         BookLoan renewedLoan = bookLoanRepository.save(bookLoan);
-
         return convertToBookLoanDto(renewedLoan);
     }
-
-    // ==========================================================
-    // <<< TRIỂN KHAI NGHIỆP VỤ CHO ĐỘC GIẢ >>>
-    // ==========================================================
 
     @Override
     @Transactional
@@ -178,15 +196,11 @@ public class BookLoanServiceImpl implements BookLoanService {
     @Override
     @Transactional(readOnly = true)
     public Page<LoanItemDto> getLoanHistoryForUser(User user, Pageable pageable) {
+        // Đảm bảo import org.springframework.data.domain.Page và Pageable đã có
         Page<LoanItem> loanItemPage = loanItemRepository.findByBookLoan_UserOrderByBookLoan_BorrowDateDesc(user, pageable);
         return loanItemPage.map(LoanItemDto::new);
     }
 
-    // ==========================================================
-    // <<< LOGIC DÙNG CHUNG VÀ CÁC PHƯƠNG THỨC HỖ TRỢ >>>
-    // ==========================================================
-
-    // <<< TÁCH LOGIC XỬ LÝ TRẢ SÁCH RA PHƯƠNG THỨC RIÊNG >>>
     private ReturnResponseDTO processReturn(LoanItem loanItem) throws Exception {
         loanItem.setReturnDate(LocalDateTime.now());
         loanItem.setStatus("RETURNED");
@@ -210,10 +224,6 @@ public class BookLoanServiceImpl implements BookLoanService {
                 }
             }
         }
-
-        // Việc kiểm tra và hoàn tất phiếu mượn sẽ được gọi bên ngoài sau khi vòng lặp kết thúc
-        // checkAndCompleteLoan(bookLoan);
-
         return new ReturnResponseDTO(convertToSimpleLoanItemDto(updatedLoanItem), newPenaltyFee);
     }
 
@@ -243,7 +253,6 @@ public class BookLoanServiceImpl implements BookLoanService {
             item.setStatus("BORROWED");
             newLoan.addLoanItem(item);
         }
-
         bookRepository.saveAll(booksToBorrow);
         return bookLoanRepository.save(newLoan);
     }
@@ -259,7 +268,6 @@ public class BookLoanServiceImpl implements BookLoanService {
     }
 
     private void checkAndCompleteLoan(BookLoan bookLoan) {
-        // Tải lại trạng thái mới nhất từ DB để chắc chắn
         List<LoanItem> items = loanItemRepository.findByBookLoanId(bookLoan.getId());
         boolean allReturned = items.stream().allMatch(item -> "RETURNED".equals(item.getStatus()));
         if (allReturned) {

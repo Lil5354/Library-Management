@@ -11,29 +11,29 @@
           rel="stylesheet">
     <style>
         :root {
-            /* Wood & Beige Theme */
-            --primary: #8B4513; /* SaddleBrown (Main Wood) */
-            --primary-light: #A0522D; /* Sienna (Lighter Wood) */
-            --primary-dark: #5C3317; /* Darker Wood */
-            --secondary: #D2B48C; /* Tan (Accent Beige/Light Wood) */
-            --light: #FAF0E6; /* Linen (Main Background Beige) */
-            --dark: #4A3B31; /* Dark Brown (Main Text) */
-            --card-bg: #FFFBF0; /* Very Light Warm Off-White (for cards/inputs) */
-            --text-on-primary: #FAF0E6; /* Light beige text for primary background */
-            --text-on-secondary: #4A3B31; /* Dark brown text for secondary background */
-            --text-light-custom: #795548; /* Lighter brown for secondary text */
-            --footer-bg-custom: #3D2B1F; /* Very Dark Brown (Footer BG) */
-            --footer-text-custom: #D3C5BC; /* Light Beige/Brown (Footer Text) */
-            --footer-link-hover-custom: #FAF0E6; /* Linen for hover */
-            --nav-bar-bg: rgba(255, 251, 240, 0.95); /* --card-bg with opacity */
-            --box-shadow-base-color-rgb: 139, 69, 19; /* For box shadows */
-            --border-subtle: #E0D6CC; /* A light brown border */
-            --accordion-button-active-bg: rgba(139, 69, 19, 0.05); /* Primary wood with light alpha */
+            /* New Mint & Teal Theme */
+            --primary: #2E935D; /* Main green for actions */
+            --primary-light: #4CAF7A; /* Lighter green for hovers */
+            --primary-dark: #176335; /* Darker green for headers/text */
+            --secondary: #B3E0D2; /* Light teal accent */
+            --light: #F2FDF6; /* Main background - very light green */
+            --dark: #293D31; /* Dark green/gray text */
+            --card-bg: #FFFFFF; /* Clean white for cards */
+            --text-on-primary: #FFFFFF; /* White text on primary color */
+            --text-on-secondary: #293D31; /* Dark text on secondary color */
+            --text-light-custom: #677C6F; /* Lighter gray-green for secondary text */
+            --footer-bg-custom: #176335; /* Dark green footer */
+            --footer-text-custom: #C0D1C7; /* Light text for footer */
+            --footer-link-hover-custom: #dfffe9; /* Original requested color for hover */
+            --nav-bar-bg: rgba(242, 253, 246, 0.9); /* Translucent light green */
+            --box-shadow-base-color-rgb: 46, 147, 93; /* RGB for --primary */
+            --border-subtle: #DCEEE3; /* Subtle green border */
+            --accordion-button-active-bg: rgba(46, 147, 93, 0.05); /* Light primary for active accordion */
             --input-bg-custom: #FFFFFF;
 
             /* Sidebar specific colors */
-            --sidebar-bg: #FDF5E6; /* Màu nền sidebar */
-            --sidebar-link-hover: #EADDCA; /* Màu hover cho link sidebar */
+            --sidebar-bg: #EAFBF1; /* Soft mint green for sidebar */
+            --sidebar-link-hover: #D3EADC; /* Slightly darker mint for hover */
         }
 
         body {
@@ -47,7 +47,7 @@
 
         /* Navbar */
         .navbar {
-            background-color: rgba(253, 249, 243, 0.95);
+            background-color: var(--nav-bar-bg);
             backdrop-filter: blur(8px);
             transition: all 0.3s ease;
             border-bottom: 1px solid var(--border-subtle);
@@ -120,59 +120,7 @@
         }
 
         /* Hero Section (Librarian Home Banner) */
-        .staff-hero-section {
-            height: 400px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            background-image: url('https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2070&auto=format&fit=crop');
-            background-size: cover;
-            background-position: center 30%;
-            background-attachment: fixed;
-        }
 
-        .staff-hero-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.4) 100%);
-            z-index: 1;
-        }
-
-        .staff-hero-section .container {
-            position: relative;
-            z-index: 2;
-            animation: fadeInScale 1s ease-out forwards;
-        }
-
-        .staff-hero-section h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3.8rem;
-            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
-        }
-
-        .staff-hero-section p {
-            font-size: 1.4rem;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
-        }
-
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
 
         /* Wrapper for Sidebar and Content */
         .wrapper {
@@ -188,69 +136,85 @@
             background: var(--sidebar-bg);
             box-shadow: 2px 0 15px rgba(var(--box-shadow-base-color-rgb), 0.1);
             transition: all 0.3s;
-            padding-top: 20px;
             position: sticky;
             top: 70px;
             height: calc(100vh - 70px);
             overflow-y: auto;
         }
 
+        /* --- CSS ĐÃ CẢI TIẾN --- */
         .sidebar-header {
-            padding: 20px;
-            background: var(--card-bg);
+            padding: 20px 25px; /* Tăng khoảng cách lề ngang */
+            background: transparent; /* Bỏ nền để đồng bộ với sidebar */
             border-bottom: 1px solid var(--border-subtle);
-            text-align: center;
+            text-align: left; /* Căn lề trái */
         }
 
         .sidebar-header h3 {
-            color: var(--primary);
+            color: var(--primary-dark); /* Đổi màu chữ cho đậm hơn một chút */
             font-family: 'Playfair Display', serif;
             margin-bottom: 0;
-            font-size: 1.8rem;
+            font-size: 1.6rem; /* Giảm kích thước chữ một chút cho cân đối */
+            display: flex; /* Bật flexbox để căn chỉnh icon và chữ */
+            align-items: center;
+            gap: 12px; /* Tạo khoảng cách giữa icon và chữ */
         }
 
+        /* --- CSS ĐÃ CẢI TIẾN --- */
         .sidebar-menu {
-            padding: 10px 0;
+            padding: 15px; /* Thêm padding cho toàn bộ khối menu */
             margin: 0;
         }
 
         .sidebar-menu .nav-item {
             font-weight: 500;
+            margin-bottom: 5px; /* Tạo khoảng cách giữa các mục menu */
         }
 
         .sidebar-menu .nav-link {
-            padding: 15px 20px;
+            padding: 12px 18px; /* Điều chỉnh lại padding */
             color: var(--dark);
             display: flex;
             align-items: center;
-            border-left: 4px solid transparent;
-            transition: all 0.3s ease;
+            border-radius: 8px; /* Bo tròn các góc */
+            transition: all 0.25s ease-in-out;
+            /* Bỏ border-left để thay bằng hiệu ứng nền */
         }
 
         .sidebar-menu .nav-link i {
             width: 30px;
             text-align: center;
-            margin-right: 10px;
+            margin-right: 12px; /* Tăng nhẹ khoảng cách icon và chữ */
             font-size: 1.1rem;
+            transition: all 0.25s ease-in-out;
         }
 
-        .sidebar-menu .nav-link:hover {
+        /* Hiệu ứng khi hover cho các mục chưa active */
+        .sidebar-menu .nav-link:not(.active):hover {
             background: var(--sidebar-link-hover);
             color: var(--primary-dark);
+            transform: translateX(5px); /* Hiệu ứng di chuyển nhẹ sang phải */
         }
 
+        /* Hiệu ứng cho mục đang active (được chọn) */
         .sidebar-menu .nav-link.active {
-            background: var(--sidebar-link-hover);
-            color: var(--primary);
+            background: var(--primary);
+            color: var(--text-on-primary) !important;
             font-weight: 700;
-            border-left-color: var(--primary);
+            box-shadow: 0 4px 10px rgba(var(--box-shadow-base-color-rgb), 0.25);
+        }
+
+        /* Đổi cả màu icon khi active */
+        .sidebar-menu .nav-link.active i {
+            color: var(--text-on-primary) !important;
         }
 
         /* Content Area */
         #content {
             flex-grow: 1;
-            padding: 25px;
+            padding: 25px 25px 25px 80px;
             overflow-y: auto;
+            position: relative;
         }
 
         .page-header {
@@ -270,7 +234,7 @@
         }
 
         .card-header {
-            background-color: var(--sidebar-bg);
+            background-color: transparent;
             border-bottom: 1px solid var(--border-subtle);
             color: var(--primary-dark);
             font-size: 1.1rem;
@@ -300,8 +264,9 @@
         }
 
         .btn-secondary:hover {
-            background-color: #C3A37C;
-            border-color: #C3A37C;
+            background-color: #97C7B7; /* Darker secondary */
+            border-color: #97C7B7;
+            color: var(--text-on-secondary);
         }
 
         .btn-info {
@@ -409,23 +374,23 @@
 
         /* --- STYLES FOR ACCORDION (GENERIC) --- */
         .accordion-button-custom {
-            background-color: #fffbf5 !important;
+            background-color: var(--card-bg) !important;
             color: var(--dark) !important;
             box-shadow: none !important;
             border-top: 1px solid var(--border-subtle);
         }
         .accordion-button-custom:not(.collapsed) {
-            background-color: var(--sidebar-link-hover) !important;
+            background-color: var(--accordion-button-active-bg) !important;
             color: var(--primary-dark) !important;
         }
         .accordion-button-custom:after {
-            filter: brightness(0) saturate(100%) invert(23%) sepia(21%) saturate(1478%) hue-rotate(346deg) brightness(91%) contrast(87%);
+            filter: brightness(0) saturate(100%) invert(18%) sepia(16%) saturate(1149%) hue-rotate(95deg) brightness(95%) contrast(84%);
         }
         .accordion-item-custom {
             border: none;
         }
         .accordion-body-custom {
-            background-color: #fdf8f0;
+            background-color: var(--light);
             padding: 0;
         }
         .detail-item-table { /* Changed from book-item-table */
@@ -442,7 +407,7 @@
         .accordion-footer-custom {
             padding: 1rem 1.25rem;
             text-align: right;
-            background-color: #f7f1e9;
+            background-color: var(--sidebar-bg);
             border-top: 1px solid var(--border-subtle);
         }
         /* ------------------------------------------- */
@@ -502,7 +467,7 @@
             height: 40px;
             line-height: 40px;
             text-align: center;
-            background-color: rgba(250, 240, 230, 0.1);
+            background-color: rgba(223, 255, 233, 0.1);
             color: var(--footer-link-hover-custom);
             border-radius: 50%;
             margin-right: 10px;
@@ -516,7 +481,7 @@
         }
 
         .footer-bottom {
-            border-top: 1px solid rgba(250, 240, 230, 0.15);
+            border-top: 1px solid rgba(223, 255, 233, 0.15);
             padding-top: 20px;
             margin-top: 40px;
             font-size: 0.9rem;
@@ -562,7 +527,7 @@
             }
 
             .navbar.fixed-top {
-                box-shadow: 0 2px 10px rgba(139, 69, 19, 0.07);
+                box-shadow: 0 2px 10px rgba(var(--box-shadow-base-color-rgb), 0.07);
             }
 
             .staff-hero-section {
@@ -627,193 +592,520 @@
             display: block;
         }
 
+        /* Nút bấm điều khiển chính */
+        /* === BẮT ĐẦU ĐOẠN MÃ CSS CẦN THAY THẾ === */
+
+        /* --- CSS for Sidebar Toggle --- */
+
+        /* Nút bấm điều khiển chính trên desktop */
+        #sidebar-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 280px; /* Vị trí ban đầu = chiều rộng sidebar (260) + 20px */
+            z-index: 1051;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            transition: all 0.35s ease-in-out;
+            color: var(--primary);
+            box-shadow: 0 2px 10px rgba(var(--box-shadow-base-color-rgb), 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #sidebar-toggle-btn:hover {
+            background-color: var(--primary);
+            color: var(--text-on-primary);
+        }
+
+        #sidebar-toggle-btn i {
+            transition: transform 0.35s ease-in-out;
+        }
+
+        /* Hiệu ứng trượt cho sidebar */
+        #sidebar {
+            transition: margin-left 0.35s ease-in-out;
+        }
+
+        /* Layout khi sidebar bị thu gọn (body.sidebar-collapsed) */
+        body.sidebar-collapsed #sidebar {
+            margin-left: -260px; /* Trượt sidebar ra ngoài */
+        }
+
+        body.sidebar-collapsed #sidebar-toggle-btn {
+            left: 20px; /* Di chuyển nút bấm về sát lề trái */
+        }
+
+        body.sidebar-collapsed #sidebar-toggle-btn i {
+            transform: rotate(180deg); /* Xoay icon mũi tên */
+        }
+
+        /* Ẩn nút toggle desktop trên màn hình mobile */
+        @media (max-width: 992px) {
+            #sidebar-toggle-btn {
+                display: none;
+            }
+        }
+        /* === KẾT THÚC ĐOẠN MÃ CSS CẦN THAY THẾ === */
     </style>
+    <style>
+        /* --- Định dạng màu sắc mới cho thẻ thống kê --- */
+        .card-border-brown { border-left: 4px solid var(--primary); }
+        .text-brown { color: var(--primary) !important; }
+
+        .card-border-terracotta { border-left: 4px solid var(--primary-light); }
+        .text-terracotta { color: var(--primary-light) !important; }
+
+        .card-border-olive { border-left: 4px solid #468966; }
+        .text-olive { color: #468966 !important; }
+
+        .card-border-sand { border-left: 4px solid var(--secondary); }
+        .text-sand { color: var(--secondary) !important; }
+
+        .card-border-slate { border-left: 4px solid #0097A7; }
+        .text-slate { color: #0097A7 !important; }
+
+        .text-gray-400 { color: var(--text-light-custom) !important; }
+
+        /* --- Định dạng cho Lịch --- */
+        .calendar-container {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 4px 12px rgba(var(--box-shadow-base-color-rgb), 0.08);
+        }
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0.5rem;
+            color: var(--primary-dark);
+        }
+        .calendar-header h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .calendar-weekdays, .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        .calendar-weekdays div {
+            text-align: center;
+            font-weight: 600;
+            color: var(--text-light-custom);
+            padding: 0.5rem 0;
+        }
+        .calendar-days div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 50px;
+            text-align: center;
+            border: 1px solid var(--border-subtle);
+            border-radius: 4px;
+            cursor: default;
+            transition: all 0.2s ease-in-out;
+        }
+        .calendar-days div.prev-month,
+        .calendar-days div.next-month {
+            opacity: 0.4;
+        }
+        .calendar-days div.today {
+            background-color: var(--primary) !important;
+            color: var(--text-on-primary) !important;
+            border-color: var(--primary-dark) !important;
+            font-weight: 700;
+        }
+
+        /* --- Định dạng cho Thư viện ảnh --- */
+        .inspiration-gallery .img-fluid {
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            object-fit: cover;
+            height: 200px; /* Đảm bảo các ảnh cao bằng nhau */
+            width: 100%;
+        }
+        .inspiration-gallery .img-fluid:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        /* Giao diện mới cho Dropdown thông báo - THEME XANH MÁT */
+        .notification-dropdown-menu {
+            width: 360px;
+            max-width: 90vw;
+            padding: 0;
+            border: 1px solid var(--border-subtle); /* Thay đổi màu viền */
+            background-color: var(--card-bg);      /* Nền trắng sạch sẽ giống các card khác */
+            box-shadow: 0 5px 20px rgba(var(--box-shadow-base-color-rgb), 0.1); /* Sử dụng biến màu đổ bóng */
+            border-radius: 8px; /* Thêm bo góc cho mềm mại */
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            font-size: 14px;
+            color: var(--dark); /* Thay đổi màu chữ */
+            background-color: var(--light); /* Nền xanh rất nhạt đồng bộ với trang */
+        }
+
+        .notification-header span {
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+
+        .notification-header a {
+            font-size: 12px;
+            color: var(--primary); /* Sử dụng màu xanh chính của trang */
+        }
+
+        /* Container cho danh sách để có thể cuộn */
+        #notificationListContainer {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        /* Tùy chỉnh thanh cuộn cho đồng bộ */
+        #notificationListContainer::-webkit-scrollbar {
+            width: 6px;
+        }
+        #notificationListContainer::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #notificationListContainer::-webkit-scrollbar-thumb {
+            background: var(--border-subtle);
+            border-radius: 6px;
+        }
+        #notificationListContainer::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        .notification-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-subtle); /* Thay đổi màu đường kẻ */
+            transition: background-color 0.2s ease-in-out;
+            position: relative;
+        }
+
+        .notification-item:hover {
+            background-color: var(--sidebar-link-hover); /* Màu hover giống sidebar (gần với #dfffe9) */
+        }
+
+        /* Đánh dấu thông báo chưa đọc */
+        .notification-item.unread {
+            background-color: var(--sidebar-bg); /* Nền xanh nhạt cho thông báo chưa đọc */
+        }
+
+        .notification-item .notification-icon {
+            font-size: 1rem;
+            margin-right: 12px;
+            margin-top: 4px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Chấm tròn cho thông báo chưa đọc */
+        .notification-item.unread .notification-icon .fa-circle {
+            font-size: 0.6rem;
+            color: var(--primary);
+        }
+
+        .notification-content-text {
+            flex-grow: 1;
+            cursor: pointer;
+        }
+
+        .notification-content-text .title-link {
+            font-weight: 600;
+            color: var(--primary-dark); /* Thay đổi màu tiêu đề */
+            text-decoration: none;
+        }
+        .notification-content-text .title-link:hover {
+            text-decoration: underline;
+        }
+
+        .notification-content-text .message {
+            font-size: 14px;
+            color: var(--dark); /* Thay đổi màu nội dung */
+            margin-bottom: 4px;
+        }
+
+        .notification-content-text .time-ago {
+            font-size: 12px;
+            color: var(--text-light-custom); /* Thay đổi màu thời gian */
+        }
+
+        .delete-notification-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 2px 6px;
+            border-radius: 50%;
+            background-color: transparent;
+            border: none;
+            opacity: 0; /* Ẩn nút xóa mặc định */
+            transition: opacity 0.2s, background-color 0.2s;
+        }
+
+        .notification-item:hover .delete-notification-btn {
+            opacity: 1; /* Hiện khi hover vào item */
+        }
+
+        .delete-notification-btn:hover {
+            background-color: var(--border-subtle); /* Thay đổi màu hover nút xóa */
+        }
+
+        .dropdown-divider {
+            margin: 0;
+            border-top: 1px solid var(--border-subtle); /* Thay đổi màu đường kẻ */
+        }
+
+        .dropdown-footer {
+            padding: 8px 16px;
+            background-color: var(--light);
+        }
+        /* Thêm đoạn mã này để ẩn nút xóa độc giả */
+        .delete-reader-btn {
+            display: none !important;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Chỉ thực thi script này khi tab dashboard được hiển thị
+            const dashboardTab = document.getElementById('v-pills-dashboard-tab');
+            if (dashboardTab) {
+                // Kiểm tra xem tab có đang active không, hoặc lắng nghe sự kiện show
+                if(dashboardTab.classList.contains('active')) {
+                    initializeDashboardCalendar();
+                } else {
+                    dashboardTab.addEventListener('shown.bs.tab', initializeDashboardCalendar, { once: true });
+                }
+            }
+
+            function initializeDashboardCalendar() {
+                const monthAndYear = document.getElementById('monthAndYear');
+                const calendarDays = document.getElementById('calendarDays');
+                const prevMonthBtn = document.getElementById('prevMonthBtn');
+                const nextMonthBtn = document.getElementById('nextMonthBtn');
+
+                let currentDate = new Date();
+
+                function renderCalendar() {
+                    const month = currentDate.getMonth();
+                    const year = currentDate.getFullYear();
+
+                    monthAndYear.textContent = `Tháng ${month + 1}, ${year}`;
+
+                    calendarDays.innerHTML = '';
+
+                    const firstDayOfMonth = new Date(year, month, 1).getDay();
+                    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                    const today = new Date();
+
+                    // Lấp đầy các ngày trống của tháng trước
+                    const daysInPrevMonth = new Date(year, month, 0).getDate();
+                    for (let i = firstDayOfMonth; i > 0; i--) {
+                        const dayDiv = document.createElement('div');
+                        dayDiv.classList.add('prev-month');
+                        dayDiv.textContent = daysInPrevMonth - i + 1;
+                        calendarDays.appendChild(dayDiv);
+                    }
+
+                    // Điền các ngày của tháng hiện tại
+                    for (let i = 1; i <= daysInMonth; i++) {
+                        const dayDiv = document.createElement('div');
+                        dayDiv.textContent = i;
+                        if (i === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                            dayDiv.classList.add('today');
+                        }
+                        calendarDays.appendChild(dayDiv);
+                    }
+
+                    // Lấp đầy các ngày trống của tháng sau
+                    const totalCells = calendarDays.children.length;
+                    const remainingCells = (totalCells % 7 === 0) ? 0 : 7 - (totalCells % 7);
+                    for (let i = 1; i <= remainingCells; i++) {
+                        const dayDiv = document.createElement('div');
+                        dayDiv.classList.add('next-month');
+                        dayDiv.textContent = i;
+                        calendarDays.appendChild(dayDiv);
+                    }
+                }
+
+                prevMonthBtn.addEventListener('click', () => {
+                    currentDate.setMonth(currentDate.getMonth() - 1);
+                    renderCalendar();
+                });
+
+                nextMonthBtn.addEventListener('click', () => {
+                    currentDate.setMonth(currentDate.getMonth() + 1);
+                    renderCalendar();
+                });
+
+                renderCalendar();
+            }
+        });
+    </script>
 </head>
 <body>
+
+
+<button type="button" id="sidebar-toggle-btn" class="btn shadow-sm">
+    <i class="fas fa-chevron-left"></i>
+</button>
 
 <button class="btn sidebar-toggle-btn d-lg-none" id="sidebarToggle">
     <i class="fas fa-bars"></i>
 </button>
-
 <nav class="navbar navbar-expand-lg navbar-light fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand ms-lg-0 ms-auto" href="/staff/dashboard"><i class="fas fa-book-open me-2"></i>Thư
-            viện<span>Số</span></a>
-        <button class="navbar-toggler d-none" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <a class="navbar-brand" href="/staff/dashboard">
+            <i class="fas fa-book-open me-2"></i>Thư viện<span>Số</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            </ul>
-            <div class="d-flex align-items-center">
-                <div th:if="${isAuthenticated}" class="d-flex align-items-center">
-                     <span class="me-2 navbar-text d-none d-lg-inline" style="color: var(--dark); white-space: nowrap;">
-                         Chào <span
-                             th:text="${loggedInUserFullName != null ? loggedInUserFullName : 'Thủ thư'}">Thủ thư</span>!👋
-                     </span>
 
-                    <div class="dropdown me-3">
-                        <a href="#" class="nav-icon-link position-relative" id="notificationDropdownToggle"
-                           data-bs-toggle="dropdown" aria-expanded="false"
-                           th:title="${unreadNotificationCount > 0 ? 'Bạn có ' + unreadNotificationCount + ' thông báo chưa đọc' : 'Không có thông báo mới'}">
-                            <i class="fas fa-bell user-notification-icon"></i>
-                            <span th:if="${unreadNotificationCount > 0}" id="notificationBadge"
-                                  class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                 [[${unreadNotificationCount}]]
-                             </span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow notification-dropdown"
-                            aria-labelledby="notificationDropdownToggle">
-                            <li class="notification-header">
-                                <h6 class="mb-0">Thông báo</h6>
-                                <a href="javascript:void(0);" id="markAllReadBtn">Đánh dấu tất cả đã đọc</a>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider my-0">
-                            </li>
+            <div th:if="${isAuthenticated}" class="d-flex align-items-center ms-auto">
 
-                            <li class="notification-body">
-                                <ul class="list-unstyled mb-0" id="notificationList">
-                                    <li>
-                                        <a href="#" class="dropdown-item d-flex align-items-start py-2">
-                                            <div class="flex-shrink-0 me-3">
-                                                <i class="fas fa-exclamation-circle text-warning mt-1"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <div class="fw-bold">Sách quá hạn!</div>
-                                                <small class="text-muted">Độc giả Nguyễn Văn A có sách "Nhà Giả Kim" quá
-                                                    hạn 5 ngày.</small>
-                                                <div class="text-muted small">2 giờ trước</div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="dropdown-item d-flex align-items-start py-2">
-                                            <div class="flex-shrink-0 me-3">
-                                                <i class="fas fa-info-circle text-info mt-1"></i>
-                                            </div>
-                                            <div class="flex-grow-1">
-                                                <div class="fw-bold">Sách mới về!</div>
-                                                <small class="text-muted">Đã thêm 10 bản "Harry Potter" vào kho.</small>
-                                                <div class="text-muted small">Hôm qua</div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                </ul>
+                <span class="me-3 navbar-text" style="color: var(--dark); white-space: nowrap;">
+                    Chào <span th:text="${loggedInUserFullName != null ? loggedInUserFullName : 'Thủ thư'}">Thủ thư</span>!<span class="wave-hand-navbar">👋</span>
+                </span>
 
-                                <div id="notificationEmptyState"
-                                     style="display: none; text-align: center; padding: 20px;">
-                                    <i class="far fa-envelope-open fa-2x text-muted mb-2"></i>
-                                    <p class="mb-0 text-muted">Bạn chưa có thông báo nào.</p>
-                                </div>
-                            </li>
+                <div class="dropdown me-3">
+                    <a class="nav-link nav-icon" href="#" id="notificationDropdownToggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                       th:title="${unreadNotificationCount > 0 ? 'Bạn có ' + unreadNotificationCount + ' thông báo chưa đọc' : 'Không có thông báo mới'}">
+                        <i class="fas fa-bell"></i>
+                        <span th:if="${unreadNotificationCount > 0}" id="notificationBadge"
+                              class="badge bg-danger rounded-pill" style="position: absolute; top: 10px; right: -5px; font-size: 0.6em; padding: 4px 6px;">
+             [[${unreadNotificationCount}]]
+        </span>
+                    </a>
 
-                            <li class="notification-footer">
-                                <button class="btn-load-more" id="loadMoreBtn"
-                                        style="width: 100%; border: none; background: none; color: var(--primary); padding: 10px 0; font-weight: 500;">
-                                    Tải thêm
-                                </button>
-                            </li>
-                        </ul>
-                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notification-dropdown-menu" aria-labelledby="notificationDropdownToggle">
+                        <li class="dropdown-header notification-header">
+                            <span>Bạn có thông báo mới</span>
+                            <a href="#" id="markAllReadBtn" class="text-decoration-underline">Đánh dấu tất cả đã đọc</a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
 
-                    <div class="dropdown">
-                        <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle"
-                           id="dropdownUserNavbar" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="fas fa-user-tie fa-lg user-avatar-icon"></i>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end text-small shadow"
-                            aria-labelledby="dropdownUserNavbar">
-                            <li class="px-3 py-2 text-center">
-                                <img th:if="${loggedInUserAvatarUrl != null AND !loggedInUserAvatarUrl.isEmpty()}"
-                                     th:src="${loggedInUserAvatarUrl}"
-                                     alt="User Avatar" width="70" height="70"
-                                     class="rounded-circle mb-2 border user-avatar-dropdown">
-                                <div th:unless="${loggedInUserAvatarUrl != null AND !loggedInUserAvatarUrl.isEmpty()}"
-                                     class="default-avatar-dropdown mb-2">
-                                    <i class="fas fa-user-circle fa-4x text-muted"></i>
-                                </div>
-                                <h5 class="mb-0 dropdown-username"
-                                    th:text="${loggedInUsername != null ? loggedInUsername : 'Thủ thư'}">
-                                    Thủ thư
-                                </h5>
-                                <p class="text-muted mb-0 dropdown-email"
-                                   th:text="${loggedInUserEmail != null ? loggedInUserEmail : 'email@thuvien.com'}">
-                                    email@thuvien.com
-                                </p>
-                            </li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li><a class="dropdown-item" th:href="@{/staff/profile}"><i
-                                    class="fas fa-user-edit me-2"></i>Thông tin cá nhân</a></li>
-                            <li><a class="dropdown-item" th:href="@{/staff/settings}"><i class="fas fa-cog me-2"></i>Cài
-                                đặt</a></li>
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                            <li>
-                                <form th:action="@{/auth/logout}" method="post" class="d-block">
-                                    <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Đăng
-                                        xuất
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
+                        <div id="notificationListContainer">
+                            <ul id="notificationList" class="list-unstyled mb-0">
+                            </ul>
+                        </div>
+
+                        <li id="notificationEmptyState" class="text-center p-4 text-muted" style="display: none;">
+                            <i class="far fa-bell-slash fa-2x"></i>
+                            <p class="mb-0 mt-2">Không có thông báo nào.</p>
+                        </li>
+
+                        <li><hr class="dropdown-divider"></li>
+
+                        <li class="dropdown-footer text-center">
+                            <button class="btn btn-link text-decoration-none" id="loadMoreBtn" style="display: none;">Tải thêm</button>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="dropdown">
+                    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                        <img th:if="${loggedInUserAvatarUrl}" th:src="${loggedInUserAvatarUrl}" alt="Avatar" width="32" height="32" class="rounded-circle">
+                        <i th:unless="${loggedInUserAvatarUrl}" class="fas fa-user-circle fa-lg user-avatar-icon"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end text-small shadow" aria-labelledby="dropdownUserNavbar">
+                        <li class="px-3 py-2 text-center">
+                            <img th:if="${loggedInUserAvatarUrl != null AND !loggedInUserAvatarUrl.isEmpty()}"
+                                 th:src="${loggedInUserAvatarUrl}"
+                                 alt="User Avatar" width="70" height="70"
+                                 class="rounded-circle mb-2 border user-avatar-dropdown">
+                            <div th:unless="${loggedInUserAvatarUrl != null AND !loggedInUserAvatarUrl.isEmpty()}"
+                                 class="default-avatar-dropdown mb-2">
+                                <i class="fas fa-user-circle fa-4x text-muted"></i>
+                            </div>
+                            <h5 class="mb-0 dropdown-username"
+                                th:text="${loggedInUsername != null ? loggedInUsername : 'Thủ thư'}">
+                                Username
+                            </h5>
+                            <p class="text-muted mb-0 dropdown-email"
+                               th:text="${loggedInUserEmail != null ? loggedInUserEmail : 'email@thuvien.com'}">
+                                email@example.com
+                            </p>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" th:href="@{/staff/profile}" id="editProfileBtn"><i class="fas fa-user-edit me-2"></i>Thông tin tài khoản</a></li>
+                        <li><a class="dropdown-item" href="#" id="changePasswordBtn"><i class="fas fa-key me-2"></i>Đổi mật khẩu</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/auth/logout}" method="post" class="d-block">
+                                <button type="submit" class="dropdown-item"><i class="fas fa-sign-out-alt me-2"></i>Đăng xuất</button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             </div>
+
+            <div th:if="${!isAuthenticated}" class="ms-auto">
+                <a th:href="@{/auth/login}" class="btn nav-btn btn-login me-2">Đăng nhập</a>
+                <a th:href="@{/auth/register}" class="btn nav-btn btn-register">Đăng ký</a>
+            </div>
+
         </div>
     </div>
 </nav>
 
-<section class="staff-hero-section d-none d-lg-flex">
-    <div class="container">
-        <h1>Chào mừng, Thủ thư!</h1>
-        <p>Bảng điều khiển toàn diện cho quản lý thư viện của bạn.</p>
-    </div>
-</section>
+
 <div class="wrapper">
     <nav id="sidebar">
         <div class="sidebar-header">
-            <h3><i class="fas fa-cogs"></i> Quản lý Thư viện</h3>
+
         </div>
 
         <ul class="nav flex-column sidebar-menu nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
             <li class="nav-item">
                 <a class="nav-link active" id="v-pills-dashboard-tab" data-bs-toggle="pill" href="#v-pills-dashboard"
                    role="tab" aria-controls="v-pills-dashboard" aria-selected="true">
-                    <i class="fas fa-tachometer-alt"></i> Tổng quan
+                    <i class="fas fa-tachometer-alt"></i> <span>Tổng quan</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="v-pills-sach-tab" data-bs-toggle="pill" href="#v-pills-sach" role="tab"
                    aria-controls="v-pills-sach" aria-selected="false">
-                    <i class="fas fa-book"></i> Quản lý Sách
+                    <i class="fas fa-book"></i> <span>Quản lý Sách</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="v-pills-docgia-tab" data-bs-toggle="pill" href="#v-pills-docgia" role="tab"
                    aria-controls="v-pills-docgia" aria-selected="false">
-                    <i class="fas fa-users"></i> Quản lý Độc giả
+                    <i class="fas fa-users"></i> <span>Quản lý Độc giả</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="v-pills-muontra-tab" data-bs-toggle="pill" href="#v-pills-muontra" role="tab"
                    aria-controls="v-pills-muontra" aria-selected="false">
-                    <i class="fas fa-exchange-alt"></i> Quản lý Mượn/Trả
+                    <i class="fas fa-exchange-alt"></i> <span>Quản lý Mượn/Trả</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="v-pills-baocao-tab" data-bs-toggle="pill" href="#v-pills-baocao" role="tab"
                    aria-controls="v-pills-baocao" aria-selected="false">
-                    <i class="fas fa-chart-pie"></i> Báo cáo & Thống kê
+                    <i class="fas fa-chart-pie"></i> <span>Báo cáo & Thống kê</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="v-pills-phiphat-tab" data-bs-toggle="pill" href="#v-pills-phiphat" role="tab"
                    aria-controls="v-pills-phiphat" aria-selected="false">
-                    <i class="fas fa-dollar-sign"></i> Quản lý Phí phạt
+                    <i class="fas fa-dollar-sign"></i> <span>Quản lý Phí phạt</span>
                 </a>
             </li>
 
@@ -821,17 +1113,160 @@
     </nav>
 
     <div id="content">
+
         <div class="tab-content" id="v-pills-tabContent">
 
+            <div class="tab-pane fade show active" id="v-pills-dashboard" role="tabpanel"
+                 aria-labelledby="v-pills-dashboard-tab">
+
+                <div class="row">
+                    <div class="col-xl col-md-6 mb-4">
+                        <div class="card card-border-brown h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold text-brown text-uppercase mb-1" style="font-size: 0.8rem;">Sách đang mượn</div>
+                                        <div class="h5 mb-0 fw-bold" th:text="${dashboardStats.borrowedBooks}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-book-reader fa-2x text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl col-md-6 mb-4">
+                        <div class="card card-border-terracotta h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold text-terracotta text-uppercase mb-1" style="font-size: 0.8rem;">Sách quá hạn</div>
+                                        <div class="h5 mb-0 fw-bold" th:text="${dashboardStats.overdueBooks}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-exclamation-triangle fa-2x text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl col-md-6 mb-4">
+                        <div class="card card-border-olive h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold text-olive text-uppercase mb-1" style="font-size: 0.8rem;">Lượt mượn hôm nay</div>
+                                        <div class="h5 mb-0 fw-bold" th:text="${dashboardStats.borrowsToday}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-arrow-circle-up fa-2x text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl col-md-6 mb-4">
+                        <div class="card card-border-sand h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold text-sand text-uppercase mb-1" style="font-size: 0.8rem;">Lượt trả hôm nay</div>
+                                        <div class="h5 mb-0 fw-bold" th:text="${dashboardStats.returnsToday}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-arrow-circle-down fa-2x text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl col-md-6 mb-4">
+                        <div class="card card-border-slate h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center p-3">
+                                    <div class="flex-grow-1">
+                                        <div class="fw-bold text-slate text-uppercase mb-1" style="font-size: 0.8rem;">Độc giả mới hôm nay</div>
+                                        <div class="h5 mb-0 fw-bold" th:text="${dashboardStats.newReadersToday}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-user-plus fa-2x text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="card calendar-container">
+                            <div class="card-body">
+                                <div class="calendar-header">
+                                    <button id="prevMonthBtn" class="btn btn-outline-secondary btn-sm"><i class="fas fa-chevron-left"></i></button>
+                                    <h4 id="monthAndYear" class="mb-0"></h4>
+                                    <button id="nextMonthBtn" class="btn btn-outline-secondary btn-sm"><i class="fas fa-chevron-right"></i></button>
+                                </div>
+                                <div class="calendar-weekdays">
+                                    <div>CN</div>
+                                    <div>T2</div>
+                                    <div>T3</div>
+                                    <div>T4</div>
+                                    <div>T5</div>
+                                    <div>T6</div>
+                                    <div>T7</div>
+                                </div>
+                                <div class="calendar-days" id="calendarDays">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-5">
+                    <div class="col-12">
+                        <h4 class="page-header" style="font-size: 1.8rem; border-color: var(--border-subtle);">Góc cảm hứng</h4>
+                    </div>
+                </div>
+                <div class="row inspiration-gallery">
+                    <div class="col-6 col-md-3 mb-4">
+                        <img src="https://images.pexels.com/photos/207756/pexels-photo-207756.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Góc đọc sách ấm cúng" class="img-fluid">
+                    </div>
+                    <div class="col-6 col-md-3 mb-4">
+                        <img src="https://images.pexels.com/photos/1188523/pexels-photo-1188523.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Những cuốn sách cũ trên kệ" class="img-fluid">
+                    </div>
+                    <div class="col-6 col-md-3 mb-4">
+                        <img src="https://images.pexels.com/photos/159711/books-bookstore-book-reading-159711.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Thư viện với ánh đèn vàng" class="img-fluid">
+                    </div>
+                    <div class="col-6 col-md-3 mb-4">
+                        <img src="https://images.pexels.com/photos/694740/pexels-photo-694740.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Một tách cà phê và sách" class="img-fluid">
+                    </div>
+                    <div class="col-6 col-md-3 mb-4">
+                        <img src="https://images.pexels.com/photos/3747502/pexels-photo-3747502.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Người đang đọc sách" class="img-fluid">
+                    </div>
+                    <div class="col-6 col-md-3 mb-4">
+                        <img src="https://images.pexels.com/photos/2228561/pexels-photo-2228561.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Bàn làm việc với sách và nến" class="img-fluid">
+                    </div>
+                    <div class="col-6 col-md-3 mb-4">
+                        <img src="https://images.pexels.com/photos/261821/pexels-photo-261821.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Cầu thang trong thư viện cổ" class="img-fluid">
+                    </div>
+                    <div class="col-6 col-md-3 mb-4">
+                        <img src="https://images.pexels.com/photos/4599736/pexels-photo-4599736.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Chi tiết gáy sách cũ" class="img-fluid">
+                    </div>
+                </div>
+            </div>
             <div class="tab-pane fade" id="v-pills-phiphat" role="tabpanel" aria-labelledby="v-pills-phiphat-tab">
                 <h2 class="page-header">Quản lý Phí phạt</h2>
+
                 <div id="penalty-management-alert" class="alert d-none" role="alert"></div>
 
                 <div class="card">
                     <div class="card-body">
                         <div class="mb-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
                             <p class="text-muted mb-0">Danh sách các khoản phí phạt, nhóm theo từng độc giả.</p>
-                            <div class="d-flex align-items-center gap-2">
+                            <div class="d-flex align-items-center gap-2" style="display: none;">
                                 <label for="penaltyStatusFilter" class="form-label mb-0">Trạng thái:</label>
                                 <select class="form-select form-select-sm" id="penaltyStatusFilter" style="width: 150px;">
                                     <option value="UNPAID" selected>Chưa thanh toán</option>
@@ -842,8 +1277,22 @@
                             </div>
                         </div>
 
+                        <div class="mb-3">
+                            <form id="penalty-search-form" class="mb-0">
+                                <div class="input-group">
+                                    <input type="text" id="penalty-search-input" class="form-control" placeholder="Nhập mã hoặc tên độc giả để tìm...">
+                                    <button class="btn btn-outline-primary" type="submit">
+                                        <i class="fas fa-search me-1"></i> Tìm kiếm
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                         <div class="accordion" id="penaltyFeeAccordion">
                         </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0 pt-0">
+                        <nav id="penaltyPagination" aria-label="Penalty Page navigation">
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -881,14 +1330,14 @@
                             <div class="card-body">
                                 <form id="return-form">
                                     <div class="mb-3">
-                                        <label for="borrowerId" class="form-label">Mã độc giả</label>
-                                        <input type="text" class="form-control" id="borrowerId" name="userId"
-                                               placeholder="Quét mã vạch hoặc nhập mã..." required>
+                                        <label for="returnReaderId" class="form-label">Mã độc giả (Tùy chọn)</label>
+                                        <input type="text" class="form-control" id="returnReaderId" name="userId"
+                                               placeholder="Quét hoặc nhập mã độc giả...">
                                     </div>
                                     <div class="mb-3">
                                         <label for="bookIsbnReturn" class="form-label">Mã sách (ISBN)</label>
                                         <textarea class="form-control" id="bookIsbnReturn" name="isbns" rows="4"
-                                                  placeholder="Quét hoặc nhập nhiều ISBN, mỗi mã cách nhau bằng dấu phẩy (,) hoặc xuống dòng..." required></textarea>
+                                                  placeholder="Quét hoặc nhập nhiều ISBN, mỗi mã cách nhau bằng dấu phẩy (,)" required></textarea>
                                     </div>
                                     <button type="submit" class="btn btn-success w-100"><i class="fas fa-undo-alt"></i>
                                         Xác nhận Trả
@@ -902,9 +1351,26 @@
 
                 <div class="card">
                     <div class="card-header fw-bold text-primary">DANH SÁCH PHIẾU MƯỢN ĐANG HOẠT ĐỘNG</div>
+
+                    <div class="p-3 border-bottom">
+                        <form id="borrowing-search-form" class="mb-0">
+                            <div class="input-group">
+                                <input type="text" id="borrowing-search-input" class="form-control" placeholder="Nhập mã hoặc tên độc giả để tìm kiếm...">
+                                <button class="btn btn-outline-primary" type="submit">
+                                    <i class="fas fa-search me-1"></i> Tìm kiếm
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
                     <div class="card-body p-0">
                         <div class="accordion" id="borrowingAccordion">
                         </div>
+                    </div>
+
+                    <div class="card-footer bg-transparent border-top-0 pt-0">
+                        <nav id="borrowingPagination" aria-label="Borrowing Page navigation">
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -939,34 +1405,19 @@
                                            th:value="${param.startsWith}">
 
                                     <div class="row g-3 align-items-end">
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <label for="keyword" class="form-label">Tên sách / Tác giả</label>
                                             <input type="text" class="form-control" id="keyword" name="keyword"
                                                    placeholder="Nhập tên sách, tác giả..." th:value="${param.keyword}">
                                         </div>
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <label for="filterCategory" class="form-label">Thể loại</label>
                                             <select class="form-select" id="filterCategory" name="categoryId">
                                                 <option value="">Tất cả thể loại</option>
                                                 <option th:each="cat : ${categories}" th:value="${cat.id}"
                                                         th:text="${cat.name}"
                                                         th:selected="${param.categoryId != null && #strings.equals(param.categoryId, cat.id)}"></option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-md-3">
-                                            <label for="filterAvailability" class="form-label">Trạng thái</label>
-                                            <select class="form-select" id="filterAvailability" name="availability">
-                                                <option value="">Tất cả</option>
-                                                <option value="available"
-                                                        th:selected="${#strings.equals(param.availability, 'available')}">
-                                                    Còn sách
-                                                </option>
-                                                <option value="borrowed"
-                                                        th:selected="${#strings.equals(param.availability, 'borrowed')}">
-                                                    Hết sách
-                                                </option>
                                             </select>
                                         </div>
                                     </div>
@@ -1124,27 +1575,17 @@
                             </div>
                         </div>
                         <p class="text-muted">Danh sách các thành viên của thư viện.</p>
-                        <div class="card mb-4" style="background-color: #fcfaf5;">
-                            <div class="card-header fw-bold text-primary" data-bs-toggle="collapse" href="#readerFilterCollapse" role="button" aria-expanded="true" aria-controls="readerFilterCollapse" style="cursor: pointer;">
+                        <div class="card mb-4" style="background-color: var(--sidebar-bg);">
+                            <div class="card-header fw-bold text-primary" data-bs-toggle="collapse" href="#readerFilterCollapse" role="button" aria-expanded="true" aria-controls="readerFilterCollapse" style="cursor: pointer; background-color: transparent;">
                                 <i class="fas fa-filter me-2"></i>Tìm kiếm & Lọc chi tiết
                             </div>
                             <div class="collapse show" id="readerFilterCollapse">
                                 <div class="card-body">
                                     <form id="reader-filter-form">
                                         <div class="row g-3 align-items-end">
-                                            <div class="col-md-8">
+                                            <div class="col-12">
                                                 <label for="readerKeyword" class="form-label">Tên độc giả / Mã thẻ / Tên đăng nhập</label>
                                                 <input type="text" class="form-control" id="readerKeyword" name="keyword" placeholder="Nhập từ khóa...">
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <label for="readerStatus" class="form-label">Trạng thái</label>
-                                                <select class="form-select" id="readerStatus" name="status">
-                                                    <option value="">Tất cả</option>
-                                                    <option value="active">Hoạt động</option>
-                                                    <option value="locked">Bị khóa</option>
-                                                    <option value="expired">Hết hạn</option>
-                                                </select>
                                             </div>
                                         </div>
 
@@ -1270,7 +1711,7 @@
                     Sách Mới</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form th:action="@{/staff/books/add}" th:object="${newBook}" method="post">
+            <form th:action="@{/staff/books/add}" th:object="${newBook}" method="post" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-8 mb-3">
@@ -1289,12 +1730,10 @@
                             <input type="text" class="form-control" id="addBookAuthor" th:field="*{author}">
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label for="addBookCategory" class="form-label">Thể loại</label>
+                            <label for="addBookCategory" class="form-label">Thể loại <span class="text-danger">*</span></label>
                             <select class="form-select" id="addBookCategory" name="categoryId" required>
                                 <option value="" selected>Chọn thể loại...</option>
-                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">Tiểu
-                                    thuyết
-                                </option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
                             </select>
                         </div>
                     </div>
@@ -1319,11 +1758,20 @@
                         <textarea class="form-control" id="addBookDescription" th:field="*{description}"
                                   rows="3"></textarea>
                     </div>
+
                     <div class="mb-3">
-                        <label for="addBookImageUrl" class="form-label">URL ảnh bìa</label>
-                        <input type="url" class="form-control" id="addBookImageUrl" th:field="*{coverImage}"
-                               placeholder="https://example.com/image.jpg">
+                        <label for="addBookImageUrl" class="form-label">Ảnh bìa (Nhập URL hoặc tải lên file)</label>
+                        <div class="input-group">
+                            <input type="url" class="form-control" th:field="*{coverImage}" id="addBookImageUrl" placeholder="https://example.com/image.jpg">
+                            <input type="file" class="form-control" name="coverImageFile" id="addCoverImageFile" accept="image/*">
+                        </div>
                     </div>
+
+                    <div class="mb-3 border-top pt-3 mt-3">
+                        <label for="addSamplePdfFile" class="form-label">File PDF đọc thử (Tùy chọn)</label>
+                        <input type="file" class="form-control" name="samplePdfFile" id="addSamplePdfFile" accept=".pdf">
+                    </div>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -1338,16 +1786,14 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="editBookModalLabel"><i class="fas fa-edit me-2 text-primary"></i> Chỉnh sửa
-                    Sách</h5>
+                <h5 class="modal-title" id="editBookModalLabel"><i class="fas fa-edit me-2 text-primary"></i> Chỉnh sửa Sách</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="editBookForm" th:action="@{/staff/books/update/0}" method="post">
+            <form id="editBookForm" th:action="@{/staff/books/update/0}" method="post" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-md-8 mb-3">
-                            <label for="editBookTitle" class="form-label">Tên sách <span
-                                    class="text-danger">*</span></label>
+                            <label for="editBookTitle" class="form-label">Tên sách <span class="text-danger">*</span></label>
                             <input type="text" class="form-control" name="title" id="editBookTitle" required>
                         </div>
                         <div class="col-md-4 mb-3">
@@ -1364,8 +1810,7 @@
                             <label for="editBookCategory" class="form-label">Thể loại</label>
                             <select class="form-select" name="categoryId" id="editBookCategory" required>
                                 <option value="">Chọn thể loại...</option>
-                                <option th:each="cat : ${categories}" th:value="${cat.id}"
-                                        th:text="${cat.name}"></option>
+                                <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
                             </select>
                         </div>
                     </div>
@@ -1376,23 +1821,37 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="editBookYear" class="form-label">Năm xuất bản</label>
-                            <input type="number" class="form-control" name="publicationYear" id="editBookYear"
-                                   min="1000" max="2100">
+                            <input type="number" class="form-control" name="publicationYear" id="editBookYear" min="1000" max="2100">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="editBookQuantity" class="form-label">Số lượng <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" name="availableCopies" id="editBookQuantity"
-                                   min="0" required>
+                            <input type="number" class="form-control" name="availableCopies" id="editBookQuantity" min="0" required>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="editBookDescription" class="form-label">Mô tả</label>
                         <textarea class="form-control" name="description" id="editBookDescription" rows="3"></textarea>
                     </div>
+
                     <div class="mb-3">
-                        <label for="editBookImageUrl" class="form-label">URL ảnh bìa</label>
-                        <input type="url" class="form-control" name="coverImage" id="editBookImageUrl"
-                               placeholder="https://example.com/image.jpg">
+                        <label for="editBookImageUrl" class="form-label">Ảnh bìa (Nhập URL hoặc tải lên file)</label>
+                        <div class="input-group">
+                            <input type="url" class="form-control" name="coverImage" id="editBookImageUrl" placeholder="https://example.com/image.jpg">
+                            <input type="file" class="form-control" name="coverImageFile" id="coverImageFile" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 border-top pt-3 mt-3">
+                        <label for="editBookSamplePdf" class="form-label">File PDF đọc thử</label>
+                        <div id="currentPdfLinkContainer" class="mb-2">
+                        </div>
+                        <div class="input-group">
+                            <input type="file" class="form-control" id="editBookSamplePdf" accept=".pdf">
+                            <button class="btn btn-outline-secondary" type="button" id="uploadPdfBtn">
+                                <i class="fas fa-upload"></i> Tải lên
+                            </button>
+                        </div>
+                        <div id="pdfUploadStatus" class="form-text mt-1"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -1484,7 +1943,60 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="editLibrarianProfileModal" tabindex="-1" aria-labelledby="editLibrarianProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editLibrarianProfileModalLabel"><i class="fas fa-user-edit me-2"></i> Chỉnh sửa Thông tin Cá nhân</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="librarianProfileErrorAlert" class="alert alert-danger d-none" role="alert"></div>
+                <form id="editLibrarianProfileForm">
+                    <div class="row">
+                        <div class="col-md-4 text-center">
+                            <img id="librarianAvatarPreview" src="/img/default-avatar.jpg" alt="Avatar" class="rounded-circle mb-3" width="150" height="150" style="object-fit: cover; border: 3px solid var(--border-subtle);">
+                            <input type="file" id="librarianAvatarFile" class="d-none" accept="image/*">
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('librarianAvatarFile').click();">
+                                <i class="fas fa-camera"></i> Chọn ảnh mới
+                            </button>
+                            <p class="form-text mt-2">Dung lượng tối đa 2MB. <br> Định dạng: JPG, PNG.</p>
+                        </div>
 
+                        <div class="col-md-8">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="librarianUsername" class="form-label">Tên đăng nhập</label>
+                                    <input type="text" id="librarianUsername" class="form-control" readonly disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="librarianEmail" class="form-label">Email</label>
+                                    <input type="email" id="librarianEmail" class="form-control" placeholder="Nhập email của bạn...">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="librarianFullName" class="form-label">Họ và Tên</label>
+                                <input type="text" id="librarianFullName" class="form-control" placeholder="Nhập họ và tên...">
+                            </div>
+                            <div class="mb-3">
+                                <label for="librarianPhone" class="form-label">Số điện thoại</label>
+                                <input type="tel" id="librarianPhone" class="form-control" placeholder="Nhập số điện thoại...">
+                            </div>
+                            <div class="mb-3">
+                                <label for="librarianAddress" class="form-label">Địa chỉ</label>
+                                <input type="text" id="librarianAddress" class="form-control" placeholder="Nhập địa chỉ...">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" id="saveLibrarianProfileBtn" class="btn btn-primary"><i class="fas fa-save me-2"></i>Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="modal fade" id="editReaderModal" tabindex="-1" aria-labelledby="editReaderModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -1839,9 +2351,9 @@
         if (navbar) {
             window.addEventListener('scroll', function () {
                 if (window.scrollY > 50) {
-                    navbar.style.boxShadow = '0 2px 15px rgba(139, 69, 19, 0.1)';
+                    navbar.style.boxShadow = '0 2px 15px rgba(var(--box-shadow-base-color-rgb), 0.1)';
                 } else {
-                    navbar.style.boxShadow = '0 2px 10px rgba(139, 69, 19, 0.07)';
+                    navbar.style.boxShadow = '0 2px 10px rgba(var(--box-shadow-base-color-rgb), 0.07)';
                 }
             });
         }
@@ -1969,7 +2481,8 @@
             }
             tableHtml += `</tbody></table>`;
 
-            const reportHtml = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>${title}</title><style>:root{--primary:#8B4513;}</style>${reportCss}</head><body><div class="report-container"><button class="print-button" onclick="window.print()">In báo cáo</button><header class="report-header"><h1>Thư Viện Số</h1><h2>${title}</h2></header><main>${tableHtml}</main></div></body></html>`;
+            // Updated primary color for the report tab
+            const reportHtml = `<!DOCTYPE html><html lang="vi"><head><meta charset="UTF-8"><title>${title}</title><style>:root{--primary:#2E935D;}</style>${reportCss}</head><body><div class="report-container"><button class="print-button" onclick="window.print()">In báo cáo</button><header class="report-header"><h1>Thư Viện Số</h1><h2>${title}</h2></header><main>${tableHtml}</main></div></body></html>`;
 
             const newTab = window.open('', '_blank');
             if (newTab) {
@@ -2205,6 +2718,14 @@
                 const form = document.getElementById('editBookForm');
                 form.action = `/staff/books/update/${bookId}`;
 
+                form.dataset.bookId = bookId;
+
+                document.getElementById('coverImageFile').value = '';
+                document.getElementById('editBookSamplePdf').value = '';
+                document.getElementById('pdfUploadStatus').textContent = '';
+                document.getElementById('currentPdfLinkContainer').innerHTML = '';
+
+
                 try {
                     const response = await fetch(`/staff/books/api/${bookId}`);
                     if (!response.ok) {
@@ -2222,27 +2743,66 @@
                     form.querySelector('#editBookImageUrl').value = book.coverImage || '';
 
                     const categorySelect = form.querySelector('#editBookCategory');
-                    let categoryIdToSet = null;
+                    categorySelect.value = (book.category && book.category.id) ? book.category.id : "";
 
-                    if (book.category && book.category.id) {
-                        categoryIdToSet = book.category.id;
-                    } else if (book.categoryId) {
-                        categoryIdToSet = book.categoryId;
+                    if (book.samplePdfUrl) {
+                        const pdfLink = `<a href="${book.samplePdfUrl}" target="_blank" class="text-success"><i class="fas fa-file-pdf"></i> Xem file đọc thử hiện tại</a>`;
+                        document.getElementById('currentPdfLinkContainer').innerHTML = pdfLink;
                     }
 
-                    if (categoryIdToSet !== null) {
-                        categorySelect.value = categoryIdToSet;
-                    } else {
-                        categorySelect.value = "";
-                    }
 
                 } catch (error) {
                     console.error('Lỗi khi lấy thông tin sách:', error);
                     alert('Đã xảy ra lỗi khi tải dữ liệu sách. Vui lòng thử lại.');
-                    const modal = bootstrap.Modal.getInstance(editBookModalElement);
-                    if (modal) {
-                        modal.hide();
+                    bootstrap.Modal.getInstance(editBookModalElement).hide();
+                }
+            });
+
+            document.getElementById('uploadPdfBtn').addEventListener('click', async function() {
+                const form = document.getElementById('editBookForm');
+                const bookId = form.dataset.bookId;
+                const pdfFile = document.getElementById('editBookSamplePdf').files[0];
+                const statusEl = document.getElementById('pdfUploadStatus');
+
+                if (!pdfFile) {
+                    statusEl.textContent = 'Vui lòng chọn một file PDF.';
+                    statusEl.className = 'form-text mt-1 text-danger';
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('sampleFile', pdfFile);
+
+                this.disabled = true;
+                this.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang tải...`;
+                statusEl.textContent = 'Đang tải lên...';
+                statusEl.className = 'form-text mt-1 text-muted';
+
+                try {
+                    const response = await fetch(`/staff/books/${bookId}/upload-sample`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok) {
+                        statusEl.textContent = result.message;
+                        statusEl.className = 'form-text mt-1 text-success';
+
+                        const pdfLink = `<a href="${result.filePath}" target="_blank" class="text-success"><i class="fas fa-file-pdf"></i> Xem file đọc thử hiện tại</a>`;
+                        document.getElementById('currentPdfLinkContainer').innerHTML = pdfLink;
+                        document.getElementById('editBookSamplePdf').value = '';
+                    } else {
+                        throw new Error(result.error || 'Lỗi không xác định.');
                     }
+
+                } catch (error) {
+                    statusEl.textContent = 'Lỗi: ' + error.message;
+                    statusEl.className = 'form-text mt-1 text-danger';
+                } finally {
+                    this.disabled = false;
+                    this.innerHTML = `<i class="fas fa-upload"></i> Tải lên`;
                 }
             });
         }
@@ -2303,10 +2863,11 @@
                     <td>${reader.role || 'N/A'}</td>
                     <td>${statusBadge}</td>
                     <td>${expiryDate}</td>
-                    <td>
-                        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editReaderModal" data-reader-id="${reader.userId}"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-outline-danger delete-reader-btn" data-reader-id="${reader.userId}" data-reader-name="${reader.fullName}"><i class="fas fa-user-times"></i></button>
-                    </td>`;
+
+    <td class="d-flex justify-content-center">
+        <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editReaderModal" data-reader-id="${reader.userId}"><i class="fas fa-edit"></i></button>
+        <button class="btn btn-sm btn-outline-danger delete-reader-btn" data-reader-id="${reader.userId}" data-reader-name="${reader.fullName}"><i class="fas fa-user-times"></i></button>
+    </td>`;
                     readerTableBody.appendChild(tr);
                 });
 
@@ -2469,44 +3030,44 @@
         const returnForm = document.getElementById('return-form');
         let borrowingsLoaded = false;
 
-        async function loadBookLoans() {
+        async function loadBookLoans(page = 0, size = 5) {
             if (!borrowingAccordion) return;
+
+            const searchInput = document.getElementById('borrowing-search-input');
+            const searchTerm = searchInput ? searchInput.value : '';
+            const borrowingPaginationContainer = document.getElementById('borrowingPagination');
+
             borrowingAccordion.innerHTML = `<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div></div>`;
+            if (borrowingPaginationContainer) borrowingPaginationContainer.innerHTML = '';
 
             try {
-                const response = await fetch('/api/book-loans');
+                // Thêm các tham số page, size, và search vào URL
+                const response = await fetch(`/api/book-loans?page=${page}&size=${size}&search=${encodeURIComponent(searchTerm)}`);
                 if (!response.ok) throw new Error('Không thể tải dữ liệu phiếu mượn.');
-                const bookLoans = await response.json();
+
+                const bookLoanPage = await response.json();
+                const bookLoans = bookLoanPage.content;
 
                 borrowingAccordion.innerHTML = '';
                 if (bookLoans.length === 0) {
-                    borrowingAccordion.innerHTML = `<div class="text-center p-4 text-muted">Chưa có phiếu mượn nào đang hoạt động.</div>`;
+                    borrowingAccordion.innerHTML = `<div class="text-center p-4 text-muted">Không tìm thấy phiếu mượn nào.</div>`;
                     return;
                 }
 
-                const today = new Date(); // Lấy ngày hiện tại để kiểm tra quá hạn
-                today.setHours(0, 0, 0, 0); // Đặt giờ về 0 để so sánh chỉ theo ngày
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
 
-                bookLoans.forEach((loan, index) => {
+                bookLoans.forEach((loan) => {
                     const dueDate = new Date(loan.dueDate);
-                    dueDate.setHours(0, 0, 0, 0); // Đặt giờ về 0 cho ngày đáo hạn
-                    const isOverdue = today > dueDate; // So sánh ngày hiện tại với ngày đáo hạn
-
-                    let statusBadge;
-                    if (isOverdue) {
-                        statusBadge = `<span class="badge bg-danger">Quá hạn</span>`;
-                    } else {
-                        statusBadge = `<span class="badge bg-primary">Đang mượn</span>`;
-                    }
-
-                    // Nút gửi email chỉ hiển thị khi sách quá hạn
-                    const sendEmailButton = isOverdue ?
-                        `<button class="btn btn-sm btn-outline-warning text-dark send-overdue-email-btn ms-2" data-loan-id="${loan.loanId}" title="Gửi email nhắc nhở quá hạn"><i class="fas fa-envelope"></i> Gửi nhắc nhở</button>` : '';
+                    dueDate.setHours(0, 0, 0, 0);
+                    const isOverdue = today > dueDate;
+                    const statusBadge = isOverdue ? `<span class="badge bg-danger">Quá hạn</span>` : `<span class="badge bg-primary">Đang mượn</span>`;
+                    const sendEmailButton = isOverdue ? `<button class="btn btn-sm btn-outline-warning text-dark send-overdue-email-btn ms-2" data-loan-id="${loan.loanId}" title="Gửi email nhắc nhở"><i class="fas fa-envelope"></i> Gửi nhắc nhở</button>` : '';
 
                     const accordionItem = `
                     <div class="accordion-item accordion-item-custom">
                         <h2 class="accordion-header" id="heading-${loan.loanId}">
-                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${loan.loanId}" aria-expanded="false" aria-controls="collapse-${loan.loanId}">
+                            <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${loan.loanId}">
                                 <div class="d-flex w-100 justify-content-between align-items-center pe-3">
                                     <div class="flex-grow-1">
                                         <strong>#${loan.loanId} - ${loan.readerName}</strong> (${loan.readerId})
@@ -2519,25 +3080,13 @@
                         <div id="collapse-${loan.loanId}" class="accordion-collapse collapse" aria-labelledby="heading-${loan.loanId}" data-bs-parent="#borrowingAccordion">
                             <div class="accordion-body accordion-body-custom">
                                 <table class="detail-item-table">
-                                    <thead>
-                                        <tr style="background-color: #f7f1e9;">
-                                            <th>Tên sách</th>
-                                            <th>ISBN</th>
-                                            <th>Trạng thái</th>
-                                        </tr>
-                                    </thead>
+                                    <thead><tr style="background-color: var(--sidebar-link-hover);"><th>Tên sách</th><th>ISBN</th><th>Trạng thái</th></tr></thead>
                                     <tbody>
-                                        ${loan.items.map(item => `
-                                            <tr>
-                                                <td>${item.bookTitle}</td>
-                                                <td>${item.bookIsbn}</td>
-                                                <td><span class="badge bg-info text-dark">${item.status}</span></td>
-                                            </tr>
-                                        `).join('')}
+                                        ${loan.items.map(item => `<tr><td>${item.bookTitle}</td><td>${item.bookIsbn}</td><td><span class="badge bg-info text-dark">${item.status}</span></td></tr>`).join('')}
                                     </tbody>
                                 </table>
                                 <div class="accordion-footer-custom d-flex justify-content-end align-items-center gap-2">
-                                     <button class="btn btn-sm btn-outline-primary renew-btn" data-loan-id="${loan.loanId}" title="Gia hạn phiếu mượn"><i class="fas fa-sync-alt"></i> Gia hạn phiếu</button>
+                                     <button class="btn btn-sm btn-outline-primary renew-btn" data-loan-id="${loan.loanId}" title="Gia hạn phiếu mượn"><i class="fas fa-sync-alt"></i> Gia hạn</button>
                                      ${sendEmailButton}
                                 </div>
                             </div>
@@ -2545,6 +3094,9 @@
                     </div>`;
                     borrowingAccordion.innerHTML += accordionItem;
                 });
+
+                // Gọi hàm render phân trang (bạn cần có hàm này)
+                renderGenericPagination(borrowingPaginationContainer, bookLoanPage, loadBookLoans);
             } catch (error) {
                 console.error("Lỗi tải phiếu mượn:", error);
                 borrowingAccordion.innerHTML = `<div class="text-center p-4 text-danger">Lỗi tải dữ liệu. Vui lòng thử lại.</div>`;
@@ -2554,7 +3106,7 @@
         if (borrowingAccordion) {
             borrowingAccordion.addEventListener('click', async function (event) {
                 const renewButton = event.target.closest('.renew-btn');
-                const sendEmailBtn = event.target.closest('.send-overdue-email-btn'); // Lắng nghe sự kiện cho nút mới
+                const sendEmailBtn = event.target.closest('.send-overdue-email-btn');
 
                 if (renewButton) {
                     const loanId = renewButton.getAttribute('data-loan-id');
@@ -2572,26 +3124,26 @@
                             showGenericAlert('borrow-return-alert', `Lỗi gia hạn: ${error.message}`, false);
                         }
                     }
-                } else if (sendEmailBtn) { // Xử lý khi click vào nút gửi email
+                } else if (sendEmailBtn) {
                     const loanId = sendEmailBtn.getAttribute('data-loan-id');
                     if (confirm(`Bạn có muốn gửi email nhắc nhở quá hạn cho phiếu mượn #${loanId} này không?`)) {
                         try {
-                            sendEmailBtn.disabled = true; // Vô hiệu hóa nút để tránh gửi nhiều lần
+                            sendEmailBtn.disabled = true;
                             sendEmailBtn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Đang gửi...`;
 
                             const response = await fetch(`/api/overdue-reminders/send-single-reminder/${loanId}`, { method: 'POST' });
-                            const result = await response.text(); // Đọc response dưới dạng text
+                            const result = await response.text();
 
                             if (response.ok) {
                                 showGenericAlert('borrow-return-alert', result, true);
                             } else {
-                                throw new Error(result); // Ném lỗi với thông báo từ server
+                                throw new Error(result);
                             }
                         } catch (error) {
                             console.error('Lỗi khi gửi email nhắc nhở:', error);
                             showGenericAlert('borrow-return-alert', `Lỗi gửi email: ${error.message}`, false);
                         } finally {
-                            sendEmailBtn.disabled = false; // Kích hoạt lại nút
+                            sendEmailBtn.disabled = false;
                             sendEmailBtn.innerHTML = `<i class="fas fa-envelope"></i> Gửi nhắc nhở`;
                         }
                     }
@@ -2663,8 +3215,7 @@
                 btn.disabled = true;
                 btn.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Đang xử lý...`;
 
-                // <<< THAY ĐỔI: Lấy loanId thay vì userId >>>
-                const loanId = returnForm.querySelector('#returnLoanId').value;
+                const userId = returnForm.querySelector('#returnReaderId').value;
                 const isbnsText = returnForm.querySelector('#bookIsbnReturn').value;
 
                 const isbns = isbnsText.split(/[\n,]+/)
@@ -2678,10 +3229,9 @@
                     return;
                 }
 
-                // <<< THAY ĐỔI: Tạo payload đúng như backend yêu cầu (loanId và isbns) >>>
                 const payload = {
-                    loanId: loanId,
-                    isbns: isbns // Tên thuộc tính là "isbns" theo file ReturnMultipleRequestDTO.java
+                    userId: userId || null,
+                    isbns: isbns
                 };
 
                 try {
@@ -2691,10 +3241,17 @@
                         body: JSON.stringify(payload)
                     });
 
-                    const result = await response.json();
-                    if (!response.ok) throw new Error(result.message || 'Lỗi không xác định.');
+                    if (!response.ok) {
+                        try {
+                            const errorResult = await response.json();
+                            throw new Error(errorResult.message || 'Lỗi không xác định từ server.');
+                        } catch (jsonError) {
+                            throw new Error(await response.text());
+                        }
+                    }
 
-                    // Xử lý kết quả trả về
+                    const result = await response.json();
+
                     const successCount = result.returnedItems ? result.returnedItems.length : 0;
                     const penaltyCount = result.penaltyFees ? result.penaltyFees.length : 0;
                     const errorCount = result.errors ? result.errors.length : 0;
@@ -2848,117 +3405,76 @@
         let penaltyFeesLoaded = false;
 
 
-        async function loadPenaltyFees() {
+        // ===== THAY THẾ TOÀN BỘ HÀM loadPenaltyFees BẰNG PHIÊN BẢN NÂNG CẤP NÀY =====
+        async function loadPenaltyFees(page = 0) {
             if (!penaltyFeeAccordion) return;
+
+            const PENALTY_PAGE_SIZE = 5; // Số nhóm độc giả hiển thị mỗi trang
             const status = penaltyStatusFilter.value;
+            const searchInput = document.getElementById('penalty-search-input');
+            const searchTerm = searchInput ? searchInput.value : '';
+            const penaltyPaginationContainer = document.getElementById('penaltyPagination');
+
             penaltyFeeAccordion.innerHTML = `<div class="text-center p-5"><div class="spinner-border text-primary" role="status"></div></div>`;
+            if (penaltyPaginationContainer) penaltyPaginationContainer.innerHTML = '';
 
             try {
-                const response = await fetch(`/api/penalty-fees?status=${status}&size=1000&sort=createdAt,desc`);
+                // Gọi API với đầy đủ tham số. size=1000 để lấy hết dữ liệu đã lọc và nhóm trên frontend
+                const response = await fetch(`/api/penalty-fees?status=${status}&search=${encodeURIComponent(searchTerm)}&size=1000&sort=createdAt,desc`);
                 if (!response.ok) throw new Error('Không thể tải dữ liệu phí phạt.');
+
                 const penaltyPage = await response.json();
 
                 if (penaltyPage.content.length === 0) {
-                    penaltyFeeAccordion.innerHTML = `<div class="text-center p-4 text-muted">Chưa có khoản phí phạt nào phù hợp.</div>`;
+                    penaltyFeeAccordion.innerHTML = `<div class="text-center p-4 text-muted">Không tìm thấy khoản phí phạt nào phù hợp.</div>`;
                     return;
                 }
 
+                // Logic nhóm dữ liệu theo độc giả (vẫn thực hiện trên frontend)
                 const groupedPenalties = penaltyPage.content.reduce((acc, penalty) => {
                     const readerId = penalty.readerId;
                     if (!acc[readerId]) {
-                        acc[readerId] = {
-                            readerName: penalty.readerName,
-                            readerId: penalty.readerId,
-                            items: [],
-                            totalAmount: 0,
-                            status: penalty.status
-                        };
+                        acc[readerId] = { readerName: penalty.readerName, readerId: penalty.readerId, items: [], totalAmount: 0, status: 'UNPAID' };
                     }
                     acc[readerId].items.push(penalty);
-                    acc[readerId].totalAmount += penalty.penaltyAmount;
+                    if (penalty.status === 'UNPAID') {
+                        acc[readerId].totalAmount += penalty.penaltyAmount;
+                    }
                     return acc;
                 }, {});
 
+                const allGroups = Object.values(groupedPenalties);
+
+                // Logic phân trang trên trình duyệt
+                const totalPages = Math.ceil(allGroups.length / PENALTY_PAGE_SIZE);
+                const start = page * PENALTY_PAGE_SIZE;
+                const end = start + PENALTY_PAGE_SIZE;
+                const groupsToShow = allGroups.slice(start, end);
+
                 penaltyFeeAccordion.innerHTML = '';
-                Object.values(groupedPenalties).forEach((group, index) => {
+                groupsToShow.forEach((group) => {
                     const formattedTotalAmount = new Intl.NumberFormat('vi-VN').format(group.totalAmount) + 'đ';
                     const accordionId = `penalty-group-${group.readerId.replace(/[^a-zA-Z0-9]/g, "")}`;
-
                     const itemsTable = group.items.map(item => {
                         const createdAt = new Date(item.createdAt).toLocaleString('vi-VN');
                         const formattedAmount = new Intl.NumberFormat('vi-VN').format(item.penaltyAmount);
                         let actionButtons;
                         switch (item.status) {
                             case 'UNPAID':
-                                actionButtons = `
-                                    <button class="btn btn-sm btn-info text-white qr-payment-btn" data-penalty-id="${item.id}" data-amount="${item.penaltyAmount}" title="Thanh toán QR"><i class="fas fa-qrcode"></i></button>
-                                    <button class="btn btn-sm btn-success pay-penalty-btn" data-penalty-id="${item.id}" title="Đánh dấu đã thu tiền mặt"><i class="fas fa-money-check-alt"></i></button>
-                                    <button class="btn btn-sm btn-outline-secondary waive-penalty-btn" data-bs-toggle="modal" data-bs-target="#waivePenaltyModal"
-                                            data-penalty-id="${item.id}" data-reader-name="${item.readerName}" data-book-title="${item.bookTitle}" data-penalty-amount="${formattedAmount}đ" title="Miễn giảm">
-                                        <i class="fas fa-gift"></i>
-                                    </button>`;
+                                actionButtons = `<button class="btn btn-sm btn-info text-white qr-payment-btn" data-penalty-id="${item.id}" data-amount="${item.penaltyAmount}" title="Thanh toán QR"><i class="fas fa-qrcode"></i></button> <button class="btn btn-sm btn-success pay-penalty-btn" data-penalty-id="${item.id}" title="Đánh dấu đã thu tiền mặt"><i class="fas fa-money-check-alt"></i></button> <button class="btn btn-sm btn-outline-secondary waive-penalty-btn" data-bs-toggle="modal" data-bs-target="#waivePenaltyModal" data-penalty-id="${item.id}" data-reader-name="${item.readerName}" data-book-title="${item.bookTitle}" data-penalty-amount="${formattedAmount}đ" title="Miễn giảm"><i class="fas fa-gift"></i></button>`;
                                 break;
                             default:
                                 actionButtons = `<button class="btn btn-sm btn-outline-info detail-penalty-btn" data-bs-toggle="modal" data-bs-target="#penaltyDetailModal" data-penalty-id="${item.id}" title="Chi tiết"><i class="fas fa-info-circle"></i></button>`;
                         }
-                        return `
-                            <tr>
-                                <td>${item.bookTitle}</td>
-                                <td>${item.overdueDays}</td>
-                                <td>${formattedAmount}đ</td>
-                                <td>${item.collectedByUserName || 'N/A'}</td>
-                                <td>${createdAt}</td>
-                                <td><div class="d-flex flex-wrap gap-1">${actionButtons}</div></td>
-                            </tr>
-                        `;
+                        return `<tr><td>${item.bookTitle}</td><td>${item.overdueDays}</td><td>${formattedAmount}đ</td><td><span class="badge ${item.status === 'PAID' ? 'bg-success' : 'bg-secondary'}">${item.status}</span></td><td><div class="d-flex flex-wrap gap-1">${actionButtons}</div></td></tr>`;
                     }).join('');
-
-                    const totalPaymentButton = group.status === 'UNPAID' ?
-                        `<div class="accordion-footer-custom">
-                            <button class="btn btn-primary pay-total-btn"
-                                    data-reader-id="${group.readerId}"
-                                    data-total-amount="${group.totalAmount}"
-                                    data-penalty-ids="${group.items.map(p => p.id).join(',')}"
-                                    title="Thanh toán toàn bộ nợ cho độc giả này">
-                                <i class="fas fa-coins me-2"></i>Thanh toán tổng nợ (${formattedTotalAmount})
-                            </button>
-                        </div>` : '';
-
-                    const accordionItemHTML = `
-                        <div class="accordion-item accordion-item-custom">
-                            <h2 class="accordion-header" id="heading-${accordionId}">
-                                <button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${accordionId}" aria-expanded="false" aria-controls="collapse-${accordionId}">
-                                    <div class="d-flex w-100 justify-content-between align-items-center pe-3">
-                                        <div class="flex-grow-1">
-                                            <strong>${group.readerName}</strong> (${group.readerId})
-                                            <small class="d-block text-muted">Tổng nợ: <span class="fw-bold text-danger">${formattedTotalAmount}</span> (${group.items.length} cuốn sách)</small>
-                                        </div>
-                                    </div>
-                                </button>
-                            </h2>
-                            <div id="collapse-${accordionId}" class="accordion-collapse collapse" aria-labelledby="heading-${accordionId}" data-bs-parent="#penaltyFeeAccordion">
-                                <div class="accordion-body accordion-body-custom">
-                                    <table class="detail-item-table">
-                                        <thead>
-                                            <tr style="background-color: #f7f1e9;">
-                                                <th>Sách quá hạn</th>
-                                                <th>Số ngày trễ</th>
-                                                <th>Số tiền phạt</th>
-                                                <th>Người xử lý</th>
-                                                <th>Thời gian tạo</th>
-                                                <th>Hành động</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            ${itemsTable}
-                                        </tbody>
-                                    </table>
-                                    ${totalPaymentButton}
-                                </div>
-                            </div>
-                        </div>`;
+                    const totalPaymentButton = group.items.some(p => p.status === 'UNPAID') ? `<div class="accordion-footer-custom"><button class="btn btn-primary pay-total-btn" data-reader-id="${group.readerId}" data-total-amount="${group.totalAmount}" data-penalty-ids="${group.items.filter(p => p.status === 'UNPAID').map(p => p.id).join(',')}" title="Thanh toán toàn bộ nợ"><i class="fas fa-coins me-2"></i>Thanh toán tổng nợ (${formattedTotalAmount})</button></div>` : '';
+                    const accordionItemHTML = `<div class="accordion-item accordion-item-custom"><h2 class="accordion-header" id="heading-${accordionId}"><button class="accordion-button accordion-button-custom collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-${accordionId}"><div class="d-flex w-100 justify-content-between align-items-center pe-3"><div class="flex-grow-1"><strong>${group.readerName}</strong> (${group.readerId})<small class="d-block text-muted">Tổng nợ chưa thanh toán: <span class="fw-bold text-danger">${formattedTotalAmount}</span> (${group.items.filter(i=> i.status==='UNPAID').length} cuốn sách)</small></div></div></button></h2><div id="collapse-${accordionId}" class="accordion-collapse collapse" data-bs-parent="#penaltyFeeAccordion"><div class="accordion-body accordion-body-custom"><table class="detail-item-table"><thead><tr style="background-color: var(--sidebar-link-hover);"><th>Sách</th><th>Ngày trễ</th><th>Tiền phạt</th><th>Trạng thái</th><th>Hành động</th></tr></thead><tbody>${itemsTable}</tbody></table>${totalPaymentButton}</div></div></div>`;
                     penaltyFeeAccordion.innerHTML += accordionItemHTML;
                 });
+
+                const mockPageData = { number: page, totalPages: totalPages, first: (page === 0), last: (page >= totalPages - 1) };
+                renderGenericPagination(penaltyPaginationContainer, mockPageData, loadPenaltyFees);
 
             } catch (error) {
                 console.error("Lỗi khi tải và nhóm phí phạt: ", error);
@@ -2967,7 +3483,9 @@
         }
 
         if (penaltyStatusFilter) {
-            penaltyStatusFilter.addEventListener('change', loadPenaltyFees);
+            penaltyStatusFilter.addEventListener('change', function() {
+                loadPenaltyFees(0); // Luôn tải lại từ trang đầu tiên khi thay đổi bộ lọc
+            });
         }
 
         if (penaltyFeeAccordion) {
@@ -3094,7 +3612,344 @@
                 penaltyFeesLoaded = true;
             }
         }
-    });
+
+        // ===== BẮT ĐẦU ĐOẠN MÃ JAVASCRIPT CẦN THAY THẾ =====
+
+        // SCRIPT TRƯỢT SIDEBAR CHO DESKTOP
+        const finalSidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+        const bodyElement = document.body;
+
+        if (finalSidebarToggleBtn && bodyElement) {
+            finalSidebarToggleBtn.addEventListener('click', function () {
+                // Chỉ cần thêm/xóa class trên thẻ body
+                // Mọi thay đổi về giao diện sẽ do CSS xử lý
+                bodyElement.classList.toggle('sidebar-collapsed');
+            });
+        }
+
+        // ===== KẾT THÚC ĐOẠN MÃ JAVASCRIPT CẦN THAY THẾ =====
+        // ===== BẮT ĐẦU ĐOẠN MÃ CẦN THÊM =====
+        const penaltySearchForm = document.getElementById('penalty-search-form');
+        if (penaltySearchForm) {
+            penaltySearchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                loadPenaltyFees(); // Gọi lại hàm load, nó sẽ tự lọc và bắt đầu từ trang đầu tiên
+            });
+        }
+        // ==========================================================
+// QUẢN LÝ THÔNG BÁO (Navbar dropdown) - PHIÊN BẢN NÂNG CẤP
+        // ==========================================================
+        let notificationCurrentPage = 0;
+        const NOTIFICATION_PAGE_SIZE = 7;
+        let hasMoreNotifications = true;
+        let isNotificationsLoading = false;
+
+        function timeSince(date) {
+            if (!(date instanceof Date) || isNaN(date)) return "không xác định";
+            const seconds = Math.floor((new Date() - date) / 1000);
+            let interval = seconds / 31536000;
+            if (interval > 1) return Math.floor(interval) + " năm trước";
+            interval = seconds / 2592000;
+            if (interval > 1) return Math.floor(interval) + " tháng trước";
+            interval = seconds / 86400;
+            if (interval > 1) return Math.floor(interval) + " ngày trước";
+            interval = seconds / 3600;
+            if (interval > 1) return Math.floor(interval) + " giờ trước";
+            interval = seconds / 60;
+            if (interval > 1) return Math.floor(interval) + " phút trước";
+            return Math.floor(seconds) + " giây trước";
+        }
+
+        async function loadNotifications() {
+            if (isNotificationsLoading) return;
+            isNotificationsLoading = true;
+
+            const listEl = document.getElementById('notificationList');
+            const emptyStateEl = document.getElementById('notificationEmptyState');
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+            if (notificationCurrentPage === 0) {
+                listEl.innerHTML = '<li class="text-center p-3 text-muted"><div class="spinner-border text-primary spinner-border-sm"></div> Đang tải...</li>';
+                emptyStateEl.style.display = 'none';
+            } else {
+                loadMoreBtn.disabled = true;
+                loadMoreBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang tải...';
+            }
+
+            try {
+                const response = await fetch(`/api/notifications?page=${notificationCurrentPage}&size=${NOTIFICATION_PAGE_SIZE}`);
+                if (!response.ok) throw new Error(`Lỗi ${response.status}`);
+                const pageData = await response.json();
+                const notifications = pageData.content;
+
+                if (notificationCurrentPage === 0) listEl.innerHTML = '';
+
+                if (notifications.length === 0 && notificationCurrentPage === 0) {
+                    emptyStateEl.style.display = 'block';
+                } else {
+                    emptyStateEl.style.display = 'none';
+                    notifications.forEach(notif => {
+                        const listItem = document.createElement('li');
+                        listItem.className = `notification-item ${!notif.read ? 'unread' : ''}`;
+                        listItem.dataset.notificationId = notif.id;
+                        const iconClass = notif.read ? 'far fa-envelope-open text-muted' : 'fas fa-circle text-primary';
+                        const titleHtml = notif.link ? `<a href="${notif.link}" class="title-link">${notif.title}</a>` : `<span class="title-link">${notif.title}</span>`;
+                        const timeAgo = timeSince(new Date(notif.createdAt));
+                        listItem.innerHTML = `
+                            <div class="notification-icon"><i class="${iconClass}"></i></div>
+                            <div class="notification-content-text">
+                                <p class="mb-1">${titleHtml}</p>
+                                <p class="message mb-1 small">${notif.message}</p>
+                                <small class="time-ago text-secondary"><i class="far fa-clock"></i> ${timeAgo}</small>
+                            </div>
+                            <button class="delete-notification-btn" title="Xóa thông báo"><i class="fas fa-times text-danger"></i></button>`;
+                        listItem.querySelector('.notification-content-text').addEventListener('click', async (e) => {
+                            e.stopPropagation();
+                            if (!notif.read) await markNotificationAsRead(notif.id);
+                            if (notif.link) {
+                                window.location.href = notif.link;
+                                bootstrap.Dropdown.getInstance(document.getElementById('notificationDropdownToggle'))?.hide();
+                            }
+                        });
+                        listEl.appendChild(listItem);
+                    });
+                }
+                hasMoreNotifications = !pageData.last;
+                loadMoreBtn.style.display = hasMoreNotifications ? 'block' : 'none';
+            } catch (error) {
+                console.error("Lỗi khi tải thông báo:", error);
+                if (notificationCurrentPage === 0) listEl.innerHTML = '<li class="text-center p-3 text-danger"><i class="fas fa-exclamation-triangle"></i> Lỗi tải dữ liệu.</li>';
+            } finally {
+                isNotificationsLoading = false;
+                if (loadMoreBtn) {
+                    loadMoreBtn.disabled = false;
+                    loadMoreBtn.textContent = 'Tải thêm';
+                }
+                await updateUnreadCount();
+            }
+        }
+
+        async function updateUnreadCount() {
+            const badge = document.getElementById('notificationBadge');
+            if (!badge) return;
+            try {
+                const response = await fetch('/api/notifications/count-unread');
+                if (!response.ok) return;
+                const count = parseInt(await response.text(), 10);
+                if (count > 0) {
+                    badge.textContent = count > 9 ? '9+' : count;
+                    badge.style.display = 'block';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (error) {
+                badge.style.display = 'none';
+            }
+        }
+
+        async function markNotificationAsRead(notificationId) {
+            try {
+                await fetch(`/api/notifications/${notificationId}/mark-as-read`, { method: 'POST' });
+                const item = document.querySelector(`.notification-item[data-notification-id="${notificationId}"]`);
+                if (item) {
+                    item.classList.remove('unread');
+                    const icon = item.querySelector('.notification-icon i');
+                    if(icon) icon.className = 'far fa-envelope-open text-muted';
+                }
+                await updateUnreadCount();
+            } catch (error) {
+                console.error(`Lỗi đánh dấu đã đọc thông báo ${notificationId}:`, error);
+            }
+        }
+
+        async function markAllAsRead() {
+            if (!confirm('Bạn có chắc muốn đánh dấu tất cả là đã đọc?')) return;
+            try {
+                await fetch('/api/notifications/mark-all-as-read', { method: 'POST' });
+                document.querySelectorAll('.notification-item.unread').forEach(item => {
+                    item.classList.remove('unread');
+                    const icon = item.querySelector('.notification-icon i');
+                    if(icon) icon.className = 'far fa-envelope-open text-muted';
+                });
+                await updateUnreadCount();
+            } catch (error) {
+                alert('Đã xảy ra lỗi. Vui lòng thử lại.');
+            }
+        }
+
+        async function deleteNotification(notificationId) {
+            if (!confirm('Bạn có chắc muốn xóa thông báo này?')) return;
+            try {
+                const response = await fetch(`/api/notifications/${notificationId}`, { method: 'DELETE' });
+                if(response.ok) {
+                    document.querySelector(`.notification-item[data-notification-id="${notificationId}"]`)?.remove();
+                    const listEl = document.getElementById('notificationList');
+                    if (listEl && listEl.children.length === 0 && !hasMoreNotifications) {
+                        document.getElementById('notificationEmptyState').style.display = 'block';
+                    }
+                    await updateUnreadCount();
+                } else {
+                    throw new Error('Xóa thất bại');
+                }
+            } catch (error) {
+                alert('Đã xảy ra lỗi. Vui lòng thử lại.');
+            }
+        }
+
+        function initializeNotificationSystem() {
+            const dropdownToggle = document.getElementById('notificationDropdownToggle');
+            const loadMoreBtn = document.getElementById('loadMoreBtn');
+            const markAllBtn = document.getElementById('markAllReadBtn');
+            const listEl = document.getElementById('notificationList');
+
+            if (dropdownToggle) {
+                dropdownToggle.addEventListener('show.bs.dropdown', () => {
+                    notificationCurrentPage = 0;
+                    hasMoreNotifications = true;
+                    loadNotifications();
+                });
+            }
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', () => {
+                    if (hasMoreNotifications) {
+                        notificationCurrentPage++;
+                        loadNotifications();
+                    }
+                });
+            }
+            if (markAllBtn) {
+                markAllBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    markAllAsRead();
+                });
+            }
+            if(listEl) {
+                listEl.addEventListener('click', (e) => {
+                    const deleteBtn = e.target.closest('.delete-notification-btn');
+                    if(deleteBtn) {
+                        const notificationId = deleteBtn.closest('.notification-item').dataset.notificationId;
+                        if(notificationId) deleteNotification(notificationId);
+                    }
+                });
+            }
+            updateUnreadCount();
+        }
+
+        // ▼▼▼ ĐÂY LÀ THAY ĐỔI QUAN TRỌNG NHẤT ▼▼▼
+        // Gọi trực tiếp hàm khởi tạo thay vì bọc trong một DOMContentLoaded khác
+        initializeNotificationSystem();
+
+// Gọi hàm khởi tạo
+        document.addEventListener('DOMContentLoaded', initializeNotificationSystem);
+            // ===== KẾT THÚC ĐOẠN MÃ CẦN THÊM =====
+        // ===== BẮT ĐẦU: LOGIC CHO POPUP CHỈNH SỬA THÔNG TIN THỦ THƯ =====
+        const editProfileBtn = document.getElementById('editProfileBtn');
+        const editLibrarianProfileModalEl = document.getElementById('editLibrarianProfileModal');
+
+        if (editProfileBtn && editLibrarianProfileModalEl) {
+            const editLibrarianProfileModal = new bootstrap.Modal(editLibrarianProfileModalEl);
+            const form = document.getElementById('editLibrarianProfileForm');
+            const saveBtn = document.getElementById('saveLibrarianProfileBtn');
+            const avatarFileInput = document.getElementById('librarianAvatarFile');
+            const avatarPreview = document.getElementById('librarianAvatarPreview');
+            const errorAlert = document.getElementById('librarianProfileErrorAlert');
+
+            // Mở modal và tải dữ liệu
+            editProfileBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                errorAlert.classList.add('d-none'); // Ẩn thông báo lỗi cũ
+                form.reset(); // Reset form
+
+                try {
+                    const response = await fetch('/staff/api/profile');
+                    if (!response.ok) throw new Error('Không thể tải thông tin cá nhân.');
+
+                    const profile = await response.json();
+
+                    document.getElementById('librarianUsername').value = profile.username || '';
+                    document.getElementById('librarianEmail').value = profile.email || '';
+                    document.getElementById('librarianFullName').value = profile.fullName || '';
+                    document.getElementById('librarianPhone').value = profile.phone || '';
+                    document.getElementById('librarianAddress').value = profile.address || '';
+                    avatarPreview.src = profile.avatarUrl || '/img/default-avatar.jpg'; // Dùng ảnh mặc định nếu không có
+
+                    editLibrarianProfileModal.show();
+                } catch (error) {
+                    alert('Lỗi: ' + error.message);
+                }
+            });
+
+            // Xem trước ảnh khi người dùng chọn file mới
+            avatarFileInput.addEventListener('change', function() {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        avatarPreview.src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Lưu thay đổi
+            saveBtn.addEventListener('click', async () => {
+                saveBtn.disabled = true;
+                saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Đang lưu...';
+                errorAlert.classList.add('d-none');
+
+                try {
+                    // Bước 1: Upload ảnh đại diện nếu có thay đổi
+                    if (avatarFileInput.files.length > 0) {
+                        const avatarFormData = new FormData();
+                        avatarFormData.append('avatar', avatarFileInput.files[0]);
+
+                        const avatarResponse = await fetch('/staff/api/profile/avatar', {
+                            method: 'POST',
+                            body: avatarFormData
+                        });
+
+                        if (!avatarResponse.ok) {
+                            const errorData = await avatarResponse.json();
+                            throw new Error(errorData.message || 'Lỗi tải lên ảnh đại diện.');
+                        }
+                    }
+
+                    // Bước 2: Cập nhật thông tin văn bản
+                    const profileData = {
+                        email: document.getElementById('librarianEmail').value,
+                        fullName: document.getElementById('librarianFullName').value,
+                        phone: document.getElementById('librarianPhone').value,
+                        address: document.getElementById('librarianAddress').value
+                    };
+
+                    // ... bên trong hàm saveBtn.addEventListener
+                    const profileResponse = await fetch('/staff/api/profile', { // <--- ĐÃ SỬA ĐÚNG ĐƯỜNG DẪN
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(profileData)
+                    });
+
+                    if (!profileResponse.ok) {
+                        const errorData = await profileResponse.json();
+                        throw new Error(errorData.message || 'Lỗi cập nhật thông tin.');
+                    }
+
+                    alert('Cập nhật thông tin thành công!');
+                    editLibrarianProfileModal.hide();
+                    window.location.reload(); // Tải lại trang để cập nhật thông tin ở header
+
+                } catch (error) {
+                    errorAlert.textContent = error.message;
+                    errorAlert.classList.remove('d-none');
+                } finally {
+                    saveBtn.disabled = false;
+                    saveBtn.innerHTML = '<i class="fas fa-save me-2"></i>Lưu thay đổi';
+                }
+            });
+        }
+
+        });
+
 </script>
 </body>
 </html>

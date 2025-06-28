@@ -1,7 +1,9 @@
 package com.uef.library.service;
 
 import com.uef.library.config.UserSpecification;
+import com.uef.library.dto.StaffProfileDTO;
 import com.uef.library.model.User;
+import com.uef.library.model.UserDetail;
 import com.uef.library.repository.UserDetailRepository;
 import com.uef.library.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,9 +13,18 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -76,14 +87,11 @@ public class UserServiceImpl implements UserService {
         return userByEmail.isPresent() && !userByEmail.get().getUsername().equals(currentUsername);
     }
 
-    // === PHẦN TRIỂN KHAI MỚI ===
     @Override
     @Transactional(readOnly = true)
     public List<User> findByRole(String role) {
-        // Gọi trực tiếp phương thức từ repository đã có sẵn
         return userRepository.findByRole(role);
     }
-    // ===========================
 
     @Override
     @Transactional
@@ -91,10 +99,8 @@ public class UserServiceImpl implements UserService {
         if (isUsernameTaken(username)) {
             return "Tên đăng nhập đã tồn tại.";
         }
-
         String newUserId = generateNextUserId();
         String hashedPassword = passwordEncoder.encode(rawPassword);
-
         User user = User.builder()
                 .userId(newUserId)
                 .username(username)
@@ -102,7 +108,6 @@ public class UserServiceImpl implements UserService {
                 .role("READER")
                 .status(true)
                 .build();
-
         userRepository.save(user);
         return "success";
     }
@@ -200,9 +205,63 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public boolean phoneExistsForOtherUser(String phone, String currentUserId) {
-        // Gọi phương thức mới từ repository
-        return userDetailRepository.existsByPhoneAndUser_UserIdNot(phone, currentUserId);
+    @Transactional
+    public User updateStaffProfile(String username, StaffProfileDTO profileDTO) throws Exception {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new Exception("Không tìm thấy người dùng: " + username));
+
+        UserDetail userDetail = user.getUserDetail();
+        if (userDetail == null) {
+            userDetail = new UserDetail();
+            userDetail.setUser(user);
+        }
+
+        userDetail.setFullName(profileDTO.getFullName());
+        userDetail.setEmail(profileDTO.getEmail());
+        userDetail.setPhone(profileDTO.getPhone());
+        userDetail.setAddress(profileDTO.getAddress());
+
+        userDetailRepository.save(userDetail);
+        user.setUserDetail(userDetail);
+        return user;
+    }
+
+    @Override
+    @Transactional
+    public User updateStaffAvatar(String username, MultipartFile avatarFile) throws IOException {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng: " + username));
+
+        UserDetail userDetail = user.getUserDetail();
+        if (userDetail == null) {
+            userDetail = new UserDetail();
+            userDetail.setUser(user);
+        }
+
+        if (avatarFile != null && !avatarFile.isEmpty()) {
+            String avatarUrl = saveFile(avatarFile, "avatars");
+            userDetail.setAvatar(avatarUrl);
+        }
+
+        userDetailRepository.save(userDetail);
+        user.setUserDetail(userDetail);
+        return user;
+    }
+
+    private String saveFile(MultipartFile file, String subDir) throws IOException {
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+        Path uploadPath = Paths.get("uploads", subDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+        String uniqueFilename = UUID.randomUUID().toString() + "_" + originalFilename;
+        Path filePath = uploadPath.resolve(uniqueFilename);
+        try (InputStream inputStream = file.getInputStream()) {
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        return "/" + "uploads" + "/" + subDir + "/" + uniqueFilename;
     }
 }

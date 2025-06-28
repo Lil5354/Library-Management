@@ -2,7 +2,7 @@ package com.uef.library.service;
 
 import com.uef.library.dto.PenaltyFeeDTO;
 import com.uef.library.model.*;
-import com.uef.library.repository.LoanItemRepository; // THAY ĐỔI
+import com.uef.library.repository.LoanItemRepository;
 import com.uef.library.repository.PenaltyFeeRepository;
 import com.uef.library.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,23 +18,53 @@ import java.time.LocalDateTime;
 public class PenaltyFeeServiceImpl implements PenaltyFeeService {
 
     private final PenaltyFeeRepository penaltyFeeRepository;
-    private final LoanItemRepository loanItemRepository; // THAY ĐỔI
+    private final LoanItemRepository loanItemRepository;
     private final UserRepository userRepository;
 
+    /**
+     * === ĐÃ SỬA LỖI ===
+     * Lấy danh sách phí phạt với khả năng lọc theo trạng thái và tìm kiếm.
+     * Đã thêm .trim() để loại bỏ khoảng trắng thừa từ tham số 'status' trước khi
+     * chuyển đổi thành Enum, tránh lỗi IllegalArgumentException và trả về trang rỗng.
+     *
+     * @param status Trạng thái phí phạt (UNPAID, PAID, WAIVED).
+     * @param search Từ khóa tìm kiếm theo mã hoặc tên độc giả.
+     * @param pageable Thông tin phân trang.
+     * @return Một trang các PenaltyFeeDTO đã được lọc và phân trang.
+     */
     @Override
     @Transactional(readOnly = true)
-    public Page<PenaltyFeeDTO> getAllPenaltyFees(String status, Pageable pageable) {
+    public Page<PenaltyFeeDTO> getAllPenaltyFees(String status, String search, Pageable pageable) {
+        boolean hasSearchTerm = search != null && !search.trim().isEmpty();
+        boolean hasStatus = status != null && !status.trim().isEmpty(); // Cũng nên trim ở đây để nhất quán
+
         Page<PenaltyFee> penaltyFeesPage;
-        if (status != null && !status.isEmpty()) {
-            try {
-                PenaltyStatus penaltyStatus = PenaltyStatus.valueOf(status.toUpperCase());
-                penaltyFeesPage = penaltyFeeRepository.findByStatus(penaltyStatus, pageable);
-            } catch (IllegalArgumentException e) {
-                return Page.empty(pageable);
+
+        try {
+            if (hasSearchTerm) {
+                if (hasStatus) {
+                    // SỬA ĐỔI: Thêm .trim() trước khi toUpperCase()
+                    PenaltyStatus penaltyStatus = PenaltyStatus.valueOf(status.trim().toUpperCase());
+                    penaltyFeesPage = penaltyFeeRepository.findByStatusAndSearchTerm(penaltyStatus, search, pageable);
+                } else {
+                    penaltyFeesPage = penaltyFeeRepository.findAllBySearchTerm(search, pageable);
+                }
+            } else {
+                if (hasStatus) {
+                    // SỬA ĐỔI: Thêm .trim() trước khi toUpperCase()
+                    PenaltyStatus penaltyStatus = PenaltyStatus.valueOf(status.trim().toUpperCase());
+                    penaltyFeesPage = penaltyFeeRepository.findByStatus(penaltyStatus, pageable);
+                } else {
+                    penaltyFeesPage = penaltyFeeRepository.findAll(pageable);
+                }
             }
-        } else {
-            penaltyFeesPage = penaltyFeeRepository.findAll(pageable);
+        } catch (IllegalArgumentException e) {
+            // Lỗi này xảy ra nếu 'status' không phải là một giá trị enum hợp lệ.
+            // Trả về trang rỗng để tránh ứng dụng bị lỗi.
+            System.err.println("Lỗi chuyển đổi trạng thái phí phạt: " + status + ". " + e.getMessage());
+            return Page.empty(pageable);
         }
+
         return penaltyFeesPage.map(this::convertToDto);
     }
 
@@ -94,7 +124,6 @@ public class PenaltyFeeServiceImpl implements PenaltyFeeService {
         return convertToDto(penaltyFee);
     }
 
-    // === THAY ĐỔI: Nhận vào loanItemId thay vì borrowingId ===
     @Override
     @Transactional
     public PenaltyFeeDTO createPenaltyFeeForOverdueBorrowing(Long loanItemId, int overdueDays, Double penaltyAmount) throws Exception {
@@ -117,13 +146,11 @@ public class PenaltyFeeServiceImpl implements PenaltyFeeService {
         return convertToDto(savedPenalty);
     }
 
-    // === THAY ĐỔI: Kiểm tra theo loanItemId ===
     @Override
     @Transactional(readOnly = true)
     public boolean hasUnpaidPenalty(Long loanItemId) {
         return penaltyFeeRepository.findByLoanItemIdAndStatus(loanItemId, PenaltyStatus.UNPAID).isPresent();
     }
-    // ===========================================
 
     private PenaltyFeeDTO convertToDto(PenaltyFee penaltyFee) {
         String readerName = "N/A";
@@ -149,12 +176,11 @@ public class PenaltyFeeServiceImpl implements PenaltyFeeService {
             collectedByUserName = penaltyFee.getCollectedByUser().getUserDetail().getFullName();
         }
 
-        // === THAY ĐỔI: Sử dụng loanItem.id thay vì borrowing.id ===
         Long borrowingId = (penaltyFee.getLoanItem() != null) ? penaltyFee.getLoanItem().getId() : null;
 
         return PenaltyFeeDTO.builder()
                 .id(penaltyFee.getId())
-                .borrowingId(borrowingId) // Giữ tên trường borrowingId trong DTO để tương thích frontend nếu cần
+                .borrowingId(borrowingId)
                 .readerId(readerId)
                 .readerName(readerName)
                 .bookId(bookId)

@@ -15,9 +15,15 @@ public interface ReaderManagementService {
 
     Optional<ReaderDetailDTO> findReaderById(String userId);
 
-    void createReader(ReaderDetailDTO readerDto) throws Exception;
+    /**
+     * SỬA LỖI: Thay đổi kiểu trả về từ void -> ReaderDetailDTO
+     */
+    ReaderDetailDTO createReader(ReaderDetailDTO readerDto) throws Exception;
 
-    void updateReader(String userId, ReaderDetailDTO readerDto) throws Exception;
+    /**
+     * SỬA LỖI: Thay đổi kiểu trả về từ void -> ReaderDetailDTO
+     */
+    ReaderDetailDTO updateReader(String userId, ReaderDetailDTO readerDto) throws Exception;
 
     void deleteReader(String userId);
 

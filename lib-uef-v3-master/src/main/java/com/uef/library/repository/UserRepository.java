@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-
+import java.time.LocalDateTime;
 @Repository
 public interface UserRepository extends JpaRepository<User, String>, JpaSpecificationExecutor<User> {
 
@@ -30,4 +30,6 @@ public interface UserRepository extends JpaRepository<User, String>, JpaSpecific
 
     // Bạn cũng có thể giữ lại phương thức này nếu cần
     boolean existsByUserDetail_Email(String email);
+
+    long countByCreatedAtBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
 }
