@@ -20,10 +20,10 @@ public interface BookLoanRepository extends JpaRepository<BookLoan, Long> {
     @Query("SELECT bl FROM BookLoan bl WHERE bl.status = 'ACTIVE'")
     Page<BookLoan> findAllActiveLoans(Pageable pageable);
 
-    @Query("SELECT DISTINCT bl FROM BookLoan bl JOIN bl.user u " +
+    @Query("SELECT DISTINCT bl FROM BookLoan bl JOIN bl.user u JOIN u.userDetail ud " + // <-- THÊM "JOIN u.userDetail ud"
             "WHERE bl.status = 'ACTIVE' AND " +
             "(LOWER(u.userId) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-            "LOWER(u.userDetail.fullName) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+            "LOWER(ud.fullName) LIKE LOWER(CONCAT('%', :searchTerm, '%')))") // <-- SỬA THÀNH "ud.fullName"
     Page<BookLoan> findActiveLoansBySearchTerm(@Param("searchTerm") String searchTerm, Pageable pageable);
 
     @Query("SELECT DISTINCT bl FROM BookLoan bl JOIN bl.loanItems li " +

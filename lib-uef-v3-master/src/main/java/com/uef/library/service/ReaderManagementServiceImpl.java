@@ -1,5 +1,7 @@
 package com.uef.library.service;
-
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.Sheet;
 import com.uef.library.config.UserSpecification;
 import com.uef.library.dto.ReaderDetailDTO;
 import com.uef.library.model.User;
@@ -141,14 +143,19 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
         Set<String> processedUsernames = new HashSet<>();
 
         try (InputStream inputStream = file.getInputStream();
-             XSSFWorkbook workbook = new XSSFWorkbook(inputStream)) {
-            XSSFSheet sheet = workbook.getSheetAt(0);
+             Workbook workbook = WorkbookFactory.create(inputStream)) {
+
+            Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
+
+            // Bỏ qua dòng tiêu đề (header)
             if (rowIterator.hasNext()) {
                 rowIterator.next();
             }
+
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
+
                 String userId = getCellValueAsString(row.getCell(0));
                 String username = getCellValueAsString(row.getCell(1));
                 String fullName = getCellValueAsString(row.getCell(2));
@@ -158,6 +165,7 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
                 }
                 if (userRepository.existsById(userId) || processedUserIds.contains(userId) ||
                         userRepository.existsByUsername(username) || processedUsernames.contains(username)) {
+                    System.out.println("Bỏ qua độc giả đã tồn tại: userId=" + userId + ", username=" + username);
                     continue;
                 }
 
@@ -181,21 +189,32 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
                 try {
                     String dobStr = getCellValueAsString(row.getCell(6));
                     if (!dobStr.isEmpty()) detail.setDob(LocalDate.parse(dobStr, DATE_FORMATTER));
-                } catch (DateTimeParseException e) { /* Bỏ qua */ }
+                } catch (DateTimeParseException e) {
+                    System.err.println("Lỗi định dạng ngày sinh ở dòng có mã: " + userId + ". Bỏ qua dòng này.");
+                }
 
                 try {
                     String expiryDateStr = getCellValueAsString(row.getCell(8));
                     if (!expiryDateStr.isEmpty()) detail.setMembershipExpiryDate(LocalDate.parse(expiryDateStr, DATE_FORMATTER));
-                } catch (DateTimeParseException e) { /* Bỏ qua */ }
+                } catch (DateTimeParseException e) {
+                    System.err.println("Lỗi định dạng ngày hết hạn ở dòng có mã: " + userId + ". Bỏ qua dòng này.");
+                }
 
                 user.setUserDetail(detail);
                 detail.setUser(user);
                 usersToSave.add(user);
             }
+        } catch (Exception e) {
+            throw new IOException("File không hợp lệ hoặc định dạng bị lỗi. Vui lòng kiểm tra lại file Excel.", e);
         }
-        if (!usersToSave.isEmpty()) {
-            userRepository.saveAll(usersToSave);
+
+        // --- BỔ SUNG LOGIC QUAN TRỌNG TẠI ĐÂY ---
+        if (usersToSave.isEmpty()) {
+            // Ném ra lỗi để Controller có thể bắt và thông báo cho người dùng
+            throw new IllegalArgumentException("Không tìm thấy dữ liệu độc giả hợp lệ nào để import. Vui lòng kiểm tra file Excel.");
         }
+
+        userRepository.saveAll(usersToSave);
     }
 
     @Override

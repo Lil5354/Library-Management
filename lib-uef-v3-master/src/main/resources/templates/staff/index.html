@@ -3281,7 +3281,13 @@
                 }
             });
         }
-
+        const borrowingSearchForm = document.getElementById('borrowing-search-form');
+        if (borrowingSearchForm) {
+            borrowingSearchForm.addEventListener('submit', function(e) {
+                e.preventDefault(); // Ngăn form gửi đi và tải lại trang
+                loadBookLoans(0);     // Gọi lại hàm tải danh sách phiếu mượn, bắt đầu từ trang đầu tiên
+            });
+        }
         // ==========================================================
         // TAB BÁO CÁO & THỐNG KÊ (v-pills-baocao)
         // ==========================================================
@@ -3841,7 +3847,7 @@
 
 // Gọi hàm khởi tạo
         document.addEventListener('DOMContentLoaded', initializeNotificationSystem);
-            // ===== KẾT THÚC ĐOẠN MÃ CẦN THÊM =====
+        // ===== KẾT THÚC ĐOẠN MÃ CẦN THÊM =====
         // ===== BẮT ĐẦU: LOGIC CHO POPUP CHỈNH SỬA THÔNG TIN THỦ THƯ =====
         const editProfileBtn = document.getElementById('editProfileBtn');
         const editLibrarianProfileModalEl = document.getElementById('editLibrarianProfileModal');
@@ -3947,8 +3953,67 @@
                 }
             });
         }
+// ==========================================================
+// BẮT ĐẦU: SỬA LỖI IMPORT KHÔNG CẦN TẢI LẠI TRANG
+// ==========================================================
 
-        });
+// Tìm đến form import độc giả
+        const importReaderForm = document.querySelector('#importReaderModal form');
+
+        if (importReaderForm) {
+            importReaderForm.addEventListener('submit', async function (event) {
+                // 1. Ngăn chặn hành vi mặc định của form (tải lại trang)
+                event.preventDefault();
+
+                const modal = document.getElementById('importReaderModal');
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalBtnHtml = submitBtn.innerHTML;
+
+                // Vô hiệu hóa nút bấm và hiển thị trạng thái đang xử lý
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Đang xử lý...`;
+
+                // 2. Lấy dữ liệu từ form (chính là file Excel)
+                const formData = new FormData(this);
+
+                try {
+                    // 3. Gửi dữ liệu lên server bằng fetch
+                    const response = await fetch(this.action, {
+                        method: 'POST',
+                        body: formData,
+                        // Yêu cầu server trả về JSON để dễ xử lý lỗi
+                        headers: {
+                            'Accept': 'application/json'
+                        }
+                    });
+
+                    // 4. Xử lý phản hồi từ server
+                    if (response.ok) {
+                        // Nếu thành công
+                        alert('Import danh sách độc giả thành công!');
+                        // Đóng modal import
+                        bootstrap.Modal.getInstance(modal).hide();
+                        // **QUAN TRỌNG: Gọi lại hàm loadReaders để làm mới bảng dữ liệu**
+                        loadReaders();
+                    } else {
+                        // Nếu có lỗi, hiển thị lỗi cho người dùng
+                        const errorData = await response.json();
+                        alert(`Import thất bại: ${errorData.message || 'Lỗi không xác định. Vui lòng kiểm tra lại file.'}`);
+                    }
+                } catch (error) {
+                    console.error('Lỗi khi gửi form import:', error);
+                    alert('Đã có lỗi kết nối xảy ra. Vui lòng thử lại.');
+                } finally {
+                    // Dù thành công hay thất bại, trả lại trạng thái ban đầu cho nút bấm
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                }
+            });
+        }
+// ==========================================================
+// KẾT THÚC: SỬA LỖI IMPORT KHÔNG CẦN TẢI LẠI TRANG
+// ==========================================================
+    });
 
 </script>
 </body>
