@@ -1,5 +1,6 @@
 package com.uef.library.repository;
 
+import com.uef.library.model.Book;
 import com.uef.library.model.LoanItem;
 import com.uef.library.model.User;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,10 @@ public interface LoanItemRepository extends JpaRepository<LoanItem, Long> {
 
     List<LoanItem> findByBookLoanId(Long bookLoanId);
 
+    List<LoanItem> findByBookLoan_UserAndStatusIn(User user, List<String> statuses);
+
+    boolean existsByBookAndBookLoan_UserAndStatusIn(Book book, User user, List<String> statuses);
+
     @Query("SELECT li FROM LoanItem li WHERE li.bookLoan.user = :user ORDER BY li.bookLoan.borrowDate DESC")
     Page<LoanItem> findByBookLoan_UserOrderByBookLoan_BorrowDateDesc(@Param("user") User user, Pageable pageable);
 
@@ -45,5 +50,7 @@ public interface LoanItemRepository extends JpaRepository<LoanItem, Long> {
     // ReturnDate là LocalDateTime, cần dùng BETWEEN trên LocalDateTime
     @Query("SELECT COUNT(li) FROM LoanItem li WHERE li.returnDate BETWEEN :startOfDay AND :endOfDay AND li.status = 'RETURNED'")
     long countByReturnDateBetween(@Param("startOfDay") java.time.LocalDateTime startOfDay, @Param("endOfDay") java.time.LocalDateTime endOfDay);
+
+    boolean existsByBookAndBookLoan_UserAndStatus(Book book, User user, String status);
 
 }

@@ -483,25 +483,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: JSON.stringify(bookIds)
                 });
                 // Phản hồi từ server có thể không phải là JSON nếu có lỗi
-                if (!response.ok) {
-                    // Đọc lỗi dưới dạng text để tránh lỗi parse JSON
-                    const errorText = await response.text();
-                    throw new Error(`Lỗi từ server: ${response.status} - ${errorText}`);
+                const result = await response.json();
+
+                if (response.ok) {
+                    // Xử lý khi thành công
+                    alert(result.message);
+                    borrowCart = [];
+                    saveCartToSession();
+                    updateCartUI();
+                    cartContainer.classList.remove('active');
+                    window.location.reload();
+                } else {
+                    // Xử lý khi có lỗi nghiệp vụ từ backend (status 400, 500...)
+                    // 'result.message' chính là thông báo lỗi cụ thể mà backend gửi về
+                    // Ví dụ: "Bạn đã mượn cuốn sách 'Nhà Giả Kim' và chưa trả."
+                    throw new Error(result.message || 'Một lỗi không xác định đã xảy ra.');
                 }
 
-                const result = await response.json();
-                alert(result.message);
-                borrowCart = [];
-                saveCartToSession();
-                updateCartUI();
-                cartContainer.classList.remove('active');
-                window.location.reload();
-
-            } catch(e){
+            } catch(e) {
+                // Bắt tất cả các lỗi (lỗi mạng hoặc lỗi từ 'throw new Error' ở trên)
+                // và hiển thị cho người dùng một cách chi tiết
                 console.error("Lỗi chi tiết khi mượn sách:", e);
-                throw new Error(result.message || 'Mượn sách thất bại. Vui lòng kiểm tra số lượng sách bạn đã mượn hoặc sách mượn bị trùng');
+                alert("Mượn sách thất bại!\n\nLý do: " + e.message);
             } finally {
-                // Khối này đảm bảo nút bấm luôn được reset
+                // Khối này đảm bảo nút bấm luôn được reset trạng thái
                 borrowAllBtn.disabled = false;
                 borrowAllBtn.textContent = 'Hoàn tất mượn sách';
             }

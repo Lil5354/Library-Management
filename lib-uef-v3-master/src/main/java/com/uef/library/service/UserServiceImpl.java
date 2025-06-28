@@ -69,6 +69,12 @@ public class UserServiceImpl implements UserService {
         }
         return users;
     }
+    @Override
+    @Transactional(readOnly = true)
+    public boolean phoneExistsForOtherUser(String phone, String currentUserId) {
+        // Gọi phương thức mới từ repository
+        return userDetailRepository.existsByPhoneAndUser_UserIdNot(phone, currentUserId);
+    }
 
     @Override
     public boolean usernameExists(String username) {
