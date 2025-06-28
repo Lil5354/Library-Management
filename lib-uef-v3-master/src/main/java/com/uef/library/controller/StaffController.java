@@ -1,10 +1,14 @@
 package com.uef.library.controller;
 
+import com.uef.library.dto.DashboardStatsDTO;
 import com.uef.library.dto.ReaderDetailDTO;
+import com.uef.library.dto.StaffProfileDTO;
 import com.uef.library.model.Book;
 import com.uef.library.model.Category;
 import com.uef.library.model.User;
 import com.uef.library.service.BookService;
+import com.uef.library.service.DashboardService;
+import com.uef.library.service.NotificationService;
 import com.uef.library.service.ReaderManagementService;
 import com.uef.library.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,8 +19,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -30,6 +38,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -42,6 +51,30 @@ public class StaffController {
     private final UserService userService;
     private final BookService bookService;
     private final ReaderManagementService readerManagementService;
+    private final DashboardService dashboardService;
+    private final NotificationService notificationService;
+
+    // --- Phương thức trợ giúp để lưu file ---
+    private String saveFile(MultipartFile file, String subDir) throws IOException {
+        if (file == null || file.isEmpty()) {
+            return null;
+        }
+
+        Path uploadPath = Paths.get("uploads", subDir);
+        if (!Files.exists(uploadPath)) {
+            Files.createDirectories(uploadPath);
+        }
+
+        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
+        String uniqueFilename = UUID.randomUUID().toString() + "_" + originalFilename;
+        Path filePath = uploadPath.resolve(uniqueFilename);
+
+        try (InputStream inputStream = file.getInputStream()) {
+            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        return "/" + "uploads" + "/" + subDir + "/" + uniqueFilename;
+    }
 
     @GetMapping({"/home", "/dashboard"})
     @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
@@ -61,16 +94,56 @@ public class StaffController {
                            @RequestParam(name = "readerPage", required = false, defaultValue = "0") int readerPage,
                            @RequestParam(name = "readerSize", required = false, defaultValue = "10") int readerSize) {
 
-        String username = (String) session.getAttribute("username");
+        // Lấy thông tin người dùng hiện tại từ Spring Security Context
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = null;
+        if (authentication != null && authentication.getPrincipal() instanceof UserDetails) {
+            username = ((UserDetails) authentication.getPrincipal()).getUsername();
+        } else if (authentication != null && authentication.getPrincipal() instanceof String && !"anonymousUser".equals(authentication.getPrincipal())) {
+            username = (String) authentication.getPrincipal();
+        }
+
+
+        User currentUser = null;
+        String loggedInUserFullName = "Thủ thư";
+        String loggedInUsername = "Thủ thư";
+        String loggedInUserEmail = "email@thuvien.com";
+        String loggedInUserAvatarUrl = null;
+        long unreadNotificationCount = 0;
+        boolean isAuthenticated = false;
+
         if (username != null) {
-            User user = userService.findByUsername(username).orElse(null);
-            if (user != null && user.getUserDetail() != null) {
-                String fullName = user.getUserDetail().getFullName();
-                if (fullName != null && !fullName.equalsIgnoreCase("Chưa cập nhật")) {
-                    model.addAttribute("loggedInUserFullName", fullName);
+            currentUser = userService.findByUsername(username).orElse(null);
+            if (currentUser != null) {
+                isAuthenticated = true;
+                loggedInUsername = currentUser.getUsername();
+                if (currentUser.getUserDetail() != null) {
+                    if (StringUtils.hasText(currentUser.getUserDetail().getFullName()) && !"Chưa cập nhật".equalsIgnoreCase(currentUser.getUserDetail().getFullName().trim())) {
+                        loggedInUserFullName = currentUser.getUserDetail().getFullName();
+                    }
+                    if (StringUtils.hasText(currentUser.getUserDetail().getEmail())) {
+                        loggedInUserEmail = currentUser.getUserDetail().getEmail();
+                    }
+                    if (StringUtils.hasText(currentUser.getUserDetail().getAvatar())) {
+                        loggedInUserAvatarUrl = currentUser.getUserDetail().getAvatar();
+                    }
                 }
+                // Lấy số lượng thông báo chưa đọc cho người dùng Staff hiện tại
+                unreadNotificationCount = notificationService.getUnreadNotificationCount(currentUser);
             }
         }
+
+        // Truyền các thuộc tính vào Model để Thymeleaf hiển thị
+        model.addAttribute("isAuthenticated", isAuthenticated);
+        model.addAttribute("loggedInUserFullName", loggedInUserFullName);
+        model.addAttribute("loggedInUsername", loggedInUsername);
+        model.addAttribute("loggedInUserEmail", loggedInUserEmail);
+        model.addAttribute("loggedInUserAvatarUrl", loggedInUserAvatarUrl);
+        model.addAttribute("unreadNotificationCount", unreadNotificationCount);
+
+        // Lấy dữ liệu thống kê cho dashboard
+        DashboardStatsDTO dashboardStats = dashboardService.getDashboardStats();
+        model.addAttribute("dashboardStats", dashboardStats);
 
         // --- Xử lý cho tab Sách ---
         Pageable bookPageable = PageRequest.of(page, size);
@@ -102,6 +175,80 @@ public class StaffController {
         return "staff/index";
     }
 
+    @GetMapping("/profile")
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
+    public String staffProfile(Model model, HttpSession session) {
+        // Tái sử dụng logic lấy thông tin người dùng từ phương thức homePage
+        homePage(session, model, "v-pills-dashboard", 0, 10, null, null, null, null, null, null, null, 0, 10);
+        return "staff/profile";
+    }
+
+
+    // ===== API LẤY/CẬP NHẬT THÔNG TIN PROFILE THỦ THƯ =====
+    @GetMapping("/api/profile")
+    @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
+    public ResponseEntity<StaffProfileDTO> getStaffProfile(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).build(); // Unauthorized
+        }
+
+        String username = authentication.getName();
+        Optional<User> userOptional = userService.findByUsername(username);
+
+        // Kiểm tra xem người dùng có tồn tại và có userDetail không
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (user.getUserDetail() != null) {
+                StaffProfileDTO dto = StaffProfileDTO.builder()
+                        .username(user.getUsername())
+                        .email(user.getUserDetail().getEmail())
+                        .fullName(user.getUserDetail().getFullName())
+                        .phone(user.getUserDetail().getPhone())
+                        .address(user.getUserDetail().getAddress())
+                        .avatarUrl(user.getUserDetail().getAvatar())
+                        .build();
+                return ResponseEntity.ok(dto);
+            } else {
+                // Nếu userDetail là null, coi như không tìm thấy thông tin chi tiết
+                return ResponseEntity.notFound().build();
+            }
+        } else {
+            // Nếu người dùng không tồn tại
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping("/api/profile")
+    @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
+    public ResponseEntity<?> updateStaffProfile(@RequestBody StaffProfileDTO profileDTO, Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            userService.updateStaffProfile(username, profileDTO);
+            return ResponseEntity.ok(Map.of("message", "Cập nhật thông tin thành công!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    @PostMapping("/api/profile/avatar")
+    @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
+    public ResponseEntity<?> uploadStaffAvatar(@RequestParam("avatar") MultipartFile file, Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            User updatedUser = userService.updateStaffAvatar(username, file);
+            return ResponseEntity.ok(Map.of(
+                    "message", "Cập nhật ảnh đại diện thành công!",
+                    "avatarUrl", updatedUser.getUserDetail().getAvatar()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Lỗi tải lên ảnh: " + e.getMessage()));
+        }
+    }
+
+
     // ==========================================================
     // <<< CÁC ENDPOINT QUẢN LÝ SÁCH >>>
     // ==========================================================
@@ -110,6 +257,8 @@ public class StaffController {
     @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public String addBook(@ModelAttribute("newBook") Book book,
                           @RequestParam("categoryId") Long categoryId,
+                          @RequestParam(value = "coverImageFile", required = false) MultipartFile coverImageFile,
+                          @RequestParam(value = "samplePdfFile", required = false) MultipartFile samplePdfFile,
                           RedirectAttributes redirectAttributes) {
 
         if (bookService.isIsbnExists(book.getIsbn())) {
@@ -118,8 +267,27 @@ public class StaffController {
             return "redirect:/staff/dashboard?tab=v-pills-sach";
         }
 
+        try {
+            if (coverImageFile != null && !coverImageFile.isEmpty()) {
+                String coverImageUrl = saveFile(coverImageFile, "covers");
+                book.setCoverImage(coverImageUrl);
+            }
+
+            if (samplePdfFile != null && !samplePdfFile.isEmpty()) {
+                String pdfUrl = saveFile(samplePdfFile, "samples");
+                book.setSamplePdfUrl(pdfUrl);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi tải file lên: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("newBook", book);
+            return "redirect:/staff/dashboard?tab=v-pills-sach";
+        }
+
         Optional<Category> category = bookService.getCategoryById(categoryId);
         category.ifPresent(book::setCategory);
+
         bookService.saveBook(book);
         redirectAttributes.addFlashAttribute("successMessage", "Thêm sách thành công!");
         return "redirect:/staff/dashboard?tab=v-pills-sach";
@@ -127,6 +295,7 @@ public class StaffController {
 
     @PostMapping("/books/delete/{id}")
     @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<?> deleteBook(@PathVariable("id") Long id) {
         try {
             bookService.deleteBookById(id);
@@ -153,6 +322,7 @@ public class StaffController {
 
     @GetMapping("/books/api/{id}")
     @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<Book> getBookById(@PathVariable("id") Long id) {
         Optional<Book> bookOptional = bookService.getBookById(id);
         return bookOptional.map(ResponseEntity::ok)
@@ -164,17 +334,35 @@ public class StaffController {
     public String updateBook(@PathVariable("id") Long id,
                              @ModelAttribute("bookDetails") Book bookDetails,
                              @RequestParam("categoryId") Long categoryId,
+                             @RequestParam(value = "coverImageFile", required = false) MultipartFile coverImageFile,
                              RedirectAttributes redirectAttributes) {
         Optional<Book> existingBookOpt = bookService.getBookById(id);
         if (existingBookOpt.isPresent()) {
             Book existingBook = existingBookOpt.get();
+
             existingBook.setTitle(bookDetails.getTitle());
             existingBook.setAuthor(bookDetails.getAuthor());
             existingBook.setPublisher(bookDetails.getPublisher());
             existingBook.setPublicationYear(bookDetails.getPublicationYear());
             existingBook.setAvailableCopies(bookDetails.getAvailableCopies());
             existingBook.setDescription(bookDetails.getDescription());
-            existingBook.setCoverImage(bookDetails.getCoverImage());
+
+            try {
+                String uploadedImageUrl = saveFile(coverImageFile, "covers");
+                if (uploadedImageUrl != null) {
+                    existingBook.setCoverImage(uploadedImageUrl);
+                } else {
+                    if (StringUtils.hasText(bookDetails.getCoverImage())) {
+                        existingBook.setCoverImage(bookDetails.getCoverImage());
+                    } else {
+                        existingBook.setCoverImage(null);
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi tải lên ảnh bìa.");
+                return "redirect:/staff/dashboard?tab=v-pills-sach";
+            }
 
             Optional<Category> category = bookService.getCategoryById(categoryId);
             category.ifPresent(existingBook::setCategory);
@@ -197,7 +385,7 @@ public class StaffController {
         try {
             bookService.importBooksFromExcel(file);
             redirectAttributes.addFlashAttribute("successMessage", "Import danh sách sách thành công!");
-        } catch (IOException e) {
+        } catch (IOException e) { // Xử lý IOException trực tiếp trong catch block
             redirectAttributes.addFlashAttribute("importError", "Đã xảy ra lỗi khi đọc file. Vui lòng kiểm tra định dạng file.");
         } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("importError", e.getMessage());
@@ -208,38 +396,29 @@ public class StaffController {
         return "redirect:/staff/dashboard?tab=v-pills-sach";
     }
 
-    // <<< MERGE: THÊM ENDPOINT UPLOAD PDF TỪ ĐỒ ÁN 2 >>>
     @PostMapping("/books/{id}/upload-sample")
     @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<Map<String, String>> uploadSamplePdf(@PathVariable("id") Long id, @RequestParam("sampleFile") MultipartFile file) {
         Book book = bookService.getBookById(id)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy sách với ID: " + id));
 
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Vui lòng chọn một file."));
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Vui lòng chọn một file PDF."));
         }
 
         try {
-            Path uploadPath = Paths.get("uploads/samples");
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+            String pdfUrl = saveFile(file, "samples");
+            if (pdfUrl != null) {
+                book.setSamplePdfUrl(pdfUrl);
+                bookService.saveBook(book);
+                return ResponseEntity.ok(Map.of("message", "Tải lên file đọc thử thành công!", "filePath", pdfUrl));
+            } else {
+                throw new IOException("Không thể lưu file.");
             }
-
-            String originalFilename = file.getOriginalFilename();
-            String uniqueFilename = "sample_" + book.getId() + "_" + originalFilename;
-            Path filePath = uploadPath.resolve(uniqueFilename);
-
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
-            }
-
-            String pdfUrl = "/uploads/samples/" + uniqueFilename;
-            book.setSamplePdfUrl(pdfUrl);
-            bookService.saveBook(book);
-
-            return ResponseEntity.ok(Map.of("message", "Tải lên file đọc thử thành công!", "filePath", pdfUrl));
         } catch (IOException e) {
-            return ResponseEntity.status(500).body(Map.of("error", "Lỗi khi lưu file."));
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(Map.of("error", "Lỗi khi lưu file trên server."));
         }
     }
 
@@ -249,6 +428,7 @@ public class StaffController {
 
     @GetMapping("/readers/api/{userId}")
     @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
     public ResponseEntity<ReaderDetailDTO> getReaderById(@PathVariable String userId) {
         return readerManagementService.findReaderById(userId)
                 .map(ResponseEntity::ok)
@@ -317,6 +497,63 @@ public class StaffController {
             readerManagementService.exportReadersToExcel(response);
         } catch (IOException e) {
             System.err.println("Lỗi khi xuất file Excel độc giả: " + e.getMessage());
+        }
+    }
+    // Thêm các phương thức này vào trong class StaffController của bạn
+
+    // API để lấy danh sách độc giả (có phân trang và tìm kiếm)
+    @GetMapping("/api/readers")
+    @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
+    public ResponseEntity<Page<ReaderDetailDTO>> getReadersApi(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ReaderDetailDTO> readersPage = readerManagementService.getPaginatedReaders(keyword, pageable);
+        return ResponseEntity.ok(readersPage);
+    }
+
+    // API để tạo mới độc giả
+    @PostMapping("/api/readers")
+    @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
+    public ResponseEntity<?> createReaderApi(@RequestBody ReaderDetailDTO readerDto) {
+        try {
+            ReaderDetailDTO newReader = readerManagementService.createReader(readerDto);
+            return ResponseEntity.ok(newReader);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Lỗi máy chủ nội bộ: " + e.getMessage());
+        }
+    }
+
+    // API để cập nhật thông tin độc giả
+    @PutMapping("/api/readers/{userId}")
+    @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
+    public ResponseEntity<?> updateReaderApi(@PathVariable String userId, @RequestBody ReaderDetailDTO readerDto) {
+        try {
+            ReaderDetailDTO updatedReader = readerManagementService.updateReader(userId, readerDto);
+            return ResponseEntity.ok(updatedReader);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Lỗi khi cập nhật: " + e.getMessage());
+        }
+    }
+
+    // API để xóa độc giả
+    @DeleteMapping("/api/readers/{userId}")
+    @ResponseBody
+    @PreAuthorize("hasAnyRole('STAFF', 'ADMIN')")
+    public ResponseEntity<?> deleteReaderApi(@PathVariable String userId) {
+        try {
+            readerManagementService.deleteReader(userId);
+            return ResponseEntity.ok(Map.of("message", "Xóa độc giả thành công!"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Không thể xóa độc giả này."));
         }
     }
 }

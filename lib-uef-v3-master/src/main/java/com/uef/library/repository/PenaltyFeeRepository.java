@@ -17,31 +17,24 @@ import java.util.Optional;
 @Repository
 public interface PenaltyFeeRepository extends JpaRepository<PenaltyFee, Long> {
 
-    /**
-     * === PHƯƠNG THỨC BỊ THIẾU GÂY LỖI ===
-     * Tìm kiếm một khoản phạt dựa trên ID của mục mượn (LoanItem) và trạng thái.
-     * Spring Data JPA sẽ tự động tạo câu lệnh query dựa trên tên của phương thức này.
-     *
-     * @param loanItemId ID của LoanItem
-     * @param status Trạng thái của phí phạt (UNPAID, PAID, WAIVED)
-     * @return một Optional chứa PenaltyFee nếu tìm thấy
-     */
     Optional<PenaltyFee> findByLoanItemIdAndStatus(Long loanItemId, PenaltyStatus status);
 
-    /**
-     * Phương thức để lọc phí phạt theo trạng thái (dùng cho trang quản lý).
-     * @param status Trạng thái cần lọc
-     * @param pageable Thông tin phân trang
-     * @return Một trang các đối tượng PenaltyFee
-     */
     Page<PenaltyFee> findByStatus(PenaltyStatus status, Pageable pageable);
 
-    /**
-     * Phương thức cho chức năng báo cáo tài chính phí phạt.
-     * @param startDate Ngày bắt đầu
-     * @param endDate Ngày kết thúc
-     * @return Danh sách các map chứa thông tin báo cáo
-     */
+    // ===== PHƯƠNG THỨC MỚI CHO TÌM KIẾM =====
+    @Query("SELECT pf FROM PenaltyFee pf JOIN pf.user u " +
+            "WHERE LOWER(u.userId) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(u.userDetail.fullName) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+    Page<PenaltyFee> findAllBySearchTerm(@Param("searchTerm") String searchTerm, Pageable pageable);
+
+    @Query("SELECT pf FROM PenaltyFee pf JOIN pf.user u " +
+            "WHERE pf.status = :status AND " +
+            "(LOWER(u.userId) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(u.userDetail.fullName) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
+    Page<PenaltyFee> findByStatusAndSearchTerm(@Param("status") PenaltyStatus status, @Param("searchTerm") String searchTerm, Pageable pageable);
+    // =========================================
+
+
     @Query("SELECT new map(" +
             "pf.user.userDetail.fullName as readerName, " +
             "pf.book.title as bookTitle, " +

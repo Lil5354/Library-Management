@@ -22,48 +22,38 @@ public class PenaltyFeeController {
 
     private final PenaltyFeeService penaltyFeeService;
 
-    // Endpoint để lấy danh sách phí phạt với phân trang và lọc trạng thái
     @GetMapping
     public ResponseEntity<Page<PenaltyFeeDTO>> getAllPenaltyFees(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id,desc") String[] sort,
-            @RequestParam(required = false) String status) {
+            @RequestParam(defaultValue = "1000") int size, // Tăng size để lấy đủ dữ liệu cho việc nhóm ở frontend
+            @RequestParam(defaultValue = "createdAt,desc") String[] sort,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false, defaultValue = "") String search) { // Thêm tham số search
 
+        // Logic sort giữ nguyên
+        String sortField = sort.length > 0 ? sort[0] : "createdAt";
         Sort.Direction direction = sort.length > 1 ? Sort.Direction.fromString(sort[1]) : Sort.Direction.DESC;
-        Sort sortOrder = Sort.by(direction, sort[0]);
+        Sort sortOrder = Sort.by(direction, sortField);
+
         Pageable pageable = PageRequest.of(page, size, sortOrder);
 
-        Page<PenaltyFeeDTO> penaltyFees = penaltyFeeService.getAllPenaltyFees(status, pageable);
+        // Gọi service với đầy đủ tham số
+        Page<PenaltyFeeDTO> penaltyFees = penaltyFeeService.getAllPenaltyFees(status, search, pageable);
         return ResponseEntity.ok(penaltyFees);
     }
 
-    // === START: ENDPOINT MỚI ĐƯỢC THÊM VÀO ĐỂ SỬA LỖI ===
-    /**
-     * Endpoint để xử lý việc đánh dấu một khoản phạt đã được thu tiền mặt.
-     * Được gọi khi thủ thư nhấn nút "Đã thu" (biểu tượng tờ tiền).
-     *
-     * @param penaltyId ID của khoản phạt cần xử lý.
-     * @return DTO của khoản phạt đã được cập nhật.
-     */
     @PostMapping("/pay/{penaltyId}")
     public ResponseEntity<?> markAsPaid(@PathVariable Long penaltyId) {
         try {
-            // Lấy thông tin người dùng đang đăng nhập (thủ thư)
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String staffUsername = authentication.getName();
-
-            // Gọi service để thực hiện logic nghiệp vụ
             PenaltyFeeDTO updatedPenalty = penaltyFeeService.markPenaltyAsPaid(penaltyId, staffUsername);
             return ResponseEntity.ok(updatedPenalty);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
-    // === END: ENDPOINT MỚI ĐƯỢC THÊM VÀO ĐỂ SỬA LỖI ===
 
-
-    // Endpoint để miễn giảm phí phạt
     @PostMapping("/waive/{penaltyId}")
     public ResponseEntity<?> waivePenalty(@PathVariable Long penaltyId, @RequestBody(required = false) Map<String, String> payload) {
         try {
@@ -74,27 +64,15 @@ public class PenaltyFeeController {
             PenaltyFeeDTO updatedPenalty = penaltyFeeService.waivePenaltyFee(penaltyId, reason, staffUserId);
             return ResponseEntity.ok(updatedPenalty);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
-    // Endpoint để lấy chi tiết một khoản phí phạt
     @GetMapping("/{penaltyId}")
     public ResponseEntity<?> getPenaltyDetail(@PathVariable Long penaltyId) {
         try {
             PenaltyFeeDTO penaltyDetail = penaltyFeeService.getPenaltyFeeById(penaltyId);
             return ResponseEntity.ok(penaltyDetail);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    // Endpoint để polling
-    @GetMapping("/{penaltyId}/status")
-    public ResponseEntity<?> getPenaltyStatus(@PathVariable Long penaltyId) {
-        try {
-            PenaltyFeeDTO penalty = penaltyFeeService.getPenaltyFeeById(penaltyId);
-            return ResponseEntity.ok(Map.of("status", penalty.getStatus()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

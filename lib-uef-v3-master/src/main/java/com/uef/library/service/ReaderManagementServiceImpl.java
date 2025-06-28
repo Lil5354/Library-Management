@@ -45,9 +45,7 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
     @Override
     @Transactional(readOnly = true)
     public Page<ReaderDetailDTO> getPaginatedReaders(String keyword, Pageable pageable) {
-        // SỬA Ở ĐÂY: Đổi tên phương thức từ "filterBy" thành "filterReaders"
         Specification<User> spec = UserSpecification.filterReaders(keyword, READER_ROLE, null);
-
         Page<User> userPage = userRepository.findAll(spec, pageable);
         return userPage.map(this::convertToDetailDto);
     }
@@ -58,8 +56,11 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
         return userRepository.findById(userId).map(this::convertToDetailDto);
     }
 
+    /**
+     * SỬA LỖI: Thay đổi kiểu trả về và trả về DTO sau khi tạo
+     */
     @Override
-    public void createReader(ReaderDetailDTO readerDto) throws Exception {
+    public ReaderDetailDTO createReader(ReaderDetailDTO readerDto) throws Exception {
         if (userRepository.existsById(readerDto.getUserId())) {
             throw new Exception("Mã độc giả '" + readerDto.getUserId() + "' đã tồn tại.");
         }
@@ -72,7 +73,7 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
         user.setUsername(readerDto.getUsername());
         user.setPassword(passwordEncoder.encode(readerDto.getPassword()));
         user.setRole(READER_ROLE);
-        user.setStatus(true); // Mặc định là hoạt động khi tạo mới
+        user.setStatus(true);
 
         UserDetail userDetail = new UserDetail();
         userDetail.setFullName(readerDto.getFullName());
@@ -81,20 +82,23 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
         userDetail.setAddress(readerDto.getAddress());
         userDetail.setDob(readerDto.getDob());
         userDetail.setGender(readerDto.getGender());
-
-        // === THAY ĐỔI LOGIC TẠI ĐÂY ===
-        // Luôn tự động đặt ngày hết hạn là 1 năm kể từ ngày đăng ký
         userDetail.setMembershipExpiryDate(LocalDate.now().plusYears(1));
-        // === KẾT THÚC THAY ĐỔI ===
 
         user.setUserDetail(userDetail);
         userDetail.setUser(user);
 
-        userRepository.save(user);
+        // Lưu người dùng và lấy đối tượng đã được lưu
+        User savedUser = userRepository.save(user);
+
+        // Chuyển đổi và trả về DTO của người dùng vừa tạo
+        return convertToDetailDto(savedUser);
     }
 
+    /**
+     * SỬA LỖI: Thay đổi kiểu trả về và trả về DTO sau khi cập nhật
+     */
     @Override
-    public void updateReader(String userId, ReaderDetailDTO readerDto) throws Exception {
+    public ReaderDetailDTO updateReader(String userId, ReaderDetailDTO readerDto) throws Exception {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new Exception("Không tìm thấy độc giả với mã: " + userId));
 
@@ -105,30 +109,22 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
             user.setUserDetail(userDetail);
         }
 
+        // Cập nhật thông tin từ DTO
         userDetail.setFullName(readerDto.getFullName());
         userDetail.setEmail(readerDto.getEmail());
         user.setStatus(readerDto.isStatus());
+        if (readerDto.getPhone() != null) userDetail.setPhone(readerDto.getPhone());
+        if (readerDto.getAddress() != null) userDetail.setAddress(readerDto.getAddress());
+        if (readerDto.getMembershipExpiryDate() != null) userDetail.setMembershipExpiryDate(readerDto.getMembershipExpiryDate());
+        if (readerDto.getDob() != null) userDetail.setDob(readerDto.getDob());
+        if (readerDto.getGender() != null) userDetail.setGender(readerDto.getGender());
+        if (readerDto.getAvatar() != null) userDetail.setAvatar(readerDto.getAvatar());
 
-        if (readerDto.getPhone() != null) {
-            userDetail.setPhone(readerDto.getPhone());
-        }
-        if (readerDto.getAddress() != null) {
-            userDetail.setAddress(readerDto.getAddress());
-        }
-        if (readerDto.getMembershipExpiryDate() != null) {
-            userDetail.setMembershipExpiryDate(readerDto.getMembershipExpiryDate());
-        }
-        if (readerDto.getDob() != null) {
-            userDetail.setDob(readerDto.getDob());
-        }
-        if (readerDto.getGender() != null) {
-            userDetail.setGender(readerDto.getGender());
-        }
-        if (readerDto.getAvatar() != null) {
-            userDetail.setAvatar(readerDto.getAvatar());
-        }
+        // Lưu và lấy đối tượng đã được cập nhật
+        User updatedUser = userRepository.save(user);
 
-        userRepository.save(user);
+        // Chuyển đổi và trả về DTO của người dùng vừa cập nhật
+        return convertToDetailDto(updatedUser);
     }
 
     @Override
@@ -136,11 +132,11 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
         userRepository.deleteById(userId);
     }
 
+    // --- CÁC PHƯƠNG THỨC KHÁC GIỮ NGUYÊN ---
     @Override
     @Transactional
     public void importReadersFromExcel(MultipartFile file) throws IOException {
         List<User> usersToSave = new ArrayList<>();
-        // Tạo Set để theo dõi các ID và Username đã xử lý trong file này
         Set<String> processedUserIds = new HashSet<>();
         Set<String> processedUsernames = new HashSet<>();
 
@@ -149,7 +145,7 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
             XSSFSheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.iterator();
             if (rowIterator.hasNext()) {
-                rowIterator.next(); // Bỏ qua dòng tiêu đề
+                rowIterator.next();
             }
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
@@ -157,24 +153,21 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
                 String username = getCellValueAsString(row.getCell(1));
                 String fullName = getCellValueAsString(row.getCell(2));
 
-                // 1. Bỏ qua nếu thiếu thông tin bắt buộc
                 if (userId.isEmpty() || username.isEmpty() || fullName.isEmpty()) {
                     continue;
                 }
-                // 2. Bỏ qua nếu đã tồn tại trong DB HOẶC đã có trong file Excel này
                 if (userRepository.existsById(userId) || processedUserIds.contains(userId) ||
                         userRepository.existsByUsername(username) || processedUsernames.contains(username)) {
                     continue;
                 }
 
-                // Nếu hợp lệ, thêm vào Set để kiểm tra các dòng tiếp theo
                 processedUserIds.add(userId);
                 processedUsernames.add(username);
 
                 User user = new User();
                 user.setUserId(userId);
                 user.setUsername(username);
-                user.setPassword(passwordEncoder.encode("123456")); // Mật khẩu mặc định
+                user.setPassword(passwordEncoder.encode("123456"));
                 user.setRole(READER_ROLE);
                 user.setStatus(true);
 
@@ -188,12 +181,12 @@ public class ReaderManagementServiceImpl implements ReaderManagementService {
                 try {
                     String dobStr = getCellValueAsString(row.getCell(6));
                     if (!dobStr.isEmpty()) detail.setDob(LocalDate.parse(dobStr, DATE_FORMATTER));
-                } catch (DateTimeParseException e) { /* Bỏ qua nếu định dạng sai */ }
+                } catch (DateTimeParseException e) { /* Bỏ qua */ }
 
                 try {
                     String expiryDateStr = getCellValueAsString(row.getCell(8));
                     if (!expiryDateStr.isEmpty()) detail.setMembershipExpiryDate(LocalDate.parse(expiryDateStr, DATE_FORMATTER));
-                } catch (DateTimeParseException e) { /* Bỏ qua nếu định dạng sai */ }
+                } catch (DateTimeParseException e) { /* Bỏ qua */ }
 
                 user.setUserDetail(detail);
                 detail.setUser(user);
